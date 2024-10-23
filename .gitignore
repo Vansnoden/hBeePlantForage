@@ -5,3 +5,15 @@ venv/
 geo_settings/
 geodatadir/
 geoserver_data/
+
+# dotenv environment variable files
+frontend/.env
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/.env.local
+
+# Fresh build directory
+frontend/_fresh/
+# npm dependencies
+frontend/node_modules/
