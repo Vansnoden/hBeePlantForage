@@ -1,3 +1,45 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    h1 {
+      @apply text-2xl;
+    }
+    h2 {
+      @apply text-xl;
+    }
+    /* ... */
+}
+
+@layer components {
+    .btn {
+      @apply rounded;
+      @apply shadow;
+      @apply bg-blue-600;
+      @apply hover:bg-blue-700;
+      @apply text-white;
+      @apply py-1;
+      @apply px-2;
+    }
+    .btn-success{
+        @apply bg-green-600;
+        @apply hover:bg-green-700;
+    }
+    .btn-danger{
+        @apply bg-red-600;
+        @apply hover:bg-red-700;
+    }
+    .btn-warning{
+        @apply bg-orange-600;
+        @apply hover:bg-orange-700;
+    }
+    .form-field{
+        @apply border-2;
+        @apply rounded;
+        @apply border-gray-500;
+        @apply py-1;
+        @apply px-2;
+        @apply m-2;
+    }
+}
