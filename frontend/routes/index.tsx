@@ -1,6 +1,7 @@
 import type { Handlers, PageProps } from "$fresh/server.ts";
 import { getCookies } from "$std/http/cookie.ts";
-
+import { useSignal } from "@preact/signals";
+import { useEffect } from "preact/hooks";
 
 interface Data {
   isAllowed: boolean;
@@ -9,29 +10,48 @@ interface Data {
 export const handler: Handlers = {
   GET(req, ctx) {
     const cookies = getCookies(req.headers);
-    return ctx.render!({ isAllowed: cookies.auth });
+    if (cookies.auth){
+      return ctx.render!({ isAllowed: true });
+    }else{
+      const url = new URL(req.url);
+      url.pathname = "/auth/login";
+      return Response.redirect(url);
+    }
+    
   },
 };
 
-
-function Login() {
-  return (
-    <form method="post" action="/api/login">
-      <input className="form-field" type="text" name="username" />
-      <input className="form-field" type="password" name="password" />
-      <button className="btn" type="submit">Submit</button>
-    </form>
-  );
-}
 
 
 export default function Home({ data }: PageProps<Data>) {
   return (
     <div>
-      <div>
-        You currently {data.isAllowed ? "are" : "are not"} logged in.
-      </div>
-      {!data.isAllowed ? <Login /> : <a className="btn btn-warning" href="/api/logout">Logout</a>}
+      {data.isAllowed ? <div>
+
+        <div class="h-screen grid grid-cols-12">
+            {/* navigation  */}
+            <div className="col-span-2 bg-blue-200 rounded shadow-lg p-2">
+              <h1>Menu</h1>
+              <span className="divider"></span>
+              <ul>
+                <li>
+                  <a href="#">Filters</a>
+                </li>
+              </ul>
+              <span className="divider"></span>
+              <ul>
+                <li>
+                  <a href="/api/logout">logout</a>
+                </li>
+              </ul>
+            </div>
+            {/* content */}
+            <div className="col-span-10 p-2">
+              my content
+            </div>
+        </div>
+
+      </div> : <div>you are not looged in ... <a className="btn btn-warning" href="/api/logout">Logout</a></div>}
     </div>
   );
 }
