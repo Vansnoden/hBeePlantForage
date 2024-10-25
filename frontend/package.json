@@ -1,9 +1,9 @@
 {
   "private": true,
   "scripts": {
-    "build": "next build -p 3003",
-    "dev": "next dev --turbo -p 3003",
-    "start": "next start -p 3003",
+    "build": "next build",
+    "dev": "next dev --turbo",
+    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
