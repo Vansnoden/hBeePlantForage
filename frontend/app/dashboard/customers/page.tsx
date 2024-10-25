@@ -1,5 +1,5 @@
 
 
 export default function Page() {
-    return <p>Customer's Page</p>;
+    return <p>Customer&apos;s Page</p>;
 }
