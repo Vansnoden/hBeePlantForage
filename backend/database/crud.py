@@ -94,6 +94,7 @@ def load_kingdom_data(db:Session, row:dict) -> int:
         db.add(db_kingdom)
         db.commit()
         db.refresh(db_kingdom)
+        fetch_kingdom = db_kingdom
     return fetch_kingdom.id
 
 
@@ -106,6 +107,7 @@ def load_taxon_data(db:Session, row:dict) -> int:
         db.add(db_taxon)
         db.commit()
         db.refresh(db_taxon)
+        fetch_taxon = db_taxon
     return fetch_taxon.id
 
 
@@ -121,6 +123,7 @@ def load_plant_specie_data(db:Session, row:dict, kingdom_id=0, taxon_id=0) -> in
         db.add(db_plant)
         db.commit()
         db.refresh(db_plant)
+        fetch_plant = db_plant
     return fetch_plant.id
 
 
@@ -142,6 +145,7 @@ def load_site_data(db:Session, row:dict) -> int:
             db.add(db_site)
             db.commit()
             db.refresh(db_site)
+            fetch_site = db_site
         return fetch_site.id
     else: 
         return 0

@@ -8,7 +8,7 @@ from fastapi import Depends, FastAPI, HTTPException, status, File, UploadFile
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
-from database.utils import excel_to_csv
+from database.utils import excel_to_csv, get_uuid
 from database.schemas import User, FileBase
 from passlib.context import CryptContext
 from jose import JWTError, jwt
@@ -19,7 +19,13 @@ from sqlalchemy.orm import Session
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.encoders import jsonable_encoder
 from slugify import slugify
+import logging
+import sys
 
+logger = logging.getLogger('uvicorn.error')
+logger.setLevel(logging.DEBUG)
+if sys.version_info[0] >= 3:
+    unicode = str
 
 
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
@@ -196,16 +202,22 @@ def upload_data_file(
     if user:
         for file in files:
             try:
-                contents = file.file.read()
-                computed_filename = os.path.join(ROOT_DIR, f"uploads/{slugify(file.filename + str(datetime.now()))}")
-                basename = os.path.basename(computed_filename).split('.')[0]
-                csv_path = os.path.join(ROOT_DIR, f"temp/{basename}.csv")
-                with open(computed_filename, "wb") as f:
+                contents = file.file.read().decode("utf-8")
+                extension = os.path.basename(file.filename).split('.')[1]
+                computed_filename = os.path.join(ROOT_DIR, f"uploads/{get_uuid()}.{extension}")
+                csv_path = ""
+                with open(computed_filename, "w", encoding="utf-8") as f:
                     f.write(contents)
-                excel_to_csv(computed_filename, target=csv_path)
+                if extension == "xlsx":
+                    basename = os.path.basename(computed_filename).split('.')[0]
+                    csv_path = os.path.join(ROOT_DIR, f"temp/{basename}.csv")
+                    excel_to_csv(computed_filename, target=csv_path)
+                else:
+                   csv_path = computed_filename
                 crud.upload_data_from_file(csv_path, db)
-            except Exception:
-                return {"message": "There was an error uploading the file(s)"}
+                logger.debug(f'#### DEBUG')
+            except Exception as e:
+                return {"message": f"There was an error uploading the file(s) \n ---- {e}"}
             finally:
                 file.file.close()
         return {"message": f"Successfuly uploaded {[file.filename for file in files]}"}   
