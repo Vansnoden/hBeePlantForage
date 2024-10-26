@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pydantic import BaseModel
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Float
+from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String, DateTime, Float
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -66,3 +66,4 @@ class Observation(Base):
     site_id = Column(Integer, ForeignKey("sites.id"), nullable=False)
     plant_specie_id = Column(Integer, ForeignKey("plant_species.id"), nullable=False)
     source = Column(String, nullable=True)
+    date = Column(String, nullable=True)

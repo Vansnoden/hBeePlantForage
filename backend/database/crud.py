@@ -5,6 +5,8 @@ import os
 import shutil
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
+
+from database.utils import get_float_val
 from . import models, schemas
 from passlib.context import CryptContext
 from pathlib import Path
@@ -22,6 +24,8 @@ import warnings
 import uuid
 import geopandas as gpd
 from shapely.geometry import Point
+from geoalchemy2 import Geometry
+
 
 DELIMITER = ","
 
@@ -63,6 +67,97 @@ def delete_user(db: Session, user_id: int):
     return res
 
 
-def upload_data_from_file(filepath) -> bool:
+def upload_data_from_file(filepath, db:Session) -> bool:
+    """filepath is more likely the path to a csv file"""
+    try:
+        with open(filepath) as file_obj: 
+            reader_obj = csv.DictReader(file_obj, delimiter=DELIMITER) 
+            for row in tqdm(list(reader_obj), unit =" rows", desc="Uploading Data ... "): 
+                kingdom_id = load_kingdom_data(db, row)
+                taxon_id = load_taxon_data(db, row)
+                plant_specie_id = load_plant_specie_data(db, row, kingdom_id=kingdom_id, taxon_id=taxon_id)
+                site_id = load_site_data(db, row)
+                observation_id = load_observation_data(db, row, site_id, plant_specie_id)
+        return True if observation_id else False
+    except Exception as e:
+        print("ERROR: ", traceback.format_exc())
+        return False
     
-    return False
+
+def load_kingdom_data(db:Session, row:dict) -> int:
+    """create or retrieved kingdom row"""
+    fetch_kingdom = db.query(models.Kingdom).filter(models.Kingdom.name == row["kingdom"]).first()
+    if not fetch_kingdom:
+        db_kingdom = models.Kingdom(
+            name=row["kingdom"],
+        )
+        db.add(db_kingdom)
+        db.commit()
+        db.refresh(db_kingdom)
+    return fetch_kingdom.id
+
+
+def load_taxon_data(db:Session, row:dict) -> int:
+    fetch_taxon = db.query(models.Kingdom).filter(models.Taxon.name == row["taxon"]).first()
+    if not fetch_taxon:
+        db_taxon = models.Taxon(
+            name=row["taxon"],
+        )
+        db.add(db_taxon)
+        db.commit()
+        db.refresh(db_taxon)
+    return fetch_taxon.id
+
+
+def load_plant_specie_data(db:Session, row:dict, kingdom_id=0, taxon_id=0) -> int:
+    fetch_plant = db.query(models.PlantSpecie).filter(models.PlantSpecie.name == row["species"]).first()
+    if not fetch_plant:
+        db_plant = models.PlantSpecie(
+            name=row["species"],
+            scientific_name=row["scientific_name"],
+            kingdom_id=kingdom_id,
+            taxon_id=taxon_id
+        )
+        db.add(db_plant)
+        db.commit()
+        db.refresh(db_plant)
+    return fetch_plant.id
+
+
+def load_site_data(db:Session, row:dict) -> int:
+    if row["latitude"] and row["longitude"]:
+        fetch_site = db.query(models.Site).filter(
+            models.Site.lat == get_float_val(str(row["latitude"])), 
+            models.Site.lon == get_float_val(str(row["longitude"]))).first()
+        if not fetch_site:
+            db_site = models.Site(
+                name=row["location_name"],
+                country=row["country"],
+                region=row["region"],
+                continent=row["continent"],
+                lat=row["latitude"],
+                lon=row["longitude"]
+            )
+            db_site.geom = f"POINT({get_float_val(str(row["latitude"]))} {get_float_val(str(row["longitude"]))})"
+            db.add(db_site)
+            db.commit()
+            db.refresh(db_site)
+        return fetch_site.id
+    else: 
+        return 0
+
+
+def load_observation_data(db:Session, row:dict, site_id, plant_id) -> int:
+    if site_id:
+        db_obs = models.Observation(
+            site_id=site_id,
+            plant_specie_id=plant_id,
+            source=row["repository_name"],
+            date=row["observation_date"],
+        )
+        db.add(db_obs)
+        db.commit()
+        db.refresh(db_obs)
+        return db_obs.id
+    else:
+        return 0

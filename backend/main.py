@@ -8,6 +8,7 @@ from fastapi import Depends, FastAPI, HTTPException, status, File, UploadFile
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
+from database.utils import excel_to_csv
 from database.schemas import User, FileBase
 from passlib.context import CryptContext
 from jose import JWTError, jwt
@@ -188,8 +189,7 @@ async def delete_user(user: Annotated[User, Depends(get_current_active_user)], d
 
 # upload data
 @app.post("/data/upload")
-def upload_data_file(
-    project_id: int, 
+def upload_data_file( 
     user: Annotated[User, Depends(get_current_active_user)],
     files: List[UploadFile] = File(...),
     db: Session = Depends(get_db)):
@@ -198,9 +198,12 @@ def upload_data_file(
             try:
                 contents = file.file.read()
                 computed_filename = os.path.join(ROOT_DIR, f"uploads/{slugify(file.filename + str(datetime.now()))}")
+                basename = os.path.basename(computed_filename).split('.')[0]
+                csv_path = os.path.join(ROOT_DIR, f"temp/{basename}.csv")
                 with open(computed_filename, "wb") as f:
                     f.write(contents)
-                crud.upload_data_from_file(computed_filename)
+                excel_to_csv(computed_filename, target=csv_path)
+                crud.upload_data_from_file(csv_path, db)
             except Exception:
                 return {"message": "There was an error uploading the file(s)"}
             finally:
