@@ -199,14 +199,16 @@ def upload_data_file(
     user: Annotated[User, Depends(get_current_active_user)],
     files: List[UploadFile] = File(...),
     db: Session = Depends(get_db)):
+    res = False
     if user:
         for file in files:
             try:
-                contents = file.file.read().decode("utf-8")
+                contents = file.file.read().decode(encoding='utf-8')
+                # logger.debug(f'#### DEBUG + {contents}')
                 extension = os.path.basename(file.filename).split('.')[1]
                 computed_filename = os.path.join(ROOT_DIR, f"uploads/{get_uuid()}.{extension}")
                 csv_path = ""
-                with open(computed_filename, "w", encoding="utf-8") as f:
+                with open(computed_filename, "w", encoding='utf-8', errors='replace') as f:
                     f.write(contents)
                 if extension == "xlsx":
                     basename = os.path.basename(computed_filename).split('.')[0]
@@ -214,12 +216,11 @@ def upload_data_file(
                     excel_to_csv(computed_filename, target=csv_path)
                 else:
                    csv_path = computed_filename
-                crud.upload_data_from_file(csv_path, db)
-                logger.debug(f'#### DEBUG')
+                res = crud.upload_data_from_file(csv_path, db)
             except Exception as e:
                 return {"message": f"There was an error uploading the file(s) \n ---- {e}"}
             finally:
                 file.file.close()
-        return {"message": f"Successfuly uploaded {[file.filename for file in files]}"}   
+        return {"message": f"Successfuly uploaded {[file.filename for file in files]}" if res else "Failure uploading Files"}   
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")

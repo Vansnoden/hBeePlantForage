@@ -87,7 +87,7 @@ def upload_data_from_file(filepath, db:Session) -> bool:
 def load_kingdom_data(db:Session, row:dict) -> int:
     """create or retrieved kingdom row"""
     fetch_kingdom = db.query(models.Kingdom).filter(models.Kingdom.name == row["kingdom"]).first()
-    if not fetch_kingdom:
+    if not fetch_kingdom and row["kingdom"]:
         db_kingdom = models.Kingdom(
             name=row["kingdom"],
         )
@@ -100,7 +100,7 @@ def load_kingdom_data(db:Session, row:dict) -> int:
 
 def load_taxon_data(db:Session, row:dict) -> int:
     fetch_taxon = db.query(models.Kingdom).filter(models.Taxon.name == row["taxon"]).first()
-    if not fetch_taxon:
+    if not fetch_taxon and row["taxon"]:
         db_taxon = models.Taxon(
             name=row["taxon"],
         )
@@ -113,7 +113,7 @@ def load_taxon_data(db:Session, row:dict) -> int:
 
 def load_plant_specie_data(db:Session, row:dict, kingdom_id=0, taxon_id=0) -> int:
     fetch_plant = db.query(models.PlantSpecie).filter(models.PlantSpecie.name == row["species"]).first()
-    if not fetch_plant:
+    if not fetch_plant and row["species"]:
         db_plant = models.PlantSpecie(
             name=row["species"],
             scientific_name=row["scientific_name"],
