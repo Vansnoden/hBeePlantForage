@@ -7,6 +7,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from .database import Base
 import datetime
+from geoalchemy2 import Geometry
 
 
 class User(Base):
@@ -52,6 +53,7 @@ class Site(Base):
     name = Column(String, nullable=False)
     lat = Column(Float, nullable=False)
     lon = Column(Float, nullable=False)
+    geom = Column(Geometry('POINT'), nullable=False)
     country = Column(String, nullable=True)
     region = Column(String, nullable=True)
     continent = Column(String, nullable=True)
