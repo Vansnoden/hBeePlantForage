@@ -8,6 +8,22 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 from passlib.context import CryptContext
 from pathlib import Path
+import datetime
+from enum import Enum
+from pprint import pprint
+import re, os
+import shutil
+import pandas as pd
+import openpyxl , csv
+
+from tqdm import tqdm
+import traceback
+import warnings
+import uuid
+import geopandas as gpd
+from shapely.geometry import Point
+
+DELIMITER = ","
 
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
@@ -45,3 +61,8 @@ def delete_user(db: Session, user_id: int):
     res = db.query(models.User).filter(models.User.id == user_id).delete()
     db.commit()
     return res
+
+
+def upload_data_from_file(filepath) -> bool:
+    
+    return False

@@ -17,12 +17,14 @@ from database.database import SessionLocal, engine
 from sqlalchemy.orm import Session
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.encoders import jsonable_encoder
+from slugify import slugify
 
 
 
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30 * 3600 * 24
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = FastAPI()
 
@@ -35,10 +37,7 @@ def get_db():
         db.close()
 
 origins = [
-    "http://localhost",
-    "http://localhost:8080",
-    "http://localhost:3000",
-    "http://localhost:8000",
+    "*"
 ]
 
 app.add_middleware(
@@ -186,3 +185,26 @@ async def delete_user(user: Annotated[User, Depends(get_current_active_user)], d
     else:
         raise HTTPException(status_code=403, detail="Unauthorized action")
 
+
+# upload data
+@app.post("/data/upload")
+def upload_data_file(
+    project_id: int, 
+    user: Annotated[User, Depends(get_current_active_user)],
+    files: List[UploadFile] = File(...),
+    db: Session = Depends(get_db)):
+    if user:
+        for file in files:
+            try:
+                contents = file.file.read()
+                computed_filename = os.path.join(ROOT_DIR, f"uploads/{slugify(file.filename + str(datetime.now()))}")
+                with open(computed_filename, "wb") as f:
+                    f.write(contents)
+                crud.upload_data_from_file(computed_filename)
+            except Exception:
+                return {"message": "There was an error uploading the file(s)"}
+            finally:
+                file.file.close()
+        return {"message": f"Successfuly uploaded {[file.filename for file in files]}"}   
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
