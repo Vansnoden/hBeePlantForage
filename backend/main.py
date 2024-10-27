@@ -44,7 +44,7 @@ def get_db():
         db.close()
 
 origins = [
-    "*"
+    "localhost:3000"
 ]
 
 app.add_middleware(

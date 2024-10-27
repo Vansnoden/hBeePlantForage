@@ -3,8 +3,9 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { AuthError } from 'next-auth';
-import { AUTH_URL } from './constants.ts';
-
+import { AUTH_URL } from './constants';
+import { cookies } from 'next/headers';
+import { signIn } from '../../auth.ts';
 
 export type State = {
     errors?: {
@@ -17,12 +18,18 @@ export type State = {
 export async function authenticate(
     prevState: string | undefined,
     formData: FormData,
-) {
+  ) {
     try {
-        await fetch(AUTH_URL, formData);
-        return true;
+      await signIn('credentials', formData);
     } catch (error) {
-        console.log(error);
-        return false;
+      if (error instanceof AuthError) {
+        switch (error.type) {
+          case 'CredentialsSignin':
+            return 'Invalid credentials.';
+          default:
+            return 'Something went wrong.';
+        }
+      }
+      throw error;
     }
-}
+  }
