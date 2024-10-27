@@ -3,7 +3,7 @@ import { authConfig } from './auth.config';
 import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
 import { AUTH_URL, USERINFO_URL } from './app/lib/constants';
-
+import { cookies } from 'next/headers'
 
 async function getUser(token: string) {
     const userData = await fetch(USERINFO_URL, {
@@ -36,7 +36,12 @@ export const { auth, signIn, signOut } = NextAuth({
         console.log(await res_content);
         if ((await res_content).token_type){
             // set cookie
-            
+            const cookieStore = await cookies();
+            cookieStore.set("auth-token", (await res_content).token_type + "__" + (await res_content).access_token, {
+                maxAge: 3600,
+                secure: true,
+                sameSite: 'lax'
+            })
             const userData = await getUser((await res_content).token_type + " " + (await res_content).access_token)
             return userData;
         }else{
