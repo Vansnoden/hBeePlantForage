@@ -32,8 +32,8 @@ export const { auth, signIn, signOut } = NextAuth({
             body: formData
         })
         const res_content = response.json();
-        console.log("-----------");
-        console.log(await res_content);
+        // console.log("-----------");
+        // console.log(await res_content);
         if ((await res_content).token_type){
             // set cookie
             const cookieStore = await cookies();
