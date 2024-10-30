@@ -95,7 +95,8 @@ def load_kingdom_data(db:Session, row:dict) -> int:
         db.commit()
         db.refresh(db_kingdom)
         fetch_kingdom = db_kingdom
-    return fetch_kingdom.id
+        return fetch_kingdom.id
+    return 0
 
 
 def load_taxon_data(db:Session, row:dict) -> int:
@@ -108,23 +109,26 @@ def load_taxon_data(db:Session, row:dict) -> int:
         db.commit()
         db.refresh(db_taxon)
         fetch_taxon = db_taxon
-    return fetch_taxon.id
+        return fetch_taxon.id
+    return 0
 
 
 def load_plant_specie_data(db:Session, row:dict, kingdom_id=0, taxon_id=0) -> int:
-    fetch_plant = db.query(models.PlantSpecie).filter(models.PlantSpecie.name == row["species"]).first()
-    if not fetch_plant and row["species"]:
-        db_plant = models.PlantSpecie(
-            name=row["species"],
-            scientific_name=row["scientific_name"],
-            kingdom_id=kingdom_id,
-            taxon_id=taxon_id
-        )
-        db.add(db_plant)
-        db.commit()
-        db.refresh(db_plant)
-        fetch_plant = db_plant
-    return fetch_plant.id
+    if kingdom_id and taxon_id:
+        fetch_plant = db.query(models.PlantSpecie).filter(models.PlantSpecie.name == row["species"]).first()
+        if not fetch_plant and row["species"]:
+            db_plant = models.PlantSpecie(
+                name=row["species"],
+                scientific_name=row["scientific_name"],
+                kingdom_id=kingdom_id,
+                taxon_id=taxon_id
+            )
+            db.add(db_plant)
+            db.commit()
+            db.refresh(db_plant)
+            fetch_plant = db_plant
+            return fetch_plant.id
+    return 0
 
 
 def load_site_data(db:Session, row:dict) -> int:
@@ -152,7 +156,7 @@ def load_site_data(db:Session, row:dict) -> int:
 
 
 def load_observation_data(db:Session, row:dict, site_id, plant_id) -> int:
-    if site_id:
+    if site_id and plant_id:
         db_obs = models.Observation(
             site_id=site_id,
             plant_specie_id=plant_id,
