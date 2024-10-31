@@ -224,3 +224,16 @@ def upload_data_file(
         return {"message": f"Successfuly uploaded {[file.filename for file in files]}" if res else "Failure uploading Files"}   
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
+    
+
+# get dashboard data
+@app.post("/data/dashboard")
+def get_dashboard_data( 
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)):
+    res = {}
+    if user:
+        res["total_plants"] = db.query(models.PlantSpecie).count()
+        return res  
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")

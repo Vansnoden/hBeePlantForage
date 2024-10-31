@@ -5,6 +5,8 @@ import {
     ArrowDownIcon,
 } from '@heroicons/react/24/outline';
 import { lusitana } from '../fonts.ts';
+import { useActionState } from 'react';
+import { getDashboardData } from '@/app/lib/data.js';
 
 const iconMap = {
     collected: UserGroupIcon,
@@ -38,9 +40,10 @@ export function Card({
 }
 
 export default async function CardWrapper() {
-    const numberOfInvoices = 50;
+    // const dashData = await getDashboardDataAction();
+    const numberOfInvoices = 50 // dashData?.total_plants as number;
     const numberOfCustomers = 160;
-    const totalPaidInvoices = 90;
+    const totalPaidInvoices = 90; //await getDashboardData();
     const totalPendingInvoices= 22;
     
     return (

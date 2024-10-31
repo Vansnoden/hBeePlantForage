@@ -12,29 +12,31 @@ import { GEOSERVER_BASE_URL } from '../../lib/constants.ts';
 const MapComponent = () => {
     const mapContainer = useRef(null);
     const map = useRef(null);
-    const center = { lng: 13.338414, lat: 52.507932 };
-    const [zoom] = useState(12);
+    const center = { lat:0.002777763, lng:32.13444449 };
+    const [zoom] = useState(5);
+
 
     useEffect(() => {
         if (map.current) return; // stops map from intializing more than once
-    
+
         map.current = new L.Map(mapContainer.current, {
-        center: L.latLng(center.lat, center.lng),
-        zoom: zoom
+            center: L.latLng(center.lat, center.lng),
+            zoom: zoom
         });
     
-        // Create a MapTiler Layer inside Leaflet
         const mtLayer = new MaptilerLayer({
-            // Get your free API key at https://cloud.maptiler.com
             apiKey: "jcHTtwiHXeEVJwuIKYDm",
         }).addTo(map.current);
 
         const occurrence_layer = L.tileLayer.wms(GEOSERVER_BASE_URL+'/ne/wms', {
             layers: 'sites',
-            projection: 'EPSG:4326',
             format: 'image/png',
             transparent: true,
         }).addTo(map.current);
+        
+        map.current.on('click', (e) => {
+            alert("You clicked the map at " + e.latlng);
+        });
     
     }, [center.lng, center.lat, zoom]);
     

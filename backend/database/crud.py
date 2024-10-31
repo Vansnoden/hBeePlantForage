@@ -25,7 +25,10 @@ import uuid
 import geopandas as gpd
 from shapely.geometry import Point
 from geoalchemy2 import Geometry
+import logging
 
+logger = logging.getLogger('uvicorn.error')
+logger.setLevel(logging.DEBUG)
 
 DELIMITER = ","
 
@@ -78,16 +81,16 @@ def upload_data_from_file(filepath, db:Session) -> bool:
                 plant_specie_id = load_plant_specie_data(db, row, kingdom_id=kingdom_id, taxon_id=taxon_id)
                 site_id = load_site_data(db, row)
                 observation_id = load_observation_data(db, row, site_id, plant_specie_id)
-        return True if observation_id else False
+            return True
     except Exception as e:
-        print("ERROR: ", traceback.format_exc())
+        logger.debug("ERROR: ", traceback.format_exc())
         return False
     
 
 def load_kingdom_data(db:Session, row:dict) -> int:
     """create or retrieved kingdom row"""
     fetch_kingdom = db.query(models.Kingdom).filter(models.Kingdom.name == row["kingdom"]).first()
-    if not fetch_kingdom and row["kingdom"]:
+    if not fetch_kingdom and row["kingdom"]: # a
         db_kingdom = models.Kingdom(
             name=row["kingdom"],
         )
@@ -100,7 +103,7 @@ def load_kingdom_data(db:Session, row:dict) -> int:
 
 
 def load_taxon_data(db:Session, row:dict) -> int:
-    fetch_taxon = db.query(models.Kingdom).filter(models.Taxon.name == row["taxon"]).first()
+    fetch_taxon = db.query(models.Taxon).filter(models.Taxon.name == row["taxon"]).first()
     if not fetch_taxon and row["taxon"]:
         db_taxon = models.Taxon(
             name=row["taxon"],
@@ -145,7 +148,7 @@ def load_site_data(db:Session, row:dict) -> int:
                 lat=row["latitude"],
                 lon=row["longitude"]
             )
-            db_site.geom = f"POINT({get_float_val(str(row["latitude"]))} {get_float_val(str(row["longitude"]))})"
+            db_site.geom = f"POINT({get_float_val(str(row["longitude"]))} {get_float_val(str(row["latitude"]))})"
             db.add(db_site)
             db.commit()
             db.refresh(db_site)

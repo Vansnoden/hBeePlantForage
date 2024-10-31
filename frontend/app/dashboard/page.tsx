@@ -5,7 +5,8 @@ import CardWrapper from "../ui/dashboard/card.tsx";
 import { lusitana } from "../ui/fonts.ts";
 import PolarAreaChart from "../ui/dashboard/charts/polarareachart.tsx";
 
-export default function Dashboard(){
+
+export default async function Dashboard(){  
     return(
         <div>
             <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
