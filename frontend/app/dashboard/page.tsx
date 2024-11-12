@@ -16,10 +16,10 @@ export default async function Dashboard(){
                 <CardWrapper />
             </div>
             <div className="p-3 mt-3 grid gap-6 grid-cols-2">
-                <LineChart/>
+                {/* <LineChart/> */}
                 <BarChart/>
-                <PieChart/>
-                <PolarAreaChart/>
+                {/* <PieChart/> */}
+                {/* <PolarAreaChart/> */}
             </div> 
         </div>
     )

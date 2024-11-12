@@ -100,6 +100,8 @@ def load_kingdom_data(db:Session, row:dict) -> int:
         db.refresh(db_kingdom)
         fetch_kingdom = db_kingdom
         return fetch_kingdom.id
+    elif fetch_kingdom:
+        return fetch_kingdom.id
     return 0
 
 
@@ -115,6 +117,8 @@ def load_family_data(db:Session, row:dict) -> int:
         db.refresh(db_family)
         fetch_family = db_family
         return fetch_family.id
+    elif fetch_family:
+        return fetch_family.id
     return 0
 
 
@@ -128,6 +132,8 @@ def load_taxon_data(db:Session, row:dict) -> int:
         db.commit()
         db.refresh(db_taxon)
         fetch_taxon = db_taxon
+        return fetch_taxon.id
+    elif fetch_taxon:
         return fetch_taxon.id
     return 0
 
@@ -146,6 +152,8 @@ def load_plant_specie_data(db:Session, row:dict, kingdom_id=0, taxon_id=0, famil
         db.commit()
         db.refresh(db_plant)
         fetch_plant = db_plant
+        return fetch_plant.id
+    elif fetch_plant:
         return fetch_plant.id
     return 0
 

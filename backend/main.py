@@ -21,6 +21,7 @@ from fastapi.encoders import jsonable_encoder
 from slugify import slugify
 import logging
 import sys
+from random import randrange
 
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
@@ -224,7 +225,24 @@ def upload_data_file(
         return {"message": f"Successfuly uploaded {[file.filename for file in files]}" if res else "Failure uploading Files"}   
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
-    
+
+
+
+def generate_colors(limit=0):
+    bgcolor = []
+    border_color = []
+    for i in list(range(limit)):
+        red = randrange(255)
+        green = randrange(255)
+        blue = randrange(255)
+        bgcolor.append(
+            f"rgba({red}, {green}, {blue}, 0.2)"
+        )
+        border_color.append(
+            f"rgba({red}, {green}, {blue}, 1)"
+        )
+    return bgcolor, border_color
+
 
 # get dashboard data
 @app.post("/data/dashboard")
