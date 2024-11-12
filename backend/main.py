@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import timedelta, timezone, datetime
+import math
 import os, json, time
 from pathlib import Path
 from typing import Annotated, List
@@ -34,6 +35,8 @@ SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30 * 3600 * 24
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+ITEMS_PER_PAGE = 20
 
 app = FastAPI()
 
@@ -228,6 +231,35 @@ def upload_data_file(
         raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
+@app.post("/data/get")
+def get_data_file( 
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db), page=1, limit=50):
+    res = {
+        "total_pages": 0,
+        "page":page,
+        "data":[]
+    }
+    offset = int(page) * int(ITEMS_PER_PAGE)
+    if user:
+        res["total_pages"] = math.floor(int(db.query(models.Observation).count()) / int(ITEMS_PER_PAGE))
+        plant_summary_data_query = text(f"""
+                                        select s.name as site_name, s.country, ps.name as plant_name, 
+                                        ps.scientific_name, f.name as family, t.name as taxon, k.name 
+                                        as kingdom from observations as o
+                                        inner join plant_species as ps on o.plant_specie_id = ps.id 
+                                        inner join sites as s on o.site_id = s.id
+                                        left  join "family"as f on ps.family_id = f.id
+                                        left  join kingdoms as k on ps.kingdom_id = k.id
+                                        left  join taxons as t on ps.taxon_id = t.id
+                                        limit {limit} offset {offset}""")
+        datarows = db.execute(plant_summary_data_query)
+        for row in datarows:
+            res["data"].append(dict(row._mapping))
+        return res
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+
 
 def generate_colors(limit=0):
     bgcolor = []
@@ -243,6 +275,9 @@ def generate_colors(limit=0):
             f"rgba({red}, {green}, {blue}, 1)"
         )
     return bgcolor, border_color
+
+
+
 
 
 # get dashboard data

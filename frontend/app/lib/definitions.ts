@@ -18,3 +18,13 @@ export interface DashboardData{
     total_sites: number;
     sites_per_country: CustomChartData;
 }
+
+export interface PlantDataRow{
+    country: string;
+    site_name: string;
+    plant_name: string;
+    scientific_name: string;
+    family: string;
+    taxon: string;
+    kingdom: string
+}
