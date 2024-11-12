@@ -1,9 +1,9 @@
-import LineChart from "../ui/dashboard/charts/linechart.tsx";
-import BarChart from "../ui/dashboard/charts/barchart.tsx";
-import PieChart from "../ui/dashboard/charts/piechart.tsx";
-import CardWrapper from "../ui/dashboard/card.tsx";
-import { lusitana } from "../ui/fonts.ts";
-import PolarAreaChart from "../ui/dashboard/charts/polarareachart.tsx";
+import LineChart from "../ui/dashboard/charts/linechart";
+import BarChart from "../ui/dashboard/charts/barchart";
+import PieChart from "../ui/dashboard/charts/piechart";
+import CardWrapper from "../ui/dashboard/card";
+import { lusitana } from "../ui/fonts";
+import PolarAreaChart from "../ui/dashboard/charts/polarareachart";
 
 
 export default async function Dashboard(){  

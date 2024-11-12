@@ -81,7 +81,7 @@ def upload_data_from_file(filepath, db:Session) -> bool:
                 family_id = load_family_data(db, row)
                 plant_specie_id = load_plant_specie_data(db, row, kingdom_id=kingdom_id, taxon_id=taxon_id, family_id=family_id)
                 site_id = load_site_data(db, row)
-                observation_id = load_observation_data(db, row, site_id, plant_specie_id)
+                load_observation_data(db, row, site_id, plant_specie_id)
             return True
     except Exception as e:
         logger.debug("ERROR: ", traceback.format_exc())
@@ -133,21 +133,20 @@ def load_taxon_data(db:Session, row:dict) -> int:
 
 
 def load_plant_specie_data(db:Session, row:dict, kingdom_id=0, taxon_id=0, family_id=0) -> int:
-    if kingdom_id and taxon_id:
-        fetch_plant = db.query(models.PlantSpecie).filter(models.PlantSpecie.name == row["species"]).first()
-        if not fetch_plant and row["species"]:
-            db_plant = models.PlantSpecie(
-                name=row["species"],
-                scientific_name=row["scientific_name"],
-                kingdom_id=kingdom_id,
-                taxon_id=taxon_id,
-                family_id=family_id
-            )
-            db.add(db_plant)
-            db.commit()
-            db.refresh(db_plant)
-            fetch_plant = db_plant
-            return fetch_plant.id
+    fetch_plant = db.query(models.PlantSpecie).filter(models.PlantSpecie.name == row["species"]).first()
+    if not fetch_plant and row["species"]:
+        db_plant = models.PlantSpecie(
+            name=row["species"],
+            scientific_name=row["scientific_name"],
+            kingdom_id=kingdom_id if kingdom_id else None,
+            taxon_id=taxon_id if taxon_id else None,
+            family_id=family_id if family_id else None
+        )
+        db.add(db_plant)
+        db.commit()
+        db.refresh(db_plant)
+        fetch_plant = db_plant
+        return fetch_plant.id
     return 0
 
 
@@ -165,7 +164,7 @@ def load_site_data(db:Session, row:dict) -> int:
                 lat=row["latitude"],
                 lon=row["longitude"]
             )
-            db_site.geom = f"POINT({get_float_val(str(row["longitude"]))} {get_float_val(str(row["latitude"]))})"
+            db_site.geom = f"POINT({get_float_val(str(row['longitude']))} {get_float_val(str(row['latitude']))})"
             db.add(db_site)
             db.commit()
             db.refresh(db_site)

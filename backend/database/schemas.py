@@ -56,6 +56,7 @@ class PlantSpecie(BaseModel):
     scientific_name: str
     kingdom_id: int
     taxon_id: int
+    family_id: int
 
     class Config:
         from_attributes = True

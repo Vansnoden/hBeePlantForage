@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import dynamic from "next/dynamic";
 import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
-import { GEOSERVER_BASE_URL } from '../../lib/constants.ts';
+import { GEOSERVER_BASE_URL } from '../../lib/constants';
 
 // const MaptilerLayer = dynamic(() => import("@maptiler/leaflet-maptilersdk"), { ssr:false })
 
@@ -23,7 +23,7 @@ const MapComponent = () => {
             center: L.latLng(center.lat, center.lng),
             zoom: zoom
         });
-    
+
         const mtLayer = new MaptilerLayer({
             apiKey: "jcHTtwiHXeEVJwuIKYDm",
         }).addTo(map.current);
