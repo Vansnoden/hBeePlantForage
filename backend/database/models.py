@@ -36,12 +36,20 @@ class Taxon(Base):
     name = Column(String, nullable=False)
 
 
+class Family(Base):
+    __tablename__ = "family"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+
+
 class PlantSpecie(Base):
     __tablename__ = "plant_species"
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     scientific_name = Column(String, nullable=True)
+    family_id = Column(Integer, ForeignKey("family.id"), nullable=True)
     kingdom_id = Column(Integer, ForeignKey("kingdoms.id"), nullable=True)
     taxon_id = Column(Integer, ForeignKey("taxons.id"), nullable=True)
 

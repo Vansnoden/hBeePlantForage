@@ -78,7 +78,8 @@ def upload_data_from_file(filepath, db:Session) -> bool:
             for row in tqdm(list(reader_obj), unit =" rows", desc="Uploading Data ... "): 
                 kingdom_id = load_kingdom_data(db, row)
                 taxon_id = load_taxon_data(db, row)
-                plant_specie_id = load_plant_specie_data(db, row, kingdom_id=kingdom_id, taxon_id=taxon_id)
+                family_id = load_family_data(db, row)
+                plant_specie_id = load_plant_specie_data(db, row, kingdom_id=kingdom_id, taxon_id=taxon_id, family_id=family_id)
                 site_id = load_site_data(db, row)
                 observation_id = load_observation_data(db, row, site_id, plant_specie_id)
             return True
@@ -102,6 +103,21 @@ def load_kingdom_data(db:Session, row:dict) -> int:
     return 0
 
 
+def load_family_data(db:Session, row:dict) -> int:
+    """create or retrieved family row"""
+    fetch_family = db.query(models.Family).filter(models.Family.name == row["file_name"]).first()
+    if not fetch_family and row["file_name"]: # a
+        db_family = models.Family(
+            name=row["file_name"],
+        )
+        db.add(db_family)
+        db.commit()
+        db.refresh(db_family)
+        fetch_family = db_family
+        return fetch_family.id
+    return 0
+
+
 def load_taxon_data(db:Session, row:dict) -> int:
     fetch_taxon = db.query(models.Taxon).filter(models.Taxon.name == row["taxon"]).first()
     if not fetch_taxon and row["taxon"]:
@@ -116,7 +132,7 @@ def load_taxon_data(db:Session, row:dict) -> int:
     return 0
 
 
-def load_plant_specie_data(db:Session, row:dict, kingdom_id=0, taxon_id=0) -> int:
+def load_plant_specie_data(db:Session, row:dict, kingdom_id=0, taxon_id=0, family_id=0) -> int:
     if kingdom_id and taxon_id:
         fetch_plant = db.query(models.PlantSpecie).filter(models.PlantSpecie.name == row["species"]).first()
         if not fetch_plant and row["species"]:
@@ -124,7 +140,8 @@ def load_plant_specie_data(db:Session, row:dict, kingdom_id=0, taxon_id=0) -> in
                 name=row["species"],
                 scientific_name=row["scientific_name"],
                 kingdom_id=kingdom_id,
-                taxon_id=taxon_id
+                taxon_id=taxon_id,
+                family_id=family_id
             )
             db.add(db_plant)
             db.commit()

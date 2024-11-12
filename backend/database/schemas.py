@@ -42,6 +42,14 @@ class Taxon(BaseModel):
         from_attributes = True
 
 
+class Family(BaseModel):
+    id: str
+    name: str
+    
+    class Config:
+        from_attributes = True
+
+
 class PlantSpecie(BaseModel):
     id: str
     name: str
