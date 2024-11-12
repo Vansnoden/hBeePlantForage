@@ -16,11 +16,11 @@ export default async function Dashboard(){
                 Dashboard
             </h1>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <CardWrapper total_plants={dashData.total_plants} total_sites={dashData.total_sites}/>
+                <CardWrapper total_plants={dashData?.total_plants} total_sites={dashData?.total_sites}/>
             </div>
             <div className="p-3 mt-3 grid gap-2 grid-cols-2">
                 {/* <LineChart/> */}
-                <BarChart data={dashData.sites_per_country}/>
+                <BarChart data={dashData?.sites_per_country}/>
                 {/* <PieChart/> */}
                 {/* <PolarAreaChart/> */}
             </div> 
