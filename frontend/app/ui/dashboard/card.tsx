@@ -1,18 +1,18 @@
 import {
-    BanknotesIcon,
-    UserGroupIcon,
-    ArrowUpIcon,
+    MapPinIcon,
+    CircleStackIcon,
     ArrowDownIcon,
+    ArrowUpIcon,
 } from '@heroicons/react/24/outline';
-import { lusitana } from '../fonts.ts';
+import { lusitana } from '../fonts';
 import { useActionState } from 'react';
-import { getDashboardData } from '@/app/lib/data.js';
+import { DashboardData } from '@/app/lib/definitions';
 
 const iconMap = {
-    collected: UserGroupIcon,
-    customers: ArrowUpIcon,
-    pending: BanknotesIcon,
-    invoices: ArrowDownIcon,
+    plants: CircleStackIcon,
+    sites: MapPinIcon,
+    uploads: ArrowUpIcon,
+    downloads: ArrowDownIcon,
 };
   
 
@@ -23,7 +23,7 @@ export function Card({
 } : {
     title: string;
     value: number | string;
-    type: 'invoices' | 'customers' | 'pending' | 'collected';
+    type: 'plants' | 'sites' | 'uploads' | 'downloads';
 }){
     const Icon = iconMap[type];
     return (
@@ -39,25 +39,16 @@ export function Card({
     )
 }
 
-export default async function CardWrapper() {
-    // const dashData = await getDashboardDataAction();
-    const numberOfInvoices = 50 // dashData?.total_plants as number;
-    const numberOfCustomers = 160;
-    const totalPaidInvoices = 90; //await getDashboardData();
-    const totalPendingInvoices= 22;
+export default async function CardWrapper(props: { total_plants: number; total_sites: number }) {
+    const numberOfDowloads = 0
+    const numberOfUploads = 0;
     
     return (
       <>
-        {/* NOTE: Uncomment this code in Chapter 9 */}
-  
-        <Card title="Total Plant Species" value={totalPaidInvoices} type="collected" />
-        <Card title="Total Recorded Sites" value={totalPendingInvoices} type="pending" />
-        <Card title="Total Downloads" value={numberOfInvoices} type="invoices" />
-        <Card
-          title="Total Uploads"
-          value={numberOfCustomers}
-          type="customers"
-        />
+        <Card title="Total Plant Species" value={props.total_plants} type="plants" />
+        <Card title="Total Recorded Sites" value={props.total_sites} type="sites" />
+        <Card title="Total Downloads" value={numberOfDowloads} type="downloads" />
+        <Card title="Total Uploads" value={numberOfUploads} type="uploads"/>
       </>
     );
   }

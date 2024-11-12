@@ -22,6 +22,7 @@ from slugify import slugify
 import logging
 import sys
 from random import randrange
+from sqlalchemy.sql import text
 
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
@@ -245,13 +246,35 @@ def generate_colors(limit=0):
 
 
 # get dashboard data
-@app.post("/data/dashboard")
+@app.get("/data/dashboard")
 def get_dashboard_data( 
     user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db)):
     res = {}
     if user:
         res["total_plants"] = db.query(models.PlantSpecie).count()
+        res["total_sites"] = db.query(models.Site).count()
+        # total sites per country
+        sites_per_country_labels = []
+        sites_per_country_values = []
+        query_site_per_country = text("""select count(id), country from sites where country != '' group by country""")
+        sites_per_country = db.execute(query_site_per_country)
+        for rec in sites_per_country:
+            sites_per_country_labels.append(rec[1])
+            sites_per_country_values.append(rec[0])
+        bgColor, borderColor = generate_colors(len(sites_per_country_values))
+        res["sites_per_country"] = {
+                "labels": sites_per_country_labels,
+                "datasets": [
+                    {
+                        "label": 'Observation sites per country',
+                        "data": sites_per_country_values,
+                        "backgroundColor": bgColor,
+                        "borderColor": borderColor,
+                        "borderWidth": 1,
+                    },
+                ],
+            }
         return res  
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")

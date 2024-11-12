@@ -3,6 +3,8 @@
 "use client";
 import dynamic from 'next/dynamic';
 import 'chart.js/auto';
+import { CustomChartData } from '@/app/lib/definitions';
+
 const Bar = dynamic(() => import('react-chartjs-2').then((mod) => mod.Bar), {
   ssr: false,
 });
@@ -32,11 +34,11 @@ const data = {
     },
   ],
 };
-const BarChart = () => {
+const BarChart = (props: { data: CustomChartData }) => {
   return (
-    <div style={{ width: '700px', height: '400px' }}>
-      <h1>Distribution Bar Chart</h1>
-      <Bar data={data} />
+    <div style={{ width: '100%', height: '700px' }}>
+      <h1>{props.data?.datasets.label}</h1>
+      <Bar data={props.data} />
     </div>
   );
 };

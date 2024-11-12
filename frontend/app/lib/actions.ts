@@ -5,9 +5,10 @@ import { redirect } from 'next/navigation';
 import { AuthError } from 'next-auth';
 import { AUTH_URL } from './constants';
 import { cookies } from 'next/headers'
-import { signIn } from '../../auth.ts';
-import { getDashboardData } from '@/services';
+import { signIn } from '../../auth';
+import { DASHBOARD_DATA_URL } from "./constants";
 import { number } from 'zod';
+import { DashboardData } from './definitions';
 
 export type State = {
     errors?: {
@@ -44,4 +45,14 @@ export async function getToken(){
 }
 
 
+export async function getDashboardData(){
+  const token = await getToken() as string
+  const dashData = await fetch(DASHBOARD_DATA_URL, {
+      method: 'GET',
+      headers: {
+          "Authorization": token
+      }
+  }).then((res) => res.json())
+  return dashData as DashboardData;
+}
 
