@@ -19,7 +19,7 @@ export default async function Dashboard(){
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <CardWrapper total_plants={dashData?.total_plants} total_sites={dashData?.total_sites}/>
             </div>
-            <div className="p-3 mt-3 grid gap-6 grid-cols-4">
+            <div className="py-3 mt-3 grid gap-6 grid-cols-4">
                 <div>
                     <h2 className={`${lusitana.className} mb-2`}>
                         Quick Stats

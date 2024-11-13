@@ -1,7 +1,6 @@
-"use client"
+
 import { getPlantData } from '@/app/lib/actions';
 import { PlantData, PlantDataRow } from '@/app/lib/definitions';
-import Image from 'next/image';
 
 
 // DataTable.use(DT);
@@ -42,7 +41,7 @@ export default async function CDataTable() {
             <tbody className="bg-white">
               {plant_data_rows.data?.map((plant_data) => (
                 <tr
-                  key={plant_data.site_name}
+                  key={plant_data.id}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                     <td className="whitespace-nowrap px-3 py-3">

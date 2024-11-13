@@ -20,6 +20,7 @@ export interface DashboardData{
 }
 
 export interface PlantDataRow{
+    id: number,
     country: string;
     site_name: string;
     plant_name: string;

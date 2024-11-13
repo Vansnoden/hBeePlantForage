@@ -36,7 +36,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30 * 3600 * 24
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-ITEMS_PER_PAGE = 20
+ITEMS_PER_PAGE = 10
 
 app = FastAPI()
 
@@ -234,7 +234,7 @@ def upload_data_file(
 @app.post("/data/get")
 def get_data_file( 
     user: Annotated[User, Depends(get_current_active_user)],
-    db: Session = Depends(get_db), page=1, limit=50):
+    db: Session = Depends(get_db), page=1, limit=ITEMS_PER_PAGE):
     res = {
         "total_pages": 0,
         "page":page,
@@ -244,7 +244,7 @@ def get_data_file(
     if user:
         res["total_pages"] = math.floor(int(db.query(models.Observation).count()) / int(ITEMS_PER_PAGE))
         plant_summary_data_query = text(f"""
-                                        select s.name as site_name, s.country, ps.name as plant_name, 
+                                        select o.id, s.name as site_name, s.country, ps.name as plant_name, 
                                         ps.scientific_name, f.name as family, t.name as taxon, k.name 
                                         as kingdom from observations as o
                                         inner join plant_species as ps on o.plant_specie_id = ps.id 
