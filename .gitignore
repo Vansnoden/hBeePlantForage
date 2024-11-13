@@ -17,3 +17,8 @@ frontend/.env.local
 frontend/_fresh/
 # npm dependencies
 frontend/node_modules/
+
+
+backend/uploads/*.csv
+backend/uploads/*.xlsx
+backend/temp/*.csv

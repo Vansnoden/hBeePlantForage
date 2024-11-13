@@ -1,50 +1,33 @@
-import AcmeLogo from '@/app/ui/acme-logo';
-import { ArrowRightIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
-import { lusitana } from './ui/fonts';
-import Image from 'next/image';
+import Link from "next/link";
+import { Button } from "./ui/button";
+import { lusitana } from "./ui/fonts";
+import Image from "next/image";
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
 
-export default function Page() {
-  return (
-    <main className="flex min-h-screen flex-col p-6">
-      <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-52">
-        <AcmeLogo />
-        {/* <div className={styles.shape} /> */}
-      </div>
-      <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
-        <div className="flex flex-col justify-center gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-2/5 md:px-20">
-          <p className={`${lusitana.className} text-xl text-gray-800 md:text-3xl md:leading-normal`}>
-            <strong>Welcome to Acme.</strong> This is the example for the{' '}
-            <a href="https://nextjs.org/learn/" className="text-blue-500">
-              Next.js Learn Course
-            </a>
-            , brought to you by Vercel.
-          </p>
-          <Link
-            href="/login"
-            className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
-          >
-            <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6" />
-          </Link>
+
+export default async function HomePage(){ 
+    return(
+        <div className="h-screen flex items-center justify-center home-bg">
+            <div className="md:w-1/3 sm:w-screen bg-yellow-200 p-4 rounded-lg">
+                <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
+                    Welcome to the Bee Plant Preference Dashboard
+                </h1>
+                <div className="grid gap-6 grid-cols-1">
+                    <div>
+                        <Image src="/bg_home.jpg" alt="Banner image" width="600" height="500" className="rounded-lg shadow-2xl"></Image>
+                    </div>
+                    <div className={`${lusitana.className} mt-4 mb-4 text-wrap`}>
+                        This tool provides insights into the plants most favored by various 
+                        bee species, helping you understand their floral preferences and 
+                        interactions within specific ecosystems. Explore comprehensive data 
+                        visualizations and analyses to support research, conservation efforts, 
+                        and the enhancement of pollinator-friendly habitats.
+                    </div>
+                    <div>
+                        <Button><Link href="/dashboard">Go to Dashboard</Link><ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" /></Button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
-          {/* Add Hero Images Here */}
-          <Image
-            src="/hero-desktop.png"
-            width={1000}
-            height={760}
-            className="hidden md:block"
-            alt="Screenshots of the dashboard project showing desktop version"
-          />
-          <Image
-            src="/hero-mobile.png"
-            width={560}
-            height={620}
-            className="block md:hidden"
-            alt="Screenshots of the dashboard project showing desktop version"
-          />
-        </div>
-      </div>
-    </main>
-  );
+    )
 }
