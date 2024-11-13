@@ -1,6 +1,7 @@
 
 import { getPlantData } from '@/app/lib/actions';
 import { PlantData, PlantDataRow } from '@/app/lib/definitions';
+import Pagination from './pagination';
 
 
 // DataTable.use(DT);
@@ -13,6 +14,7 @@ export default async function DataTable({
   currentPage: number;
 }) {
   const plant_data_rows: PlantData = await getPlantData(query, currentPage);
+  const totalPages = plant_data_rows.total_pages;
 
   return (
     <div className="mt-6 flow-root">  
@@ -75,6 +77,9 @@ export default async function DataTable({
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="mt-5 flex w-full justify-center">
+          <Pagination totalPages={totalPages} />
         </div>
       </div>
     </div>

@@ -234,13 +234,13 @@ def upload_data_file(
 @app.post("/data/get")
 def get_data_file( 
     user: Annotated[User, Depends(get_current_active_user)],
-    db: Session = Depends(get_db), page=1, limit=ITEMS_PER_PAGE):
+    db: Session = Depends(get_db), query="", page=1, limit=ITEMS_PER_PAGE):
     res = {
         "total_pages": 0,
         "page":page,
         "data":[]
     }
-    offset = int(page) * int(ITEMS_PER_PAGE)
+    offset = (int(page) - 1) * int(ITEMS_PER_PAGE)
     if user:
         res["total_pages"] = math.floor(int(db.query(models.Observation).count()) / int(ITEMS_PER_PAGE))
         plant_summary_data_query = text(f"""
@@ -252,6 +252,20 @@ def get_data_file(
                                         left  join "family"as f on ps.family_id = f.id
                                         left  join kingdoms as k on ps.kingdom_id = k.id
                                         left  join taxons as t on ps.taxon_id = t.id
+                                        limit {limit} offset {offset}""")
+        if query:
+            plant_summary_data_query = text(f"""
+                                        select o.id, s.name as site_name, s.country, ps.name as plant_name, 
+                                        ps.scientific_name, f.name as family, t.name as taxon, k.name 
+                                        as kingdom from observations as o
+                                        inner join plant_species as ps on o.plant_specie_id = ps.id 
+                                        inner join sites as s on o.site_id = s.id
+                                        left  join "family"as f on ps.family_id = f.id
+                                        left  join kingdoms as k on ps.kingdom_id = k.id
+                                        left  join taxons as t on ps.taxon_id = t.id
+                                        where s.name ilike '{query}' or s.country ilike '{query}' 
+                                            or ps.name ilike '{query}' or f.name ilike '{query}' 
+                                            or k.name ilike '{query}' or t.name ilike '{query}'
                                         limit {limit} offset {offset}""")
         datarows = db.execute(plant_summary_data_query)
         for row in datarows:

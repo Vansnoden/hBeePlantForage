@@ -64,6 +64,7 @@ export async function getPlantData(query="", currentPage=1){
           "Authorization": token
       },
       body:{
+        query: query,
         page: currentPage
       }
   }).then((res) => res.json())
