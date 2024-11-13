@@ -56,7 +56,7 @@ export async function getDashboardData(){
   return dashData as DashboardData;
 }
 
-export async function getPlantData(page=1){
+export async function getPlantData(query="", currentPage=1){
   const token = await getToken() as string
   const plantData = await fetch(PLANT_DATA_URL, {
       method: 'POST',
@@ -64,7 +64,7 @@ export async function getPlantData(page=1){
           "Authorization": token
       },
       body:{
-        page: page
+        page: currentPage
       }
   }).then((res) => res.json())
   return plantData as PlantData;

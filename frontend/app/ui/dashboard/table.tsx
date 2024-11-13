@@ -5,11 +5,17 @@ import { PlantData, PlantDataRow } from '@/app/lib/definitions';
 
 // DataTable.use(DT);
 
-export default async function CDataTable() {
-  const plant_data_rows: PlantData = await getPlantData();
+export default async function DataTable({
+  query,
+  currentPage,
+}: {
+  query: string;
+  currentPage: number;
+}) {
+  const plant_data_rows: PlantData = await getPlantData(query, currentPage);
 
   return (
-    <div className="mt-6 flow-root">
+    <div className="mt-6 flow-root">  
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
           <table className="hidden min-w-full text-gray-900 md:table">

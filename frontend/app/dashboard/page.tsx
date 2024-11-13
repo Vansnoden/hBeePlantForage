@@ -5,12 +5,23 @@ import CardWrapper from "../ui/dashboard/card";
 import { lusitana } from "../ui/fonts";
 import PolarAreaChart from "../ui/dashboard/charts/polarareachart";
 import { getDashboardData } from "../lib/actions";
-import CDataTable from "../ui/dashboard/table";
+import DataTable from "../ui/dashboard/table";
+import { Suspense } from 'react';
+import Search from "../ui/dashboard/search";
 
 
+export default async function Dashboard(props: {
+    searchParams?: Promise<{
+      query?: string;
+      page?: string;
+    }>;
+  }){  
 
-export default async function Dashboard(){  
-    const dashData = await getDashboardData()
+    const dashData = await getDashboardData();
+    const searchParams = await props.searchParams;
+    const query = searchParams?.query || '';
+    const currentPage = Number(searchParams?.page) || 1;
+
     return(
         <div>
             <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
@@ -30,7 +41,8 @@ export default async function Dashboard(){
                     {/* <PolarAreaChart/> */}
                 </div>
                 <div className="md:col-span-3 sm:col-span-1">
-                    <CDataTable/>
+                    <Search placeholder="Search ..." />
+                    <DataTable query={query} currentPage={currentPage}/>
                 </div>
             </div> 
         </div>
