@@ -58,19 +58,19 @@ export default async function DataTable({
                     <td className="px-3 py-3 break-all">
                         {plant_data.site_name}
                     </td>
-                    <td className="px-3 py-3 break-all">
+                    <td className="whitespace-nowrap px-3 py-3 break-all">
                         {plant_data.plant_name}
                     </td>
                     <td className="px-3 py-3 break-all">
                         {plant_data.scientific_name}
                     </td>
-                    <td className="px-3 py-3 break-all">
+                    <td className="whitespace-nowrap px-3 py-3 break-all">
                         {plant_data.family}
                     </td>
-                    <td className="px-3 py-3 break-all">
+                    <td className=" px-3 py-3 break-all">
                         {plant_data.taxon}
                     </td>
-                    <td className="px-3 py-3 break-all">
+                    <td className="whitespace-nowrap px-3 py-3 break-all">
                         {plant_data.kingdom}
                     </td>
                 </tr>
