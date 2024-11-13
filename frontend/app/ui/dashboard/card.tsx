@@ -44,11 +44,11 @@ export default async function CardWrapper(props: { total_plants: number; total_s
     const numberOfUploads = 0;
     
     return (
-      <>
+      <div>
         <Card title="Total Plant Species" value={props.total_plants} type="plants" />
         <Card title="Total Recorded Sites" value={props.total_sites} type="sites" />
         <Card title="Total Downloads" value={numberOfDowloads} type="downloads" />
         <Card title="Total Uploads" value={numberOfUploads} type="uploads"/>
-      </>
+      </div>
     );
   }
