@@ -22,7 +22,6 @@ export default async function Dashboard(props: {
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;
 
-
     return(
         <div>
             <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>

@@ -231,7 +231,7 @@ def upload_data_file(
         raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
-@app.post("/data/get")
+@app.get("/data/get")
 def get_data_file( 
     user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db), query="", page=1, limit=ITEMS_PER_PAGE):
@@ -241,8 +241,8 @@ def get_data_file(
         "data":[]
     }
     offset = (int(page) - 1) * int(ITEMS_PER_PAGE)
+
     if user:
-        res["total_pages"] = math.floor(int(db.query(models.Observation).count()) / int(ITEMS_PER_PAGE))
         plant_summary_data_query = text(f"""
                                         select o.id, s.name as site_name, s.country, ps.name as plant_name, 
                                         ps.scientific_name, f.name as family, t.name as taxon, k.name 
@@ -270,6 +270,7 @@ def get_data_file(
         datarows = db.execute(plant_summary_data_query)
         for row in datarows:
             res["data"].append(dict(row._mapping))
+        res["total_pages"] = math.floor(len(res["data"]) / int(ITEMS_PER_PAGE))
         return res
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")

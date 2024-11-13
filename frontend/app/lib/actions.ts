@@ -9,6 +9,7 @@ import { signIn } from '../../auth';
 import { DASHBOARD_DATA_URL } from "./constants";
 import { number } from 'zod';
 import { DashboardData, PlantData, PlantDataRow } from './definitions';
+import { json } from 'stream/consumers';
 
 export type State = {
     errors?: {
@@ -40,7 +41,6 @@ export async function getToken(){
   const cookieStore = await cookies()
   const base_token = cookieStore.get('auth-token')
   const token = base_token?.value.split("__").join(" ")
-  console.log("TOKEN: " + token)
   return token
 }
 
@@ -56,17 +56,18 @@ export async function getDashboardData(){
   return dashData as DashboardData;
 }
 
-export async function getPlantData(query="", currentPage=1){
+export async function getPlantData(query: string, currentPage: number){
   const token = await getToken() as string
-  const plantData = await fetch(PLANT_DATA_URL, {
-      method: 'POST',
-      headers: {
-          "Authorization": token
-      },
-      body:{
-        query: query,
-        page: currentPage
-      }
-  }).then((res) => res.json())
-  return plantData as PlantData;
+  const myHeaders = new Headers();
+  myHeaders.append("Authorization", token);
+
+  const requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+  };
+
+  const plant_data = await fetch(PLANT_DATA_URL +"?query="+query+"&page="+currentPage, 
+    requestOptions).then((response) => response.json())
+ 
+  return plant_data as PlantData;
 }
