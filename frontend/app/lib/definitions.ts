@@ -28,3 +28,10 @@ export interface PlantDataRow{
     taxon: string;
     kingdom: string
 }
+
+
+export interface PlantData{
+    total_pages: number,
+    page: number,
+    data: Array<PlantDataRow> 
+}

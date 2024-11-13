@@ -3,12 +3,12 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { AuthError } from 'next-auth';
-import { AUTH_URL } from './constants';
+import { AUTH_URL, PLANT_DATA_URL } from './constants';
 import { cookies } from 'next/headers'
 import { signIn } from '../../auth';
 import { DASHBOARD_DATA_URL } from "./constants";
 import { number } from 'zod';
-import { DashboardData } from './definitions';
+import { DashboardData, PlantData, PlantDataRow } from './definitions';
 
 export type State = {
     errors?: {
@@ -56,3 +56,16 @@ export async function getDashboardData(){
   return dashData as DashboardData;
 }
 
+export async function getPlantData(page=1){
+  const token = await getToken() as string
+  const plantData = await fetch(PLANT_DATA_URL, {
+      method: 'POST',
+      headers: {
+          "Authorization": token
+      },
+      body:{
+        page: page
+      }
+  }).then((res) => res.json())
+  return plantData as PlantData;
+}

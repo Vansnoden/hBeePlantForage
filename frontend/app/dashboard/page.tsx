@@ -5,7 +5,7 @@ import CardWrapper from "../ui/dashboard/card";
 import { lusitana } from "../ui/fonts";
 import PolarAreaChart from "../ui/dashboard/charts/polarareachart";
 import { getDashboardData } from "../lib/actions";
-import DataTable from "../ui/dashboard/table";
+import CDataTable from "../ui/dashboard/table";
 
 
 
@@ -30,7 +30,7 @@ export default async function Dashboard(){
                     {/* <PolarAreaChart/> */}
                 </div>
                 <div className="md:col-span-3 sm:col-span-1">
-                    <DataTable/>
+                    <CDataTable/>
                 </div>
             </div> 
         </div>
