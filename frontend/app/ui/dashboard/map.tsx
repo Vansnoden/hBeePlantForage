@@ -14,7 +14,7 @@ const MapComponent = () => {
     const map = useRef(null);
     const center = { lat:0.002777763, lng:32.13444449 };
     const [zoom] = useState(5);
-
+    
 
     useEffect(() => {
         if (map.current) return; // stops map from intializing more than once
@@ -42,7 +42,12 @@ const MapComponent = () => {
     
     return (
         <div>
-            <div ref={mapContainer} className="map"/>
+            <div>
+                <div ref={mapContainer} className="map"/>
+            </div>
+            <div>
+
+            </div>
         </div>
     )
 }
