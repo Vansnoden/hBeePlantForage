@@ -252,7 +252,7 @@ def get_data_file(
                                         left  join "family"as f on ps.family_id = f.id
                                         left  join kingdoms as k on ps.kingdom_id = k.id
                                         left  join taxons as t on ps.taxon_id = t.id
-                                        limit {limit} offset {offset}""")
+                                        limit {ITEMS_PER_PAGE} offset {offset}""")
         plant_summary_data_count_query = text(f""" select count(*) from (
                                         select o.id, s.name as site_name, s.country, ps.name as plant_name, 
                                         ps.scientific_name, f.name as family, t.name as taxon, k.name 
@@ -262,7 +262,7 @@ def get_data_file(
                                         left  join "family"as f on ps.family_id = f.id
                                         left  join kingdoms as k on ps.kingdom_id = k.id
                                         left  join taxons as t on ps.taxon_id = t.id
-                                        limit {limit} offset {offset})""")
+                                        limit {limit})""")
         if query:
             plant_summary_data_query = text(f"""
                                         select o.id, s.name as site_name, s.country, ps.name as plant_name, 
@@ -276,7 +276,7 @@ def get_data_file(
                                         where s.name ilike '{query}' or s.country ilike '{query}' 
                                             or ps.name ilike '{query}' or f.name ilike '{query}' 
                                             or k.name ilike '{query}' or t.name ilike '{query}'
-                                        limit {limit} offset {offset}""")
+                                        limit {ITEMS_PER_PAGE} offset {offset}""")
             plant_summary_data_count_query = text(f""" select count(*) from (
                                         select o.id, s.name as site_name, s.country, ps.name as plant_name, 
                                         ps.scientific_name, f.name as family, t.name as taxon, k.name 
@@ -289,13 +289,13 @@ def get_data_file(
                                         where s.name ilike '{query}' or s.country ilike '{query}' 
                                             or ps.name ilike '{query}' or f.name ilike '{query}' 
                                             or k.name ilike '{query}' or t.name ilike '{query}'
-                                        limit {limit} offset {offset})""")
+                                        limit {limit})""")
         datarows = db.execute(plant_summary_data_query)
         for row in datarows:
             res["data"].append(dict(row._mapping))
         datarows_count = db.execute(plant_summary_data_count_query)
         for row in datarows_count:
-            res["total_pages"] = (dict(row._mapping)["count"])
+            res["total_pages"] = math.floor((dict(row._mapping)["count"]) / ITEMS_PER_PAGE)
         return res
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
