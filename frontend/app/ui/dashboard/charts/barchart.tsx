@@ -8,6 +8,15 @@ import { CustomChartData } from '@/app/lib/definitions';
 const Bar = dynamic(() => import('react-chartjs-2').then((mod) => mod.Bar), {
   ssr: false,
 });
+
+const options={
+  scales:{
+    x: {
+        display: false ////this will remove all the x-axis grid lines
+    }
+  }
+}
+
 const data = {
   labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
   datasets: [
@@ -38,7 +47,7 @@ const BarChart = (props: { data: CustomChartData }) => {
   return (
     <div style={{ width: '100%', height: '700px' }}>
       <h1>{props.data?.datasets.label}</h1>
-      <Bar data={props.data} />
+      <Bar options={options} data={props.data}/>
     </div>
   );
 };
