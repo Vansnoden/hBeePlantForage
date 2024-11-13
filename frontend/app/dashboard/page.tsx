@@ -1,12 +1,8 @@
-import LineChart from "../ui/dashboard/charts/linechart";
 import BarChart from "../ui/dashboard/charts/barchart";
-import PieChart from "../ui/dashboard/charts/piechart";
 import CardWrapper from "../ui/dashboard/card";
 import { lusitana } from "../ui/fonts";
-import PolarAreaChart from "../ui/dashboard/charts/polarareachart";
 import { getDashboardData } from "../lib/actions";
 import DataTable from "../ui/dashboard/table";
-import { Suspense } from 'react';
 import Search from "../ui/dashboard/search";
 
 

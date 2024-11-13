@@ -1,6 +1,6 @@
 
 import { getPlantData } from '@/app/lib/actions';
-import { PlantData, PlantDataRow } from '@/app/lib/definitions';
+import { PlantData } from '@/app/lib/definitions';
 import Pagination from './pagination';
 
 

@@ -1,4 +1,4 @@
-version: "3.3"
+
 services:
 
   postgres_db:
@@ -38,36 +38,36 @@ services:
       - ./geo_settings:/settings
       - ./geoserver_data:/opt/geoserver_data/
 
-  # backend:
-  #   build: ./backend
-  #   depends_on:
-  #     - postgres_db
-  #     - geoserver
-  #   container_name: backend
-  #   volumes:
-  #     - ./backend:/code
-  #     # - ./backend/database/utilities/ai_model:/code/database/utilities/ai_model
-  #     # - ./backend/alembic:/code/alembic
-  #     # - ./backend/alembic.ini:/code/alembic.ini
-  #   ports:
-  #     - 3000:8000
-  #   environment:
-  #     - GEOSERVER_URL=http://geoserver:8080/geoserver
-  #     - GEOSERVER_USERNAME=admin
-  #     - GEOSERVER_PASSWORD=geoserver
-  #     - POSTGRES_URL=jdbc:postgresql://postgres_db:5432/bppd_db
-  #     - POSTGRES_USERNAME=postgres
-  #     - POSTGRES_PASSWORD=admin
+  backend:
+    build: ./backend
+    depends_on:
+      - postgres_db
+      - geoserver
+    container_name: backend
+    volumes:
+      - ./backend:/code
+      # - ./backend/database/utilities/ai_model:/code/database/utilities/ai_model
+      # - ./backend/alembic:/code/alembic
+      # - ./backend/alembic.ini:/code/alembic.ini
+    ports:
+      - 8000:8000
+    environment:
+      - GEOSERVER_URL=http://geoserver:8080/geoserver
+      - GEOSERVER_USERNAME=admin
+      - GEOSERVER_PASSWORD=geoserver
+      - POSTGRES_URL=jdbc:postgresql://postgres_db:5432/bppd_db
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=admin
 
-  # ada-t-frontend:
-  #   build: ./frontend/narrator
-  #   container_name: ada-t-frontend
-  #   volumes:
-  #     - ./frontend/narrator:/app
-  #   ports:
-  #     - 8202:3000
-  #   links:
-  #     - ada-t-backend
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    container_name: frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - 3000:3000
 
 volumes:
   postgres-data:

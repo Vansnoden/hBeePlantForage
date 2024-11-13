@@ -3,7 +3,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import dynamic from "next/dynamic";
 import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 import { GEOSERVER_BASE_URL } from '../../lib/constants';
 

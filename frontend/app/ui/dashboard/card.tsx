@@ -5,8 +5,6 @@ import {
     ArrowUpIcon,
 } from '@heroicons/react/24/outline';
 import { lusitana } from '../fonts';
-import { useActionState } from 'react';
-import { DashboardData } from '@/app/lib/definitions';
 
 const iconMap = {
     plants: CircleStackIcon,
