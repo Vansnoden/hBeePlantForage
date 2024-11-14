@@ -19,25 +19,11 @@ COPY . .
 # Build the Next.js app
 RUN pnpm build
 
-# Production stage
-FROM node:18-alpine AS runner
-
-WORKDIR /app
-
-# Install pnpm globally in the production container
-RUN npm install -g pnpm
-
-# Copy only the necessary files from the previous build
-COPY --from=base /app/public ./public
-COPY --from=base /app/.next ./.next
-COPY --from=base /app/package.json ./
-
-
 # Set environment variable to run Next.js in production mode
 ENV NODE_ENV=production
 
 # Expose port 3000 for the Next.js app
 EXPOSE 3000
 
-# Start the Next.js app
+# Start the Next.js app using `next start`
 CMD ["pnpm", "start"]
