@@ -23,11 +23,14 @@ const MapComponent = () => {
             zoom: zoom
         });
 
-        const mtLayer = new MaptilerLayer({
+        
+        // const mtLayer = 
+        new MaptilerLayer({
             apiKey: "jcHTtwiHXeEVJwuIKYDm",
         }).addTo(map.current);
 
-        const occurrence_layer = L.tileLayer.wms(GEOSERVER_BASE_URL+'/ne/wms', {
+        // const occurrence_layer = 
+        L.tileLayer.wms(GEOSERVER_BASE_URL+'/ne/wms', {
             layers: 'sites',
             format: 'image/png',
             transparent: true,
@@ -44,9 +47,7 @@ const MapComponent = () => {
             <div>
                 <div ref={mapContainer} className="map"/>
             </div>
-            <div>
-
-            </div>
+            <div></div>
         </div>
     )
 }

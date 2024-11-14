@@ -1,5 +1,6 @@
 
-export interface CustomChartDataset{
+
+export interface CustomChartDataset {
     label: string;
     data: Array<number>;
     backgroundColor: Array<string>;
