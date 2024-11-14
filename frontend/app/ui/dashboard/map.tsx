@@ -3,10 +3,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 import { GEOSERVER_BASE_URL } from '../../lib/constants';
 
-// const MaptilerLayer = dynamic(() => import("@maptiler/leaflet-maptilersdk"), { ssr:false })
+const MaptilerLayer = dynamic(() => import("@maptiler/leaflet-maptilersdk"), { ssr:false })
 
 const MapComponent = () => {
     const mapContainer = useRef(null);
