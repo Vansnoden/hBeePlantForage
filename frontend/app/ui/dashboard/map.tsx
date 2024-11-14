@@ -4,6 +4,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { GEOSERVER_BASE_URL } from '../../lib/constants';
+import dynamic from 'next/dynamic';
 
 const MaptilerLayer = dynamic(() => import("@maptiler/leaflet-maptilersdk"), { ssr:false })
 
