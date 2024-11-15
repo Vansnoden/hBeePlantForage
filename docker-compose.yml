@@ -64,11 +64,6 @@ services:
     depends_on:
       - backend
     container_name: frontend
-    restart: always
-    environment:
-      - NODE_ENV=production
-    volumes:
-      - ./frontend:/app
     ports:
       - 3000:3000
 
