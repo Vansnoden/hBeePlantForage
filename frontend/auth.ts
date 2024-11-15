@@ -40,7 +40,7 @@ export const { auth, signIn, signOut } = NextAuth({
             cookieStore.set("auth-token", (await res_content).token_type + "__" + (await res_content).access_token, {
                 maxAge: 86400,
                 secure: true,
-                sameSite: 'lax'
+                sameSite: 'none'
             })
             const userData = await getUser((await res_content).token_type + " " + (await res_content).access_token)
             return userData;
