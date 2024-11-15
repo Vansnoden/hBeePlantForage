@@ -39,7 +39,6 @@ export const { auth, signIn, signOut } = NextAuth({
             const cookieStore = await cookies();
             cookieStore.set("auth-token", (await res_content).token_type + "__" + (await res_content).access_token, {
                 maxAge: 86400,
-                domain: "212.56.40.148",
                 secure: true,
                 sameSite: 'none',
                 path: "/"
