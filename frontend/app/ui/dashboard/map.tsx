@@ -1,5 +1,9 @@
 "use client"
 
+import React, { useState, useEffect, useRef } from 'react';
+import { Map, View } from 'ol';
+import TileLayer from 'ol/layer/Tile';
+import OSM from 'ol/source/OSM';
 
 
 // const MaptilerLayer = dynamic(() => import("@maptiler/leaflet-maptilersdk"), { ssr:false })
@@ -35,22 +39,28 @@ const MapComponent = () => {
     //     });
     
     // }, [center.lng, center.lat, zoom]);
+
+    useEffect(() => {
+        const osmLayer = new TileLayer({
+            preload: Infinity,
+            source: new OSM(),
+        })
+
+        const map = new Map({
+            target: "map",
+            layers: [osmLayer],
+            view: new View({
+                center: [0, 0],
+                zoom: 0,
+              }),
+          });
+      return () => map.setTarget(null)
+    }, []);
     
     return (
         <div>
-            <div>
-                {/* <div ref={mapContainer} className="map"/> */}
-                {/* <MapContainer center={[4.79029, -75.69003]} zoom={zoom} scrollWheelZoom={false}>
-                    <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <Marker position={[4.79029, -75.69003]}>
-                    <Popup>
-                        A pretty CSS3 popup. <br /> Easily customizable.
-                    </Popup>
-                    </Marker>
-                </MapContainer> */}
+            <div id="map" className='map'>
+                
             </div>
             <div></div>
         </div>
