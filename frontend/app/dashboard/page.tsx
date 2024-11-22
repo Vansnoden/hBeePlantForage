@@ -4,6 +4,7 @@ import { lusitana } from "../ui/fonts";
 import { getDashboardData } from "../lib/actions";
 import DataTable from "../ui/dashboard/table";
 import Search from "../ui/dashboard/search";
+import { useEffect, useState } from "react";
 
 
 export default async function Dashboard(props: {
