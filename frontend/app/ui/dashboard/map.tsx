@@ -1,14 +1,12 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
-import { ImageWMS, TileWMS } from 'ol/source';
+import { TileWMS } from 'ol/source';
 import { GEOSERVER_BASE_URL } from '@/app/lib/constants';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import GeoJSON from 'ol/format/GeoJSON';
+
 
 
 // const MaptilerLayer = dynamic(() => import("@maptiler/leaflet-maptilersdk"), { ssr:false })
