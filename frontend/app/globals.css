@@ -37,9 +37,9 @@ input[type='number']::-webkit-outer-spin-button {
 }
 
 .map{
-  height: 90vh;
-  width: 80vw;
-  /* background-color: grey; */
+  height: 80vh;
+  width: 81.555vw;
+  background-color: grey;
 }
 
 .home-bg{
@@ -47,4 +47,8 @@ input[type='number']::-webkit-outer-spin-button {
   background-repeat: repeat;
   background-size: 200px auto;
   background-color: gold;
+}
+
+.map-details{
+  
 }
