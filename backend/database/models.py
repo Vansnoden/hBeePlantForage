@@ -79,3 +79,4 @@ class Observation(Base):
     month = Column(Integer, nullable=True)
     lat = Column(Float, nullable=True)
     lon = Column(Float, nullable=True)
+    geom = Column(Geometry('POINT'), nullable=True)
