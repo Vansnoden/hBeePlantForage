@@ -77,3 +77,5 @@ class Observation(Base):
     date = Column(String, nullable=True)
     year = Column(Integer, nullable=True)
     month = Column(Integer, nullable=True)
+    lat = Column(Float, nullable=True)
+    lon = Column(Float, nullable=True)

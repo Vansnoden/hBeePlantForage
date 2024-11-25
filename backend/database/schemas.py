@@ -83,3 +83,5 @@ class Observation(BaseModel):
     date: str
     year: int
     month: int
+    lat: float
+    lon: float
