@@ -27,7 +27,7 @@ class FileBase(BaseModel):
 
 
 class Kingdom(BaseModel):
-    id: str
+    id: int
     name: str
 
     class Config:
@@ -35,7 +35,7 @@ class Kingdom(BaseModel):
 
 
 class Taxon(BaseModel):
-    id: str
+    id: int
     name: str
     
     class Config:
@@ -43,7 +43,7 @@ class Taxon(BaseModel):
 
 
 class Family(BaseModel):
-    id: str
+    id: int
     name: str
     
     class Config:
@@ -51,7 +51,7 @@ class Family(BaseModel):
 
 
 class PlantSpecie(BaseModel):
-    id: str
+    id: int
     name: str
     scientific_name: str
     kingdom_id: int
@@ -63,7 +63,7 @@ class PlantSpecie(BaseModel):
 
 
 class Site(BaseModel):
-    id: str
+    id: int
     name: str
     lat: float
     lon: float
@@ -73,3 +73,12 @@ class Site(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class Observation(BaseModel):
+    id: int
+    site_id: int
+    plant_specie_id: int
+    source: str
+    date: str
+    year: str
