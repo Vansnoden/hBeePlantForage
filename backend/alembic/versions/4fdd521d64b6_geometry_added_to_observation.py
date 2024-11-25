@@ -28,7 +28,7 @@ def upgrade() -> None:
     op.alter_column('observations', 'lon',
                existing_type=sa.DOUBLE_PRECISION(precision=53),
                nullable=True)
-    op.create_index('idx_observations_geom', 'observations', ['geom'], unique=False, postgresql_using='gist')
+    #op.create_index('idx_observations_geom', 'observations', ['geom'], unique=False, postgresql_using='gist')
     # ### end Alembic commands ###
 
 
