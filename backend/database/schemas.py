@@ -81,4 +81,5 @@ class Observation(BaseModel):
     plant_specie_id: int
     source: str
     date: str
-    year: str
+    year: int
+    month: int

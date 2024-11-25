@@ -22,7 +22,7 @@ const BarChart = (props: { data: CustomChartData }) => {
   const converted_dataset = props.data?.datasets;
   const converted_data = {
     labels: props.data?.labels,
-    datasets: JSON.parse(JSON.stringify(converted_dataset))
+    datasets: JSON.stringify(converted_dataset)?JSON.parse(JSON.stringify(converted_dataset)):[]
   }
 
 

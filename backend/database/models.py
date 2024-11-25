@@ -76,3 +76,4 @@ class Observation(Base):
     source = Column(String, nullable=True)
     date = Column(String, nullable=True)
     year = Column(Integer, nullable=True)
+    month = Column(Integer, nullable=True)
