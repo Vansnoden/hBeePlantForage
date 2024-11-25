@@ -17,6 +17,9 @@ export interface CustomChartData{
 export interface DashboardData{
     total_plants: number;
     total_sites: number;
+    top_10_plants: CustomChartData;
+    obs_montly_distro: CustomChartData;
+    obs_10_year_overview: CustomChartData;
     sites_per_country: CustomChartData;
 }
 

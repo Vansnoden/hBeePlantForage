@@ -24,6 +24,7 @@ import logging
 import sys
 from random import randrange
 from sqlalchemy.sql import text
+from queries import *
 
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
@@ -243,53 +244,11 @@ def get_data_file(
     offset = (int(page) - 1) * int(ITEMS_PER_PAGE)
 
     if user:
-        plant_summary_data_query = text(f"""
-                                        select o.id, s.name as site_name, s.country, ps.name as plant_name, 
-                                        ps.scientific_name, f.name as family, t.name as taxon, k.name 
-                                        as kingdom from observations as o
-                                        inner join plant_species as ps on o.plant_specie_id = ps.id 
-                                        inner join sites as s on o.site_id = s.id
-                                        left  join "family"as f on ps.family_id = f.id
-                                        left  join kingdoms as k on ps.kingdom_id = k.id
-                                        left  join taxons as t on ps.taxon_id = t.id
-                                        limit {ITEMS_PER_PAGE} offset {offset}""")
-        plant_summary_data_count_query = text(f""" select count(*) from (
-                                        select o.id, s.name as site_name, s.country, ps.name as plant_name, 
-                                        ps.scientific_name, f.name as family, t.name as taxon, k.name 
-                                        as kingdom from observations as o
-                                        inner join plant_species as ps on o.plant_specie_id = ps.id 
-                                        inner join sites as s on o.site_id = s.id
-                                        left  join "family"as f on ps.family_id = f.id
-                                        left  join kingdoms as k on ps.kingdom_id = k.id
-                                        left  join taxons as t on ps.taxon_id = t.id
-                                        limit {limit})""")
+        plant_summary_data_query = text(QUERY_PLANT_SUMMARY_DATA.format(items_per_page=ITEMS_PER_PAGE, offset=offset))
+        plant_summary_data_count_query = text( QUERY_COUNT_PLANT_SUMMARY_DATA.format(limit=limit))
         if query:
-            plant_summary_data_query = text(f"""
-                                        select o.id, s.name as site_name, s.country, ps.name as plant_name, 
-                                        ps.scientific_name, f.name as family, t.name as taxon, k.name 
-                                        as kingdom from observations as o
-                                        inner join plant_species as ps on o.plant_specie_id = ps.id 
-                                        inner join sites as s on o.site_id = s.id
-                                        left  join "family"as f on ps.family_id = f.id
-                                        left  join kingdoms as k on ps.kingdom_id = k.id
-                                        left  join taxons as t on ps.taxon_id = t.id
-                                        where s.name ilike '{query}' or s.country ilike '{query}' 
-                                            or ps.name ilike '{query}' or f.name ilike '{query}' 
-                                            or k.name ilike '{query}' or t.name ilike '{query}'
-                                        limit {ITEMS_PER_PAGE} offset {offset}""")
-            plant_summary_data_count_query = text(f""" select count(*) from (
-                                        select o.id, s.name as site_name, s.country, ps.name as plant_name, 
-                                        ps.scientific_name, f.name as family, t.name as taxon, k.name 
-                                        as kingdom from observations as o
-                                        inner join plant_species as ps on o.plant_specie_id = ps.id 
-                                        inner join sites as s on o.site_id = s.id
-                                        left  join "family"as f on ps.family_id = f.id
-                                        left  join kingdoms as k on ps.kingdom_id = k.id
-                                        left  join taxons as t on ps.taxon_id = t.id
-                                        where s.name ilike '{query}' or s.country ilike '{query}' 
-                                            or ps.name ilike '{query}' or f.name ilike '{query}' 
-                                            or k.name ilike '{query}' or t.name ilike '{query}'
-                                        limit {limit})""")
+            plant_summary_data_query = text(QUERY_PLANT_SUMMARY_DATA_FILTERED.format(query=query, items_per_page=ITEMS_PER_PAGE, offset=offset))
+            plant_summary_data_count_query = text(QUERY_COUNT_PLANT_SUMMARY_DATA_FILTERED.format(query=query, limit=limit))
         datarows = db.execute(plant_summary_data_query)
         for row in datarows:
             res["data"].append(dict(row._mapping))
@@ -329,6 +288,70 @@ def get_dashboard_data(
     if user:
         res["total_plants"] = db.query(models.PlantSpecie).count()
         res["total_sites"] = db.query(models.Site).count()
+        # top 10 most reorted species
+        top_10_plants_labels = []
+        top_10_plants_values = []
+        query_top_10 = text(QUERY_TOP_10_MOST_REPORTED_PLANTS)
+        top_10_data = db.execute(query_top_10)
+        for rec in top_10_data:
+            top_10_plants_labels.append(rec[2])
+            top_10_plants_values.append(rec[0])
+        top10bgColor, top10borderColor = generate_colors(len(top_10_plants_values))
+        res["top_10_plants"] = {
+                "labels": top_10_plants_labels,
+                "datasets": [
+                    {
+                        "label": 'Top 10 Most Observed Plants',
+                        "data": top_10_plants_values,
+                        "backgroundColor": top10bgColor,
+                        "borderColor": top10borderColor,
+                        "borderWidth": 1,
+                    },
+                ],
+            }
+        
+        # monthly distro of observations
+        obs_montly_distro_labels = []
+        obs_montly_distro_values = []
+        query_obs_montly_distro = text(QUERY_MONTHLY_OBS_DISTRO)
+        obs_montly_distro_data = db.execute(query_obs_montly_distro)
+        for rec in obs_montly_distro_data:
+            obs_montly_distro_labels.append(rec[1])
+            obs_montly_distro_values.append(rec[0])
+        obsmbgColor, obsmborderColor = generate_colors(len(obs_montly_distro_values))
+        res["obs_montly_distro"] = {
+                "labels": obs_montly_distro_labels,
+                "datasets": [
+                    {
+                        "label": 'Monthly Distribution of Observations',
+                        "data": obs_montly_distro_values,
+                        "backgroundColor": obsmbgColor,
+                        "borderColor": obsmborderColor,
+                        "borderWidth": 1,
+                    },
+                ],
+            }
+        # 10 years span observations
+        obs_10_year_overview_labels = []
+        obs_10_year_overview_values = []
+        query_obs_10_year_overview = text(QUERY_OBS_YEARLY_OVERVIEW.format(year_start="2015", year_end="2025"))
+        obs_10_year_overview_data = db.execute(query_obs_10_year_overview)
+        for rec in obs_10_year_overview_data:
+            obs_10_year_overview_labels.append(rec[1])
+            obs_10_year_overview_values.append(rec[0])
+        obs_10bgColor, obs_10borderColor = generate_colors(len(obs_10_year_overview_values))
+        res["obs_10_year_overview"] = {
+                "labels": obs_10_year_overview_labels,
+                "datasets": [
+                    {
+                        "label": 'Last 10 Years Observations Overview',
+                        "data": obs_10_year_overview_values,
+                        "backgroundColor": obs_10bgColor,
+                        "borderColor": obs_10borderColor,
+                        "borderWidth": 1,
+                    },
+                ],
+            }
         # total sites per country
         sites_per_country_labels = []
         sites_per_country_values = []
@@ -337,15 +360,15 @@ def get_dashboard_data(
         for rec in sites_per_country:
             sites_per_country_labels.append(rec[1])
             sites_per_country_values.append(rec[0])
-        bgColor, borderColor = generate_colors(len(sites_per_country_values))
+        spcbgColor, spcborderColor = generate_colors(len(sites_per_country_values))
         res["sites_per_country"] = {
                 "labels": sites_per_country_labels,
                 "datasets": [
                     {
                         "label": 'Observation sites per country',
                         "data": sites_per_country_values,
-                        "backgroundColor": bgColor,
-                        "borderColor": borderColor,
+                        "backgroundColor": spcbgColor,
+                        "borderColor": spcborderColor,
                         "borderWidth": 1,
                     },
                 ],
