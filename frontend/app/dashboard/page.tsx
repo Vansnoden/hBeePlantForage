@@ -31,7 +31,7 @@ export default async function Dashboard(props: {
                     <h2 className={`${lusitana.className} mb-2`}>
                         Quick Stats
                     </h2>
-                    <BarChart data={dashData?.sites_per_country}/>
+                    <BarChart data={dashData?.top_10_plants} show_labels={false}/>
                     {/* <LineChart/> */}
                     {/* <PieChart/> */}
                     {/* <PolarAreaChart/> */}

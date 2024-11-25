@@ -53,7 +53,7 @@ const MapComponent = () => {
             // extent: [-13884991, 2870341, -7455066, 6338219],
             source: new TileWMS({
                 url: GEOSERVER_BASE_URL+'/wms',
-                params: {'LAYERS': 'ne:sites'},
+                params: {'LAYERS': 'ne:observations'},
                 serverType: 'geoserver',
                 // Countries have transparency, so do not fade tiles:
                 transition: 0,

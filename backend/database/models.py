@@ -75,3 +75,8 @@ class Observation(Base):
     plant_specie_id = Column(Integer, ForeignKey("plant_species.id"), nullable=False)
     source = Column(String, nullable=True)
     date = Column(String, nullable=True)
+    year = Column(Integer, nullable=True)
+    month = Column(Integer, nullable=True)
+    lat = Column(Float, nullable=True)
+    lon = Column(Float, nullable=True)
+    geom = Column(Geometry('POINT'), nullable=True)

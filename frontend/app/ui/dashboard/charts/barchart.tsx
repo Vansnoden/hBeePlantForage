@@ -18,18 +18,24 @@ const options={
   }
 }
 
-const BarChart = (props: { data: CustomChartData }) => {
+const BarChart = (props: { data: CustomChartData , show_labels: boolean}) => {
   const converted_dataset = props.data?.datasets;
   const converted_data = {
     labels: props.data?.labels,
-    datasets: JSON.parse(JSON.stringify(converted_dataset))
+    datasets: JSON.stringify(converted_dataset)?JSON.parse(JSON.stringify(converted_dataset)):[]
   }
 
 
   return (
-    <div style={{ width: '100%', height: '700px' }}>
+    <div style={{ width: '100%', height: '100%' }}>
       <h1>{props.data?.datasets.label}</h1>
-      <Bar options={options} 
+      <Bar options={{
+          scales:{
+            x: {
+                display: props.show_labels ////this will remove all the x-axis grid lines
+            }
+          }
+        }} 
         data={converted_data}/>
     </div>
   );
