@@ -1,8 +1,8 @@
 import { getDashboardData } from "@/app/lib/actions";
 import BarChart from "@/app/ui/dashboard/charts/barchart";
-import LineChart from "@/app/ui/dashboard/charts/linechart";
-import PieChart from "@/app/ui/dashboard/charts/piechart";
-import PolarAreaChart from "@/app/ui/dashboard/charts/polarareachart";
+// import LineChart from "@/app/ui/dashboard/charts/linechart";
+// import PieChart from "@/app/ui/dashboard/charts/piechart";
+// import PolarAreaChart from "@/app/ui/dashboard/charts/polarareachart";
 
 export default async function Stats(){
     const dashData = await getDashboardData();
