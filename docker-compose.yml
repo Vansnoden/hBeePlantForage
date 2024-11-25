@@ -60,7 +60,9 @@ services:
       - POSTGRES_PASSWORD=admin
 
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      dockerfile: ./Dockerfile.dev
     depends_on:
       - backend
     container_name: frontend
