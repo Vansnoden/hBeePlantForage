@@ -123,7 +123,7 @@ const MapComponent = () => {
                 </div>
                 <div className={clsx("map-details bg-white",{
                     "md:col-span-3": showDetails,
-                    "md:d-none": !showDetails
+                    "d-none": !showDetails
                 })}>
                     <div className='flex flex-row justify-between items-center p-2 bg-yellow-600'>
                         <b>Details</b>
