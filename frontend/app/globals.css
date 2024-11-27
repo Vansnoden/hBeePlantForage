@@ -55,6 +55,6 @@ input[type='number']::-webkit-outer-spin-button {
   background-color: gold;
 }
 
-.map-details{
-  
+.d-none{
+  display: none;
 }
