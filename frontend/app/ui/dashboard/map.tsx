@@ -91,9 +91,10 @@ const MapComponent = () => {
                     <select
                         id="country"
                         name="country_id"
+                        defaultValue=""
                         className="block w-full cursor-pointer rounded-md border py-2 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
                         >
-                        <option value="" disabled={true} selected>
+                        <option value="" disabled={true}>
                             Select Country
                         </option>
                         {/* other options */}
@@ -103,25 +104,26 @@ const MapComponent = () => {
                     <select
                         id="family"
                         name="family_id"
+                        defaultValue=""
                         className="block w-full cursor-pointer rounded-md border py-2 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
                         >
-                        <option value="" disabled={true} selected>
+                        <option value="" disabled={true}>
                             Select Family
                         </option>
                         {/* other options */}
                     </select>
                 </div>
             </div>
-            <div className='content grid grid-cols-12 gap-0'>
+            <div className='content grid gap-0 sm:grid-cols-1 md:grid-cols-12'>
                 <div className={clsx("map-container",{
-                    "col-span-9": showDetails,
-                    "col-span-12": !showDetails
+                    "md:col-span-9": showDetails,
+                    "md:col-span-12": !showDetails
                 })}>
                     <div id="map" className='map'></div>
                 </div>
                 <div className={clsx("map-details bg-white",{
-                    "col-span-3": showDetails,
-                    "d-none": !showDetails
+                    "md:col-span-3": showDetails,
+                    "md:d-none": !showDetails
                 })}>
                     <div className='flex flex-row justify-between items-center p-2 bg-yellow-600'>
                         <b>Details</b>

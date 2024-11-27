@@ -9,7 +9,7 @@ export default async function Stats(){
     return (
         <div>
             {/* <h1>Satistics page</h1> */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <BarChart data={dashData?.top_10_plants} show_labels={true}/>
                 <BarChart data={dashData?.obs_montly_distro} show_labels={true}/>
                 <BarChart data={dashData?.obs_10_year_overview} show_labels={true}/>
