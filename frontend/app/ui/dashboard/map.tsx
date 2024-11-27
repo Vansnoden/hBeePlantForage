@@ -1,47 +1,18 @@
 "use client"
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import { TileWMS } from 'ol/source';
 import { GEOSERVER_BASE_URL } from '@/app/lib/constants';
-
-
-
-// const MaptilerLayer = dynamic(() => import("@maptiler/leaflet-maptilersdk"), { ssr:false })
+import clsx from 'clsx';
+import { XMarkIcon } from '@heroicons/react/20/solid';
 
 const MapComponent = () => {
-    // const mapContainer = useRef(null);
-    // const map = useRef(null);
-    // const center = { lat:0.002777763, lng:32.13444449 };
-    // const [zoom] = useState(5);
-    // useEffect(() => {
-    //     if (map.current) return; // stops map from intializing more than once
 
-    //     map.current = new L.Map(mapContainer.current, {
-    //         center: L.latLng(center.lat, center.lng),
-    //         zoom: zoom
-    //     });
-
-        
-    //     // const mtLayer = 
-    //     // new MaptilerLayer({
-    //     //     apiKey: "jcHTtwiHXeEVJwuIKYDm",
-    //     // }).addTo(map.current);
-
-    //     // const occurrence_layer = 
-    //     L.tileLayer.wms(GEOSERVER_BASE_URL+'/ne/wms', {
-    //         layers: 'sites',
-    //         format: 'image/png',
-    //         transparent: true,
-    //     }).addTo(map.current);
-        
-    //     map.current.on('click', (e) => {
-    //         alert("You clicked the map at " + e.latlng);
-    //     });
-    
-    // }, [center.lng, center.lat, zoom]);
+    const [showDetails, setShowDetails] = useState(false);
+    const [pointDetails, setPointDetails] = useState([])
 
     useEffect(() => {
         const osmLayer = new TileLayer({
@@ -61,6 +32,10 @@ const MapComponent = () => {
             }),
         })
 
+        var params = pointLayer?.getSource()?.getParams();
+        params.CQL_FILTER = "year > 2010 and year < 2015";
+        // console.log(params)
+
         const map = new Map({
             target: "map",
             layers: [osmLayer, pointLayer],
@@ -69,8 +44,31 @@ const MapComponent = () => {
                 zoom: 0,
               }),
           });
+
+        map.on('singleclick', function (evt) {
+            // const viewResolution = /** @type {number} */ (view.getResolution());
+            // const url = wmsSource.getFeatureInfoUrl(
+            //   evt.coordinate,
+            //   viewResolution,
+            //   'EPSG:3857',
+            //   {'INFO_FORMAT': 'text/html'},
+            // );
+            // if (url) {
+            //   fetch(url)
+            //     .then((response) => response.text())
+            //     .then((html) => {
+            //       document.getElementById('info').innerHTML = html;
+            //     });
+            // }
+            console.log("click caught")
+            setShowDetails(true);
+        });
       return () => map.setTarget()
     }, []);
+
+    const toggleDetails = () => {
+        setShowDetails((showDetails) => !showDetails);
+    };
     
     return (
         <div>
@@ -102,9 +100,29 @@ const MapComponent = () => {
                     </select>
                 </div>
             </div>
-            <div className='content'>
-                <div id="map" className='map'></div>
-                <div className='map-details bg-white'></div>
+            <div className='content grid grid-cols-12 gap-0'>
+                <div className={clsx("map-container",{
+                    "col-span-9": showDetails,
+                    "col-span-12": !showDetails
+                })}>
+                    <div id="map" className='map'></div>
+                </div>
+                <div className={clsx("map-details bg-white",{
+                    "col-span-3": showDetails,
+                    "d-none": !showDetails
+                })}>
+                    <div className='flex flex-row justify-between items-center p-2'>
+                        <b>Details panel</b>
+                        <XMarkIcon onClick={toggleDetails} className='text-black text-xs size-6'></XMarkIcon>
+                    </div>
+                    <div>
+                    {pointDetails.map((item) => (
+                    <li key={pointDetails.indexOf(item)}>
+                        <p>{item}</p>
+                    </li>
+                    ))}
+                    </div>
+                </div>
             </div>
         </div>
     )

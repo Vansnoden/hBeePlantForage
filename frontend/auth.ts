@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { AUTH_URL, USERINFO_URL } from './app/lib/constants';
 import { cookies } from 'next/headers'
 
+
 async function getUser(token: string) {
     const userData = await fetch(USERINFO_URL, {
         method: 'GET',
@@ -32,15 +33,13 @@ export const { auth, signIn, signOut } = NextAuth({
             body: formData
         })
         const res_content = response.json();
-        // console.log("-----------");
-        // console.log(await res_content);
         if ((await res_content).token_type){
             // set cookie
             const cookieStore = await cookies();
             cookieStore.set("auth-token", (await res_content).token_type + "__" + (await res_content).access_token, {
-                maxAge: 86400,
-                secure: true,
-                sameSite: 'none',
+                maxAge: 60 * 60 * 24 * 7, // One week
+                secure: false,
+                httpOnly: false,
                 path: "/"
             })
             const userData = await getUser((await res_content).token_type + " " + (await res_content).access_token)
