@@ -86,31 +86,29 @@ const MapComponent = () => {
     
     return (
         <div>
-            <div className="card mb-2 bg-gray-300 rounded-sm flex gap-2 p-2">
+            <div className="card mb-2 bg-yellow-600 rounded flex gap-2 p-2">
                 <div className="relative">
                     <select
-                        id="customer"
-                        name="customerId"
-                        className="peer block w-full cursor-pointer rounded-md border border-gray-200 bg-white py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-                        defaultValue=""
-                        aria-describedby="customer-error"
+                        id="country"
+                        name="country_id"
+                        className="block w-full cursor-pointer rounded-md border py-2 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
                         >
-                        <option value="" disabled={true}>
+                        <option value="" disabled={true} selected>
                             Select Country
                         </option>
+                        {/* other options */}
                     </select>
                 </div>
                 <div className="relative">
                     <select
-                        id="customer"
-                        name="customerId"
-                        className="peer block w-full cursor-pointer rounded-md border border-gray-200 bg-white py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-                        defaultValue=""
-                        aria-describedby="customer-error"
+                        id="family"
+                        name="family_id"
+                        className="block w-full cursor-pointer rounded-md border py-2 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
                         >
-                        <option value="" disabled={true}>
+                        <option value="" disabled={true} selected>
                             Select Family
                         </option>
+                        {/* other options */}
                     </select>
                 </div>
             </div>
@@ -125,14 +123,14 @@ const MapComponent = () => {
                     "col-span-3": showDetails,
                     "d-none": !showDetails
                 })}>
-                    <div className='flex flex-row justify-between items-center p-2'>
+                    <div className='flex flex-row justify-between items-center p-2 bg-yellow-600'>
                         <b>Details</b>
                         <XMarkIcon onClick={toggleDetails} className='text-black text-xs size-6'></XMarkIcon>
                     </div>
                     {/* <div dangerouslySetInnerHTML={createMarkup(pointDetails)}></div> */}
-                    <div>
+                    <div className='p-2'>
                         {pointDetails.map(function(item){
-                            return (<ObservationItem obs={item}/>)
+                            return (<ObservationItem key={pointDetails.indexOf(item)} obs={item}/>)
                         })}
                     </div>
                 </div>
