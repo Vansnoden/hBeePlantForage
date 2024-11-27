@@ -10,11 +10,14 @@ import clsx from 'clsx';
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import { Observation } from '@/app/lib/definitions';
 import { ObservationItem } from './observation';
+import { map } from 'leaflet';
 
 const MapComponent = () => {
 
     const [showDetails, setShowDetails] = useState(false);
     const [pointDetails, setPointDetails] = useState([] as Array<Observation>);
+    const [startYear, setStartYear] = useState(2010);
+    const [endYear, setEndYear] = useState(2025);
 
     useEffect(() => {
         const osmLayer = new TileLayer({
@@ -35,7 +38,7 @@ const MapComponent = () => {
         })
 
         var params = pointLayer?.getSource()?.getParams();
-        params.CQL_FILTER = "year > 2010 and year < 2015";
+        params.CQL_FILTER = `year > ${startYear} and year < ${endYear}`;
         // console.log(params)
 
         const map = new Map({
@@ -112,6 +115,28 @@ const MapComponent = () => {
                         </option>
                         {/* other options */}
                     </select>
+                </div>
+                <div className="relative">
+                    <input
+                        className="block w-full cursor-pointer rounded-md border py-2 pl-2 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
+                        id="startYear"
+                        type="number"
+                        name="startYear"
+                        placeholder="Provide Start Year"
+                        value={startYear}
+                        onChange={(e) => setStartYear(parseInt(e.target.value))}
+                    />
+                </div>
+                <div className="relative">
+                    <input
+                        className="block w-full cursor-pointer rounded-md border py-2 pl-2 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
+                        id="endYear"
+                        type="number"
+                        name="endYear"
+                        placeholder="Provide End Year"
+                        value={endYear}
+                        onChange={(e) => setEndYear(parseInt(e.target.value))}
+                    />
                 </div>
             </div>
             <div className='content grid gap-0 sm:grid-cols-1 md:grid-cols-12'>
