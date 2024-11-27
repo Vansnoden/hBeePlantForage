@@ -40,3 +40,15 @@ export interface PlantData{
     page: number,
     data: Array<PlantDataRow> 
 }
+
+
+export interface Observation{
+    site_id: number,
+    plant_specie_id: number,
+    source: string,
+    date: string,
+    year: number,
+    month: number,
+    lat: number,
+    lon: number
+}

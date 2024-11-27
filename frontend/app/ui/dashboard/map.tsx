@@ -8,11 +8,13 @@ import { TileWMS } from 'ol/source';
 import { GEOSERVER_BASE_URL } from '@/app/lib/constants';
 import clsx from 'clsx';
 import { XMarkIcon } from '@heroicons/react/20/solid';
+import { Observation } from '@/app/lib/definitions';
+import { ObservationItem } from './observation';
 
 const MapComponent = () => {
 
     const [showDetails, setShowDetails] = useState(false);
-    const [pointDetails, setPointDetails] = useState([])
+    const [pointDetails, setPointDetails] = useState([] as Array<Observation>);
 
     useEffect(() => {
         const osmLayer = new TileLayer({
@@ -46,21 +48,29 @@ const MapComponent = () => {
           });
 
         map.on('singleclick', function (evt) {
-            // const viewResolution = /** @type {number} */ (view.getResolution());
-            // const url = wmsSource.getFeatureInfoUrl(
-            //   evt.coordinate,
-            //   viewResolution,
-            //   'EPSG:3857',
-            //   {'INFO_FORMAT': 'text/html'},
-            // );
-            // if (url) {
-            //   fetch(url)
-            //     .then((response) => response.text())
-            //     .then((html) => {
-            //       document.getElementById('info').innerHTML = html;
-            //     });
-            // }
-            console.log("click caught")
+            const viewResolution = map.getView().getResolution() as number;
+            const url = pointLayer.getSource()?.getFeatureInfoUrl(
+                evt.coordinate,
+                viewResolution,
+                'EPSG:3857',
+                {'INFO_FORMAT': 'application/json'},
+            )
+            console.log(url)
+            if (url) {
+              fetch(url)
+                .then((response) => response.json())
+                .then((res) => {
+                    let cleanRes = []
+                    if(res){
+                       for(let i=0; i<res.features.length; i++){
+                        let point = res.features[i].properties;
+                        cleanRes.push(point as Observation);
+                       } 
+                    }
+                    console.log(cleanRes);
+                    setPointDetails(cleanRes);
+                });
+            }
             setShowDetails(true);
         });
       return () => map.setTarget()
@@ -69,6 +79,10 @@ const MapComponent = () => {
     const toggleDetails = () => {
         setShowDetails((showDetails) => !showDetails);
     };
+
+    const createMarkup = (code: string) => {
+        return {__html: `${code}`};
+    }
     
     return (
         <div>
@@ -112,15 +126,14 @@ const MapComponent = () => {
                     "d-none": !showDetails
                 })}>
                     <div className='flex flex-row justify-between items-center p-2'>
-                        <b>Details panel</b>
+                        <b>Details</b>
                         <XMarkIcon onClick={toggleDetails} className='text-black text-xs size-6'></XMarkIcon>
                     </div>
+                    {/* <div dangerouslySetInnerHTML={createMarkup(pointDetails)}></div> */}
                     <div>
-                    {pointDetails.map((item) => (
-                    <li key={pointDetails.indexOf(item)}>
-                        <p>{item}</p>
-                    </li>
-                    ))}
+                        {pointDetails.map(function(item){
+                            return (<ObservationItem obs={item}/>)
+                        })}
                     </div>
                 </div>
             </div>
