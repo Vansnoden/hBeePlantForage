@@ -1,5 +1,4 @@
 import { Observation } from '@/app/lib/definitions';
-import clsx from 'clsx';
 
 
 export function ObservationItem(props:{ obs:Observation }) {

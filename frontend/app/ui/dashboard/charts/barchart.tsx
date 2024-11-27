@@ -10,13 +10,6 @@ import { Bar } from 'react-chartjs-2';
 //   ssr: false,
 // });
 
-const options={
-  scales:{
-    x: {
-        display: false ////this will remove all the x-axis grid lines
-    }
-  }
-}
 
 const BarChart = (props: { data: CustomChartData , show_labels: boolean}) => {
   const converted_dataset = props.data?.datasets;

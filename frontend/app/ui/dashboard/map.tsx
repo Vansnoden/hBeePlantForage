@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import { Observation } from '@/app/lib/definitions';
 import { ObservationItem } from './observation';
-import { map } from 'leaflet';
+
 
 const MapComponent = () => {
 
@@ -37,8 +37,8 @@ const MapComponent = () => {
             }),
         })
 
-        var params = pointLayer?.getSource()?.getParams();
-        params.CQL_FILTER = `year > ${startYear} and year < ${endYear}`;
+        const params = pointLayer?.getSource()?.getParams();
+        params.CQL_FILTER = `year > 2010 and year < 2025`;
         // console.log(params)
 
         const map = new Map({
@@ -63,10 +63,10 @@ const MapComponent = () => {
               fetch(url)
                 .then((response) => response.json())
                 .then((res) => {
-                    let cleanRes = []
+                    const cleanRes = []
                     if(res){
                        for(let i=0; i<res.features.length; i++){
-                        let point = res.features[i].properties;
+                        const point = res.features[i].properties;
                         cleanRes.push(point as Observation);
                        } 
                     }
@@ -83,9 +83,9 @@ const MapComponent = () => {
         setShowDetails((showDetails) => !showDetails);
     };
 
-    const createMarkup = (code: string) => {
-        return {__html: `${code}`};
-    }
+    // const createMarkup = (code: string) => {
+    //     return {__html: `${code}`};
+    // }
     
     return (
         <div>
