@@ -1,9 +1,9 @@
 "use client";
 import dynamic from 'next/dynamic';
 import 'chart.js/auto';
-const Pie = dynamic(() => import('react-chartjs-2').then((mod) => mod.Pie), {
-  ssr: false,
-});
+import { CustomChartData } from '@/app/lib/definitions';
+import { Pie } from 'react-chartjs-2';
+
 
 const data = {
     labels: [
@@ -23,11 +23,16 @@ const data = {
     }]
 };
 
-const PieChart = () => {
+const PieChart = (props: { data: CustomChartData })  => {
+    const converted_dataset = props.data?.datasets;
+    const converted_data = {
+        labels: props.data?.labels,
+        datasets: JSON.stringify(converted_dataset)?JSON.parse(JSON.stringify(converted_dataset)):[]
+    }
     return (
-    <div style={{ width: '400px', height: '400px' }}>
-        <h1>Distribution Donnut Chart</h1>
-        <Pie data={data} />
+    <div style={{ width: '100%', height: '60vh' }}>
+        <h1>{props.data?.datasets.label}</h1>
+        <Pie data={converted_data} />
     </div>
     );
 };
