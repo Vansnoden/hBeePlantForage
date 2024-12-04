@@ -22,6 +22,7 @@ from fastapi.encoders import jsonable_encoder
 from slugify import slugify
 import logging
 import sys
+import random
 from random import randrange
 from sqlalchemy.sql import text
 from queries import *
@@ -276,25 +277,6 @@ def generate_colors(limit=0):
     return bgcolor, border_color
 
 
-@app.get("/data/family")
-def get_family_data( 
-    user: Annotated[User, Depends(get_current_active_user)],
-    db: Session = Depends(get_db),
-    fname: str = ""):
-    res = {}
-    if user:
-        res["data"] = []
-        query_family_distro = text(QUERY_OBS_PER_FAMILY_PER_COUNTRY.format(family_name=fname))
-        family_distro_data = db.execute(query_family_distro)
-        for rec in family_distro_data:
-            logger.debug(f"======> {rec[0]}")
-            res["data"].append({
-                "count": rec[0],
-                "country": rec[5]
-            })
-        return res
-    else:
-        raise HTTPException(status_code=403, detail="Unauthorized access")
 
 # get dashboard data
 @app.get("/data/dashboard")
@@ -391,5 +373,33 @@ def get_dashboard_data(
                 ],
             }
         return res  
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+
+
+def get_country_geo_json(country_name):
+    random_file=random.choice(os.listdir("world.geo.json-master/countries"))
+    data = {}
+    with open(f"world.geo.json-master/countries/{random_file}", 'r') as f:
+        data = json.load(f)
+    return data
+
+
+@app.get("/data/family")
+def get_family_data( 
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db),
+    fname: str = ""):
+    res = []
+    if user:
+        query_family_distro = text(QUERY_OBS_PER_FAMILY_PER_COUNTRY.format(family_name=fname))
+        family_distro_data = db.execute(query_family_distro)
+        for rec in family_distro_data:
+            country = rec[5]
+            count = rec[0]
+            base_geojson = get_country_geo_json(country)
+            base_geojson["features"][0]["properties"]["count"] = count
+            res.append(base_geojson)
+        return res
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")

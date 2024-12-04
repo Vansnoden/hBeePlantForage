@@ -2,6 +2,7 @@ import { getDashboardData } from "@/app/lib/actions";
 import BarChart from "@/app/ui/dashboard/charts/barchart";
 // import LineChart from "@/app/ui/dashboard/charts/linechart";
 import PieChart from "@/app/ui/dashboard/charts/piechart";
+import MiniMapComponent from "@/app/ui/dashboard/mini_map";
 // import PolarAreaChart from "@/app/ui/dashboard/charts/polarareachart";
 
 export default async function Stats(){
@@ -9,6 +10,9 @@ export default async function Stats(){
     return (
         <div>
             {/* <h1>Satistics page</h1> */}
+            <div className="">
+                <MiniMapComponent/>
+            </div>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
                 <PieChart data={dashData?.sites_per_country}/>
                 <BarChart data={dashData?.sites_per_country} show_labels={true}/>
