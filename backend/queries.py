@@ -70,3 +70,30 @@ QUERY_COUNT_PLANT_SUMMARY_DATA_FILTERED = """
         limit {limit})
 """
 
+QUERY_OBS_PER_COUNTRY = """
+DROP TABLE IF EXISTS obs_data_2;
+select o.id, o.year ,o.site_id, o.plant_specie_id, s.country 
+into temp obs_data_2
+from observations as o
+inner join sites as s on o.site_id=s.id and country <> '';
+select count(id),country from obs_data_2 group by country
+"""
+
+
+QUERY_OBS_PER_REGION = """
+DROP TABLE IF EXISTS obs_data_1;
+select o.id, o.year ,o.site_id, o.plant_specie_id, s.region 
+into temp obs_data_1
+from observations as o
+inner join sites as s on o.site_id=s.id and s.region <>'';
+select count(id),region from obs_data_1 group by region
+"""
+
+QUERY_OBS_PER_FAMILY_PER_COUNTRY = """
+select count(o.id),o.plant_specie_id ,o.site_id, ps."name" as plant_specie, f.name as family, s.country from observations as o
+inner join plant_species as ps on ps.id = o.plant_specie_id
+inner join "family" as f on f.id = ps.family_id 
+inner join sites as s on o.site_id = s.id
+where s.country <> '' and f.name ilike '{family_name}'
+group by plant_specie_id,site_id,ps."name",f.name,s.country order by count desc 
+"""

@@ -276,8 +276,25 @@ def generate_colors(limit=0):
     return bgcolor, border_color
 
 
-
-
+@app.get("/data/family")
+def get_family_data( 
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db),
+    fname: str = ""):
+    res = {}
+    if user:
+        res["data"] = []
+        query_family_distro = text(QUERY_OBS_PER_FAMILY_PER_COUNTRY.format(family_name=fname))
+        family_distro_data = db.execute(query_family_distro)
+        for rec in family_distro_data:
+            logger.debug(f"======> {rec[0]}")
+            res["data"].append({
+                "count": rec[0],
+                "country": rec[5]
+            })
+        return res
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
 
 # get dashboard data
 @app.get("/data/dashboard")
