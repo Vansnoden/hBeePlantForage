@@ -399,7 +399,10 @@ def get_family_data(
             count = rec[0]
             base_geojson = get_country_geo_json(country)
             base_geojson["features"][0]["properties"]["count"] = count
-            res.append(base_geojson)
+            if not res:
+                res = base_geojson # adding initial country
+            else:
+                res["features"].append(base_geojson["features"][0]) # adding other countries as features
         return res
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
