@@ -1,6 +1,7 @@
 "use client";
 import dynamic from 'next/dynamic';
 import 'chart.js/auto';
+import { lusitana } from '../../fonts';
 const PolarArea = dynamic(() => import('react-chartjs-2').then((mod) => mod.PolarArea), {
   ssr: false,
 });
@@ -28,7 +29,7 @@ const data = {
 
 const PolarAreaChart = () => {
     return (
-    <div style={{ width: '400px', height: '400px' }}>
+    <div style={{ width: '400px', height: '400px' }} className={`${lusitana.className}`}>
         <h1>Distribution Polar Area Chart</h1>
         <PolarArea data={data} />
     </div>

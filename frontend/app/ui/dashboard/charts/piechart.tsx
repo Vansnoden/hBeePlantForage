@@ -3,6 +3,7 @@
 import 'chart.js/auto';
 import { CustomChartData } from '@/app/lib/definitions';
 import { Pie } from 'react-chartjs-2';
+import { lusitana } from '../../fonts';
 
 
 const PieChart = (props: { data: CustomChartData , show_labels: boolean})  => {
@@ -13,7 +14,7 @@ const PieChart = (props: { data: CustomChartData , show_labels: boolean})  => {
         datasets: JSON.stringify(converted_dataset)?JSON.parse(JSON.stringify(converted_dataset)):[]
     }
     return (
-    <div style={{ width: '100%', height: '100%' }}>
+    <div style={{ width: '100%', height: '100%' }} className={`${lusitana.className}`}>
         <h1>{title}</h1>
         <Pie options={{
             plugins: {

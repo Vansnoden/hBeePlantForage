@@ -10,6 +10,7 @@ import clsx from 'clsx';
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import { Observation } from '@/app/lib/definitions';
 import { ObservationItem } from './observation';
+import { lusitana } from '../fonts';
 
 
 const MapComponent = () => {
@@ -88,8 +89,8 @@ const MapComponent = () => {
     // }
     
     return (
-        <div>
-            <div className="card mb-2 bg-yellow-600 rounded flex gap-2 p-2">
+        <div className={`${lusitana.className}`}>
+            <div className="card mb-2 bg-yellow-600 rounded flex gap-2 p-2" >
                 <div className="relative">
                     <select
                         id="country"

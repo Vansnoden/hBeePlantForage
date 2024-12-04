@@ -1,9 +1,10 @@
 import { Observation } from '@/app/lib/definitions';
+import { lusitana } from '../fonts';
 
 
 export function ObservationItem(props:{ obs:Observation }) {
   return (
-    <div className="grid grid-cols-2">
+    <div className={`${lusitana.className} grid grid-cols-2`}>
         <div>
             <b>Site Name</b><br/>
             <b>Plant Specie Name</b><br/>

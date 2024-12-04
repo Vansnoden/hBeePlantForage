@@ -5,6 +5,7 @@
 import 'chart.js/auto';
 import { CustomChartData } from '@/app/lib/definitions';
 import { Bar } from 'react-chartjs-2';
+import { lusitana } from '../../fonts';
 
 // const Bar = dynamic(() => import('react-chartjs-2').then((mod) => mod.Bar), {
 //   ssr: false,
@@ -20,7 +21,7 @@ const BarChart = (props: { data: CustomChartData , show_labels: boolean}) => {
 
 
   return (
-    <div style={{ width: '100%', height: '100%' }}>
+    <div style={{ width: '100%', height: '100%' }} className={`${lusitana.className}`}>
       <h1>{props.data?.datasets.label}</h1>
       <Bar options={{
           scales:{

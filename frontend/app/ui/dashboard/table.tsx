@@ -2,6 +2,7 @@
 import { getPlantData } from '@/app/lib/actions';
 import { PlantData } from '@/app/lib/definitions';
 import Pagination from './pagination';
+import { lusitana } from '../fonts';
 
 
 // DataTable.use(DT);
@@ -17,7 +18,7 @@ export default async function DataTable({
   const totalPages = plant_data_rows.total_pages;
 
   return (
-    <div className="mt-6 flow-root">  
+    <div className={`${lusitana.className} mt-6 flow-root`}>  
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0 table-container">
           <table className="hidden min-w-full text-gray-900 md:table table-auto">
