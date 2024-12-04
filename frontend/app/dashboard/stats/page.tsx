@@ -7,7 +7,7 @@ import MiniMapComponent from "@/app/ui/dashboard/mini_map";
 
 export default async function Stats(){
     const dashData = await getDashboardData();
-    const geojsonObject = getFamilyData("Acanthaceae");
+    const geojsonObject = await getFamilyData("Acanthaceae");
     return (
         <div>
             {/* <h1>Satistics page</h1> */}

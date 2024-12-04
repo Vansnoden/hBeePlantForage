@@ -4,6 +4,7 @@ import { lusitana } from "../ui/fonts";
 import { getDashboardData } from "../lib/actions";
 import DataTable from "../ui/dashboard/table";
 import Search from "../ui/dashboard/search";
+import PieChart from "../ui/dashboard/charts/piechart";
 
 
 export default async function Dashboard(props: {
@@ -31,10 +32,13 @@ export default async function Dashboard(props: {
                     <h2 className={`${lusitana.className} mb-2`}>
                         Quick Stats
                     </h2>
-                    <BarChart data={dashData?.top_10_plants} show_labels={false}/>
-                    {/* <LineChart/> */}
-                    {/* <PieChart/> */}
-                    {/* <PolarAreaChart/> */}
+                    <div>
+                        <BarChart data={dashData?.top_10_plants} show_labels={false}/>
+                    </div>
+                    <div>
+                        <h3 className={`${lusitana.className}`}>Distribution of observations per region</h3>
+                        <PieChart data={dashData?.obs_per_region} show_labels={true} />
+                    </div>
                 </div>
                 <div className="sm:col-span-4 md:col-span-3">
                     <Search placeholder="Search ..." />
