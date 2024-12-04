@@ -1,4 +1,4 @@
-import { getDashboardData } from "@/app/lib/actions";
+import { getDashboardData, getFamilyData } from "@/app/lib/actions";
 import BarChart from "@/app/ui/dashboard/charts/barchart";
 // import LineChart from "@/app/ui/dashboard/charts/linechart";
 import PieChart from "@/app/ui/dashboard/charts/piechart";
@@ -7,11 +7,12 @@ import MiniMapComponent from "@/app/ui/dashboard/mini_map";
 
 export default async function Stats(){
     const dashData = await getDashboardData();
+    const geojsonObject = getFamilyData("Acanthaceae");
     return (
         <div>
             {/* <h1>Satistics page</h1> */}
             <div className="">
-                <MiniMapComponent/>
+                <MiniMapComponent geojsonObject={geojsonObject}/>
             </div>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-3">
                 <BarChart data={dashData?.sites_per_country} show_labels={true}/>
