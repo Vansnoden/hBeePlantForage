@@ -33,7 +33,7 @@ const MiniMapComponent = (props: {geojsonObject: any}) => { // eslint-disable-li
         };
         const styleFunction = function (feature: any) { // eslint-disable-line
             // feature.getGeometry().getType() // eslint-disable-line
-            return styles(feature.getProperties().count / 4)[feature.getGeometry().getType()]; // eslint-disable-line
+            return styles(feature.getProperties().count / 100)[feature.getGeometry().getType()]; // eslint-disable-line
         }; // eslint-disable-line
         const vectorSource = new VectorSource({
             features: new GeoJSON().readFeatures(props.geojsonObject, {featureProjection: 'EPSG:3857'}),
