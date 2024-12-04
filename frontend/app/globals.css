@@ -43,7 +43,19 @@ input[type='number']::-webkit-outer-spin-button {
   overflow: hidden;
 }
 
+.mini-map-container{
+  height: 40vh;
+  width: 100%;
+  background-color: grey;
+  overflow: hidden;
+}
+
 .map-container .map{
+  height: 100%;
+  width: 100%;
+}
+
+.mini-map-container .map{
   height: 100%;
   width: 100%;
 }

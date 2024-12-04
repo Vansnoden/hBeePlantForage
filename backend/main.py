@@ -372,6 +372,27 @@ def get_dashboard_data(
                     },
                 ],
             }
+        # total observations per region
+        obs_per_region_labels = []
+        obs_per_region_values = []
+        query_obs_per_region = text(QUERY_OBS_PER_REGION)
+        obs_per_region = db.execute(query_obs_per_region)
+        for rec in obs_per_region:
+            obs_per_region_labels.append(rec[1])
+            obs_per_region_values.append(rec[0])
+        spcbgColor, spcborderColor = generate_colors(len(obs_per_region_values))
+        res["obs_per_region"] = {
+                "labels": obs_per_region_labels,
+                "datasets": [
+                    {
+                        "label": 'Observations per region',
+                        "data": obs_per_region_values,
+                        "backgroundColor": spcbgColor,
+                        "borderColor": spcborderColor,
+                        "borderWidth": 1,
+                    },
+                ],
+            }
         return res  
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")

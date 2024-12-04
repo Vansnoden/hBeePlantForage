@@ -21,6 +21,7 @@ export interface DashboardData{
     obs_montly_distro: CustomChartData;
     obs_10_year_overview: CustomChartData;
     sites_per_country: CustomChartData;
+    obs_per_region: CustomChartData;
 }
 
 export interface PlantDataRow{

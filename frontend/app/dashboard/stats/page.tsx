@@ -13,15 +13,12 @@ export default async function Stats(){
             <div className="">
                 <MiniMapComponent/>
             </div>
-            <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-                <PieChart data={dashData?.sites_per_country}/>
+            <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-3">
                 <BarChart data={dashData?.sites_per_country} show_labels={true}/>
                 <BarChart data={dashData?.top_10_plants} show_labels={true}/>
                 <BarChart data={dashData?.obs_montly_distro} show_labels={true}/>
                 <BarChart data={dashData?.obs_10_year_overview} show_labels={true}/>
-                {/* <LineChart/> */}
-                {/* <PolarAreaChart/> */}
-                {/* <LineChart/> */}
+                <PieChart data={dashData?.obs_per_region} show_labels={true} />
             </div>
         </div>
     )

@@ -21595,7 +21595,7 @@ const MiniMapComponent = () => {
                 </div>
             </div>
             <div className='content grid gap-0 sm:grid-cols-1 md:grid-cols-12'>
-                <div className={clsx("map-container",{
+                <div className={clsx("mini-map-container",{
                     "md:col-span-9": showDetails,
                     "md:col-span-12": !showDetails
                 })}>
