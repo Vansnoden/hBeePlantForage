@@ -41,9 +41,9 @@ export async function getToken(){
 }
 
 
-export async function getDashboardData(){
+export async function getDashboardData(fname: string){
   const token = await getToken() as string
-  const dashData = await fetch(DASHBOARD_DATA_URL, {
+  const dashData = await fetch(DASHBOARD_DATA_URL +"?fname="+fname, {
       method: 'GET',
       headers: {
           "Authorization": token

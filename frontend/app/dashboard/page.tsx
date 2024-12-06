@@ -14,7 +14,7 @@ export default async function Dashboard(props: {
     }>;
   }){  
 
-    const dashData = await getDashboardData();
+    const dashData = await getDashboardData("");
     const searchParams = await props.searchParams;
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;
@@ -33,7 +33,7 @@ export default async function Dashboard(props: {
                         Quick Stats
                     </h2>
                     <div>
-                        <BarChart data={dashData?.top_10_plants} show_labels={false}/>
+                        <BarChart data={dashData?.top_20_plants} show_labels={false}/>
                     </div>
                     <div>
                         <h3 className={`${lusitana.className}`}>Distribution of observations per region</h3>

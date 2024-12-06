@@ -30,6 +30,7 @@
     "lucide-react": "^0.456.0",
     "next": "15.0.1",
     "next-auth": "5.0.0-beta.25",
+    "next-client-cookies": "^2.0.0",
     "ol": "^10.2.1",
     "react": "19.0.0-rc-69d4b800-20241021",
     "react-chartjs-2": "^5.2.0",

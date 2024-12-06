@@ -53,7 +53,7 @@ def get_db():
         db.close()
 
 origins = [
-    "localhost:3000"
+    "*"
 ]
 
 app.add_middleware(
@@ -294,7 +294,7 @@ def get_dashboard_data(
         top_20_plants_labels = []
         top_20_plants_values = []
         if fname:
-            query_top_20 = text(QUERY_TOP_20_MOST_REPORTED_PLANTS_FOR_FAMILY.format(fname))
+            query_top_20 = text(QUERY_TOP_20_MOST_REPORTED_PLANTS_FOR_FAMILY.format(family_name=fname))
         else:
             query_top_20 = text(QUERY_TOP_20_MOST_REPORTED_PLANTS)
         top_20_data = db.execute(query_top_20)
