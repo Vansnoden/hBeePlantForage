@@ -1,4 +1,4 @@
-import { getDashboardData, getFamilyData, getFamilyDataMax } from "@/app/lib/actions";
+import { getAllFamilyNames, getDashboardData, getFamilyData, getFamilyDataMax } from "@/app/lib/actions";
 import BarChart from "@/app/ui/dashboard/charts/barchart";
 // import LineChart from "@/app/ui/dashboard/charts/linechart";
 import PieChart from "@/app/ui/dashboard/charts/piechart";
@@ -10,7 +10,8 @@ import { lusitana } from "@/app/ui/fonts";
 export default async function Stats(){
     const dashData = await getDashboardData();
     const geojsonObject = await getFamilyData("Acanthaceae");
-    const family_max = await getFamilyDataMax("Acanthaceae")
+    const family_max = await getFamilyDataMax("Acanthaceae");
+    const family_names = await getAllFamilyNames();
 
     return (
         <div>
@@ -25,22 +26,11 @@ export default async function Stats(){
                             defaultValue="Acanthaceae"
                             className="block w-full cursor-pointer rounded-md border py-2 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
                             >
-                            <option value="Acanthaceae">
-                                Acanthaceae
-                            </option>
-                            <option value="Bignoniaceae">
-                                Bignoniaceae
-                            </option>
-                            <option value="Aceraceae">
-                                Aceraceae
-                            </option>
-                            <option value="Achariaceae">
-                                Achariaceae
-                            </option>
-                            <option value="Agavaceae">
-                                Agavaceae
-                            </option>
-                            {/* other options */}
+                            {family_names.map((item:string, index:number) =>
+                                <option key={index} value={item}>
+                                    {item}
+                                </option>
+                            )}
                         </select>
                     </div>
                 </div>

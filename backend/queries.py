@@ -143,3 +143,6 @@ where s.country <> '' and f.name ilike '{family_name}'
 group by plant_specie_id,site_id,ps."name",f.name,s.country order by count desc limit 1
 """
 
+QUERY_FAMILIES = """
+select name from family;
+"""

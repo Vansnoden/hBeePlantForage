@@ -460,7 +460,23 @@ def get_family_data(
         return res
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
-    
+
+
+@app.get("/data/family/all")
+def get_family_all_data( 
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)):
+    res = []
+    if user:
+        query_families = text(QUERY_FAMILIES)
+        families_data = db.execute(query_families)
+        for rec in families_data:
+            name = rec[0]
+            res.append(name)
+        return res
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+
 
 @app.get("/data/family/max")
 def get_family_data_max_observations( 
