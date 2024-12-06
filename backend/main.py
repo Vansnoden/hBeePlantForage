@@ -26,6 +26,8 @@ import random
 from random import randrange
 from sqlalchemy.sql import text
 from queries import *
+import numpy as np
+from numpy.linalg import norm
 
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
@@ -398,10 +400,41 @@ def get_dashboard_data(
         raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
+def levenshtein_distance(s, t):
+    m, n = len(s), len(t)
+    if m < n:
+        s, t = t, s
+        m, n = n, m
+    d = [list(range(n + 1))] + [[i] + [0] * n for i in range(1, m + 1)]
+    for j in range(1, n + 1):
+        for i in range(1, m + 1):
+            if s[i - 1] == t[j - 1]:
+                d[i][j] = d[i - 1][j - 1]
+            else:
+                d[i][j] = min(d[i - 1][j], d[i][j - 1], d[i - 1][j - 1]) + 1
+    return d[m][n]
+
+
+def compute_similarity(input_string, reference_string):
+    distance = levenshtein_distance(input_string, reference_string)
+    max_length = max(len(input_string), len(reference_string))
+    similarity = 1 - (distance / max_length)
+    return similarity
+
+
+def get_country_code(country_name):
+    for k,v in COUNTRIES.items():
+        similarity = compute_similarity(country_name, k)
+        # logger.debug(f"SIMILARITY {country_name} --- {k} :   {similarity}")
+        if similarity > 0.65:
+            return v
+
+
 def get_country_geo_json(country_name):
-    random_file=random.choice(os.listdir("world.geo.json-master/countries"))
+    country_code = get_country_code(country_name)
+    country_code = country_code.upper() if country_code else "AFG"
     data = {}
-    with open(f"world.geo.json-master/countries/{random_file}", 'r') as f:
+    with open(f"world.geo.json-master/countries/{country_code}.geo.json", 'r') as f:
         data = json.load(f)
     return data
 
@@ -427,3 +460,22 @@ def get_family_data(
         return res
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
+    
+
+@app.get("/data/family/max")
+def get_family_data_max_observations( 
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db),
+    fname: str = ""):
+    res = 0
+    if user:
+        query_family_distro = text(QUERY_MAX_OBS_PER_FAMILY_PER_COUNTRY.format(family_name=fname))
+        family_distro_data = db.execute(query_family_distro)
+        for rec in family_distro_data:
+            max = rec[0]
+            if not res:
+                res = max # adding initial country
+        return res
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+

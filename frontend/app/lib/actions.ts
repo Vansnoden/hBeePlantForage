@@ -1,7 +1,7 @@
 'use server'
 
 import { AuthError } from 'next-auth';
-import { FAMILY_DATA_URL, PLANT_DATA_URL } from './constants';
+import { FAMILY_DATA_MAX_URL, FAMILY_DATA_URL, PLANT_DATA_URL } from './constants';
 import { cookies } from 'next/headers'
 import { signIn } from '../../auth';
 import { DASHBOARD_DATA_URL } from "./constants";
@@ -83,4 +83,21 @@ export async function getFamilyData(fname: string){
     requestOptions).then((response) => response.json())
  
   return data;
+}
+
+
+export async function getFamilyDataMax(fname: string){
+  const token = await getToken() as string
+  const myHeaders = new Headers();
+  myHeaders.append("Authorization", token);
+
+  const requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+  };
+
+  const data = await fetch(FAMILY_DATA_MAX_URL +"?fname="+fname, 
+    requestOptions).then((response) => response.json())
+ 
+  return data; 
 }

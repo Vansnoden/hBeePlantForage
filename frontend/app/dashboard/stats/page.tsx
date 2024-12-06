@@ -1,4 +1,4 @@
-import { getDashboardData, getFamilyData } from "@/app/lib/actions";
+import { getDashboardData, getFamilyData, getFamilyDataMax } from "@/app/lib/actions";
 import BarChart from "@/app/ui/dashboard/charts/barchart";
 // import LineChart from "@/app/ui/dashboard/charts/linechart";
 import PieChart from "@/app/ui/dashboard/charts/piechart";
@@ -10,6 +10,7 @@ import { lusitana } from "@/app/ui/fonts";
 export default async function Stats(){
     const dashData = await getDashboardData();
     const geojsonObject = await getFamilyData("Acanthaceae");
+    const family_max = await getFamilyDataMax("Acanthaceae")
 
     return (
         <div>
@@ -43,7 +44,7 @@ export default async function Stats(){
                         </select>
                     </div>
                 </div>
-                <MiniMapComponent geojsonObject={geojsonObject}/>
+                <MiniMapComponent geojsonObject={geojsonObject} max={family_max}/>
             </div>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-3">
                 <BarChart data={dashData?.sites_per_country} show_labels={true}/>
