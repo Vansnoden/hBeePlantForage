@@ -13,25 +13,30 @@ import { useState, useEffect } from 'react'
 
 export default function StatsComponent(props:{token: string}){
 
-    const [currentFamilyName, setCurrentFamilyName] = useState("");
+    const [currentFamilyName, setCurrentFamilyName] = useState("Acanthaceae");
     const [dashData, setDashData] = useState<DashboardData>();
     const [geojsonObject, setGeojsonObject] = useState({});
     const [familyMax, setFamilyMax] = useState(0);
     const [familyNames, setFamilyNames] = useState<Array<string>>([]);
 
     useEffect(() => {
-        setCurrentFamilyName("Acanthaceae");
-        setDashData(getDashboardData(props.token, currentFamilyName));   
-        setGeojsonObject(getFamilyData(props.token, currentFamilyName));
-        setFamilyMax(getFamilyDataMax(props.token, currentFamilyName));
-        setFamilyNames(getAllFamilyNames(props.token, ));
+        (async () => {
+            setDashData(await getDashboardData(props.token, currentFamilyName));   
+            setGeojsonObject(await getFamilyData(props.token, currentFamilyName));
+            setFamilyMax(await getFamilyDataMax(props.token, currentFamilyName));
+            setFamilyNames(await getAllFamilyNames(props.token));
+        })();
     }, [])
 
-    const onChangeHandler = (evt: any) => {
-        console.log(evt.target.value);
+    const onChangeHandler = async (evt: any) => {
+        let family_name = evt.target.value;
+        setCurrentFamilyName(family_name);
+        setDashData(await getDashboardData(props.token, family_name));   
+        setGeojsonObject(await getFamilyData(props.token, family_name));
+        setFamilyMax(await getFamilyDataMax(props.token, family_name));
+        setFamilyNames(await getAllFamilyNames(props.token));
     }
     
-
     return (
         <div>
             <div className="">
