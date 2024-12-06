@@ -13,7 +13,7 @@ import { useState, useEffect } from 'react'
 
 export default function StatsComponent(props:{token: string}){
 
-    const [currentFamilyName, setCurrentFamilyName] = useState("Acanthaceae");
+    const [currentFamilyName, setCurrentFamilyName] = useState("");
     const [dashData, setDashData] = useState<DashboardData>();
     const [geojsonObject, setGeojsonObject] = useState({});
     const [familyMax, setFamilyMax] = useState(0);
@@ -50,6 +50,9 @@ export default function StatsComponent(props:{token: string}){
                             onChange={onChangeHandler} 
                             className="block w-full cursor-pointer rounded-md border py-2 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
                             >
+                            <option value="">
+                                --- select plant family ---
+                            </option>
                             {familyNames.map((item:string, index:number) =>
                                 <option key={index} value={item}>
                                     {item}

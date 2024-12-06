@@ -37,6 +37,7 @@ const MiniMapComponent = (props: {geojsonObject: any|undefined, max:number}) => 
             // feature.getGeometry().getType() // eslint-disable-line
             return styles(feature.getProperties().count / props.max)[feature.getGeometry().getType()]; // eslint-disable-line
         }; // eslint-disable-line
+        console.log(props.geojsonObject);
         if(Object.keys(props.geojsonObject).length !== 0){
             console.log(props.geojsonObject)
             const vectorSource = new VectorSource({
