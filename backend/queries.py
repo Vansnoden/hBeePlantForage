@@ -33,12 +33,21 @@ COUNTRIES = {
 }
 
 
-QUERY_TOP_10_MOST_REPORTED_PLANTS = """
+QUERY_TOP_20_MOST_REPORTED_PLANTS = """
     select count(o.id), o.plant_specie_id , ps.name as plant_name
     from observations as o
     inner join plant_species as ps on o.plant_specie_id = ps.id
-    group by o.plant_specie_id, ps.name order by count desc limit 10
+    group by o.plant_specie_id, ps.name order by count desc limit 20
 """
+
+QUERY_TOP_20_MOST_REPORTED_PLANTS_FOR_FAMILY = """
+    select count(o.id), o.plant_specie_id , ps.name, f.name as plant_name
+    from observations as o
+    inner join plant_species as ps on o.plant_specie_id = ps.id
+    inner join "family" as f on f.name = '{family_name}' 
+    group by o.plant_specie_id, ps.name, f.name order by count desc limit 20
+"""
+
 
 QUERY_OBS_YEARLY_OVERVIEW = """
     select count(id), year from observations where year between {year_start} and {year_end} group by year order by year asc

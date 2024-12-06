@@ -284,28 +284,32 @@ def generate_colors(limit=0):
 @app.get("/data/dashboard")
 def get_dashboard_data( 
     user: Annotated[User, Depends(get_current_active_user)],
-    db: Session = Depends(get_db)):
+    db: Session = Depends(get_db),
+    fname: str = ""):
     res = {}
     if user:
         res["total_plants"] = db.query(models.PlantSpecie).count()
         res["total_sites"] = db.query(models.Site).count()
         # top 10 most reorted species
-        top_10_plants_labels = []
-        top_10_plants_values = []
-        query_top_10 = text(QUERY_TOP_10_MOST_REPORTED_PLANTS)
-        top_10_data = db.execute(query_top_10)
-        for rec in top_10_data:
-            top_10_plants_labels.append(rec[2])
-            top_10_plants_values.append(rec[0])
-        top10bgColor, top10borderColor = generate_colors(len(top_10_plants_values))
-        res["top_10_plants"] = {
-                "labels": top_10_plants_labels,
+        top_20_plants_labels = []
+        top_20_plants_values = []
+        if fname:
+            query_top_20 = text(QUERY_TOP_20_MOST_REPORTED_PLANTS_FOR_FAMILY.format(fname))
+        else:
+            query_top_20 = text(QUERY_TOP_20_MOST_REPORTED_PLANTS)
+        top_20_data = db.execute(query_top_20)
+        for rec in top_20_data:
+            top_20_plants_labels.append(rec[2])
+            top_20_plants_values.append(rec[0])
+        top20bgColor, top20borderColor = generate_colors(len(top_20_plants_values))
+        res["top_20_plants"] = {
+                "labels": top_20_plants_labels,
                 "datasets": [
                     {
-                        "label": 'Top 10 Most Observed Plants',
-                        "data": top_10_plants_values,
-                        "backgroundColor": top10bgColor,
-                        "borderColor": top10borderColor,
+                        "label": 'Top 20 Most Observed Plants',
+                        "data": top_20_plants_values,
+                        "backgroundColor": top20bgColor,
+                        "borderColor": top20borderColor,
                         "borderWidth": 1,
                     },
                 ],
@@ -353,27 +357,27 @@ def get_dashboard_data(
                     },
                 ],
             }
-        # total sites per country
-        sites_per_country_labels = []
-        sites_per_country_values = []
-        query_site_per_country = text("""select count(id), country from sites where country != '' group by country""")
-        sites_per_country = db.execute(query_site_per_country)
-        for rec in sites_per_country:
-            sites_per_country_labels.append(rec[1])
-            sites_per_country_values.append(rec[0])
-        spcbgColor, spcborderColor = generate_colors(len(sites_per_country_values))
-        res["sites_per_country"] = {
-                "labels": sites_per_country_labels,
-                "datasets": [
-                    {
-                        "label": 'Observation sites per country',
-                        "data": sites_per_country_values,
-                        "backgroundColor": spcbgColor,
-                        "borderColor": spcborderColor,
-                        "borderWidth": 1,
-                    },
-                ],
-            }
+        # # total sites per country
+        # sites_per_country_labels = []
+        # sites_per_country_values = []
+        # query_site_per_country = text("""select count(id), country from sites where country != '' group by country""")
+        # sites_per_country = db.execute(query_site_per_country)
+        # for rec in sites_per_country:
+        #     sites_per_country_labels.append(rec[1])
+        #     sites_per_country_values.append(rec[0])
+        # spcbgColor, spcborderColor = generate_colors(len(sites_per_country_values))
+        # res["sites_per_country"] = {
+        #         "labels": sites_per_country_labels,
+        #         "datasets": [
+        #             {
+        #                 "label": 'Observation sites per country',
+        #                 "data": sites_per_country_values,
+        #                 "backgroundColor": spcbgColor,
+        #                 "borderColor": spcborderColor,
+        #                 "borderWidth": 1,
+        #             },
+        #         ],
+        #     }
         # total observations per region
         obs_per_region_labels = []
         obs_per_region_values = []
