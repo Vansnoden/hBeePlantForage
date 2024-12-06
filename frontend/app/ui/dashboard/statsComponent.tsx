@@ -25,7 +25,7 @@ export default function StatsComponent(props:{token: string}){
         setGeojsonObject(getFamilyData(props.token, currentFamilyName));
         setFamilyMax(getFamilyDataMax(props.token, currentFamilyName));
         setFamilyNames(getAllFamilyNames(props.token, ));
-    }, [currentFamilyName])
+    }, [])
 
     const onChangeHandler = (evt: any) => {
         console.log(evt.target.value);
