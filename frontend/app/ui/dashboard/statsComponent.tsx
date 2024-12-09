@@ -80,12 +80,13 @@ export default function StatsComponent(props:{token: string}){
                             )}
                         </select>
                     </div>
-                    <div className={`${lusitana.className} relative`}>
+                    <div className={`${lusitana.className} ml-2 relative`}>
                         <span>Select Zone of interest</span>
                         <select
                             id="zone"
                             name="zone_id"
-                            defaultValue=""
+                            defaultValue="Globe"
+                            disabled={true}
                             onChange={zoneOnChangeHandler} 
                             className="block w-full cursor-pointer rounded-md border py-2 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
                             >
