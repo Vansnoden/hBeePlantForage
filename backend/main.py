@@ -471,13 +471,13 @@ def get_family_data(
         raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
-@app.get("/data/family/all")
-def get_family_all_data( 
+@app.get("/data/family/search")
+def get_family_search_data( 
     user: Annotated[User, Depends(get_current_active_user)],
-    db: Session = Depends(get_db)):
+    db: Session = Depends(get_db), search_filter:str=""):
     res = []
     if user:
-        query_families = text(QUERY_FAMILIES)
+        query_families = text(QUERY_FAMILIES.format(search=search_filter))
         families_data = db.execute(query_families)
         for rec in families_data:
             name = rec[0]

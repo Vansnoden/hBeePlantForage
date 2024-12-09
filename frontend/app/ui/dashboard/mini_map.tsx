@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
+import React, { useActionState, useEffect, useState } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
@@ -9,11 +9,13 @@ import GeoJSON from 'ol/format/GeoJSON';
 import VectorLayer from 'ol/layer/Vector';
 import {Fill, Stroke, Style} from 'ol/style';
 import { lusitana } from '../fonts';
+import { getFamilyData } from '@/app/lib/client_actions';
 
 
-const MiniMapComponent = (props: {geojsonObject: any, max:number}) => { // eslint-disable-line
+const MiniMapComponent = (props: {familyName: any, max:number, token:string}) => { // eslint-disable-line
 
     const [map, refreshMap] = useState<Map>();
+    const [geojsonObject, setGeojsonObject] = useState({});
 
     useEffect(() => {
         const osmLayer = new TileLayer({
@@ -33,14 +35,23 @@ const MiniMapComponent = (props: {geojsonObject: any, max:number}) => { // eslin
                 }),
             }
         };
+        const getGeoJSON = async () => {
+            const data = await getFamilyData(props.token, props.familyName);
+            setGeojsonObject(data);
+        };
+        getGeoJSON().then(()=>{
+            console.log(geojsonObject);
+            console.log(props.familyName);
+            console.log(Object.keys(geojsonObject).length);
+        }).catch(console.error);
         const styleFunction = function (feature: any) { // eslint-disable-line
             // feature.getGeometry().getType() // eslint-disable-line
             return styles(feature.getProperties().count / props.max)[feature.getGeometry().getType()]; // eslint-disable-line
         }; // eslint-disable-line
-        if(Object.keys(props.geojsonObject).length !== 0){
-            console.log("map refresh now. test")
+        if(Object.keys(geojsonObject).length !== 0){
+            console.log("map refresh now. now test")
             const vectorSource = new VectorSource({
-                features: new GeoJSON().readFeatures(props.geojsonObject, {featureProjection: 'EPSG:3857'}),
+                features: new GeoJSON().readFeatures(geojsonObject, {featureProjection: 'EPSG:3857'}),
             });
             const vectorLayer = new VectorLayer({
                 source: vectorSource,
@@ -64,9 +75,8 @@ const MiniMapComponent = (props: {geojsonObject: any, max:number}) => { // eslin
                 }),
             }))
         }
-        
-      return () => map?.setTarget()
-    }, []);
+        return () => map?.setTarget()
+    }, [props.familyName]);
     
     return (
         <div className={`${lusitana.className}`}>

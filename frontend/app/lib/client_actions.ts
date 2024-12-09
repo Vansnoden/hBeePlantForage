@@ -1,6 +1,6 @@
 "use client";
 
-import { FAMILY_DATA_MAX_URL, FAMILY_DATA_URL, FAMILY_NAME_ALL, PLANT_DATA_URL } from './constants';
+import { FAMILY_DATA_MAX_URL, FAMILY_DATA_URL, FAMILY_NAME_SEARCH, PLANT_DATA_URL } from './constants';
 import { DASHBOARD_DATA_URL } from "./constants";
 import { DashboardData, PlantData } from './definitions';
 
@@ -51,14 +51,14 @@ export async function getFamilyDataMax(token: string, fname: string){
 }
 
 
-export async function getAllFamilyNames(token: string, ){
+export async function searchFamilyNames(token: string, search_string: string){
     const myHeaders = new Headers();
     myHeaders.append("Authorization", token);
     const requestOptions = {
         method: "GET",
         headers: myHeaders,
     };
-    let data:Array<string> = await fetch(FAMILY_NAME_ALL, requestOptions)
+    let data:Array<string> = await fetch(FAMILY_NAME_SEARCH + `?search_string=${search_string}`, requestOptions)
     .then((response) => response.json())
     return data; 
 }

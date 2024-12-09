@@ -75,3 +75,10 @@ input[type='number']::-webkit-outer-spin-button {
   overflow-x:scroll;
   max-width: 100vw!important;
 }
+
+.mdropdown{
+  position: absolute;
+  z-index:2000;
+  border: 1px solid black;
+  width: 70%;
+}

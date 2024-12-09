@@ -1,7 +1,7 @@
 'use server'
 
 import { AuthError } from 'next-auth';
-import { FAMILY_DATA_MAX_URL, FAMILY_DATA_URL, FAMILY_NAME_ALL, PLANT_DATA_URL } from './constants';
+import { FAMILY_DATA_MAX_URL, FAMILY_DATA_URL, FAMILY_NAME_SEARCH, PLANT_DATA_URL } from './constants';
 import { cookies } from 'next/headers'
 import { signIn } from '../../auth';
 import { DASHBOARD_DATA_URL } from "./constants";
@@ -113,7 +113,7 @@ export async function getAllFamilyNames(){
     headers: myHeaders,
   };
 
-  const data = await fetch(FAMILY_NAME_ALL, 
+  const data = await fetch(FAMILY_NAME_SEARCH, 
     requestOptions).then((response) => response.json())
  
   return data; 
