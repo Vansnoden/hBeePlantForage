@@ -55,7 +55,10 @@ def get_db():
 origins = [
     "http://localhost",
     "http://localhost:3000",
-    "http://localhost:8000"
+    "http://localhost:8000",
+    "http://212.56.40.148",
+    "http://212.56.40.148:3000",
+    "http://212.56.40.148:8000"
 ]
 
 app.add_middleware(
