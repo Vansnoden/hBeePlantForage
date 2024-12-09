@@ -153,5 +153,5 @@ group by s.country order by count desc limit 1
 """
 
 QUERY_FAMILIES = """
-select name from family where name ilike '%{search}%';
+select name from family where name ilike '%{search}%' limit 20;
 """

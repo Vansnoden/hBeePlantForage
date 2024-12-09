@@ -12,7 +12,7 @@ import { lusitana } from '../fonts';
 import { getFamilyData } from '@/app/lib/client_actions';
 
 
-const MiniMapComponent = (props: {familyName: any, max:number, token:string}) => { // eslint-disable-line
+const MiniMapComponent = (props: {familyName: any, max:number, token:string, update:boolean}) => { // eslint-disable-line
 
     const [map, refreshMap] = useState<Map>();
     const [geojsonObject, setGeojsonObject] = useState({});
@@ -35,37 +35,42 @@ const MiniMapComponent = (props: {familyName: any, max:number, token:string}) =>
                 }),
             }
         };
-        const getGeoJSON = async () => {
-            const data = await getFamilyData(props.token, props.familyName);
-            setGeojsonObject(data);
-        };
-        getGeoJSON().then(()=>{
-            console.log(geojsonObject);
-            console.log(props.familyName);
-            console.log(Object.keys(geojsonObject).length);
-        }).catch(console.error);
         const styleFunction = function (feature: any) { // eslint-disable-line
             // feature.getGeometry().getType() // eslint-disable-line
             return styles(feature.getProperties().count / props.max)[feature.getGeometry().getType()]; // eslint-disable-line
         }; // eslint-disable-line
-        if(Object.keys(geojsonObject).length !== 0){
-            console.log("map refresh now. now test")
-            const vectorSource = new VectorSource({
-                features: new GeoJSON().readFeatures(geojsonObject, {featureProjection: 'EPSG:3857'}),
-            });
-            const vectorLayer = new VectorLayer({
-                source: vectorSource,
-                style: styleFunction,
-            });
-            refreshMap(new Map({
-                target: "map",
-                layers: [osmLayer, vectorLayer],
-                view: new View({
-                    center: [0, 0],
-                    zoom: 0,
-                }),
-            }))
-        }else{
+
+        const getGeoJSON = async () => {
+            const data = await getFamilyData(props.token, props.familyName);
+            setGeojsonObject(data);
+        };
+        let vectorSource = null;
+        getGeoJSON().then(()=>{
+            console.log("DATA GOT, UPDATING MAp");
+            if(Object.keys(geojsonObject).length !== 0){
+                console.log("map refresh now. now test")
+                vectorSource = new VectorSource({
+                    features: new GeoJSON().readFeatures(geojsonObject, {featureProjection: 'EPSG:3857'}),
+                });
+                const vectorLayer = new VectorLayer({
+                    source: vectorSource,
+                    style: styleFunction,
+                });
+                refreshMap(new Map({
+                    target: "map",
+                    layers: [osmLayer, vectorLayer],
+                    view: new View({
+                        center: [0, 0],
+                        zoom: 0,
+                    }),
+                }))
+            }
+            console.log("MAP UPDATED");
+        }).catch(console.error);
+        console.log("Map UI refresh");
+        console.log("VectorSource:");
+        console.log(vectorSource);
+        if(!vectorSource){
             refreshMap(new Map({
                 target: "map",
                 layers: [osmLayer],
@@ -76,7 +81,7 @@ const MiniMapComponent = (props: {familyName: any, max:number, token:string}) =>
             }))
         }
         return () => map?.setTarget()
-    }, [props.familyName]);
+    }, [props.update, props.familyName]);
     
     return (
         <div className={`${lusitana.className}`}>
@@ -85,6 +90,7 @@ const MiniMapComponent = (props: {familyName: any, max:number, token:string}) =>
                     <div id="map" className='map'></div>
                 </div>
             </div>
+            {props.familyName}
         </div>
     )
 }

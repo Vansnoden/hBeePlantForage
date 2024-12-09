@@ -20,7 +20,7 @@ export default function StatsComponent(props:{token: string}){
     const [currentFamilyName, setCurrentFamilyName] = useState("");
     const [dashData, setDashData] = useState<DashboardData>();
     const [familyMax, setFamilyMax] = useState(0);
-    const [familyNames, setFamilyNames] = useState<Array<string>>(["Acanthaceae", "Bignoniaceae"]);
+    const [familyNames, setFamilyNames] = useState<Array<string>>([]);
     const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
     const [mapVisibility, toggleMapVisibility] = useState(false);
     const searchInput = useRef<HTMLInputElement>(null);
@@ -46,14 +46,16 @@ export default function StatsComponent(props:{token: string}){
     }
 
     const refreshData = () => {
-        toggleDropdowVisibility(false);
-        toggleMapVisibility(true);
+        if(searchInput.current){
+            setCurrentFamilyName(searchInput.current.value);
+        }
         const fetchData = async () => {
-            setCurrentFamilyName(currentFamilyName);
             setDashData(await getDashboardData(props.token, currentFamilyName));   
             setFamilyMax(await getFamilyDataMax(props.token, currentFamilyName));
         }
-        fetchData().then(()=>{
+        fetchData().then(() => {
+            toggleDropdowVisibility(false);
+            toggleMapVisibility(true);
         })
         .catch(console.error);
     }
@@ -122,7 +124,7 @@ export default function StatsComponent(props:{token: string}){
                         </select>
                     </div>
                 </div>
-                { mapVisibility && <MiniMapComponent familyName={currentFamilyName} max={familyMax} token={props.token}/> }
+                { mapVisibility && <MiniMapComponent familyName={currentFamilyName} max={familyMax} token={props.token} update={mapVisibility}/> }
             </div>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
                 {/* <BarChart data={dashData?.sites_per_country} show_labels={true}/> */}
