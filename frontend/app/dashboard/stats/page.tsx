@@ -1,6 +1,5 @@
 import { getToken } from '@/app/lib/actions'
 import StatsComponent from '@/app/ui/dashboard/statsComponent'
-import { cookies } from 'next/headers'
 
 
 export default async function StatsPage() {

@@ -11,7 +11,7 @@ import {Fill, Stroke, Style} from 'ol/style';
 import { lusitana } from '../fonts';
 
 
-const MiniMapComponent = (props: {geojsonObject: any|undefined, max:number}) => { // eslint-disable-line
+const MiniMapComponent = (props: {geojsonObject: any, max:number}) => { // eslint-disable-line
 
     const [map, refreshMap] = useState<Map>();
 
@@ -37,9 +37,8 @@ const MiniMapComponent = (props: {geojsonObject: any|undefined, max:number}) => 
             // feature.getGeometry().getType() // eslint-disable-line
             return styles(feature.getProperties().count / props.max)[feature.getGeometry().getType()]; // eslint-disable-line
         }; // eslint-disable-line
-        console.log(props.geojsonObject);
         if(Object.keys(props.geojsonObject).length !== 0){
-            console.log(props.geojsonObject)
+            console.log("map refresh now. test")
             const vectorSource = new VectorSource({
                 features: new GeoJSON().readFeatures(props.geojsonObject, {featureProjection: 'EPSG:3857'}),
             });

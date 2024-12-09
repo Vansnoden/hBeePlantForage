@@ -44,7 +44,7 @@ QUERY_TOP_20_MOST_REPORTED_PLANTS_FOR_FAMILY = """
     select count(o.id), o.plant_specie_id , ps.name, f.name as plant_name
     from observations as o
     inner join plant_species as ps on o.plant_specie_id = ps.id
-    inner join "family" as f on f.name = '{family_name}' 
+    inner join "family" as f on f.name ilike '{family_name}' 
     group by o.plant_specie_id, ps.name, f.name order by count desc limit 20
 """
 
@@ -134,22 +134,22 @@ select count(id),region from obs_data_1 group by region
 """
 
 QUERY_OBS_PER_FAMILY_PER_COUNTRY = """
-select count(o.id),o.plant_specie_id ,o.site_id, ps."name" as plant_specie, f.name as family, s.country from observations as o
+select count(o.id), s.country from observations as o
 inner join plant_species as ps on ps.id = o.plant_specie_id
 inner join "family" as f on f.id = ps.family_id 
 inner join sites as s on o.site_id = s.id
 where s.country <> '' and f.name ilike '{family_name}'
-group by plant_specie_id,site_id,ps."name",f.name,s.country order by count desc 
+group by s.country order by count desc 
 """
 
 
 QUERY_MAX_OBS_PER_FAMILY_PER_COUNTRY = """
-select count(o.id),o.plant_specie_id ,o.site_id, ps."name" as plant_specie, f.name as family, s.country from observations as o
+select count(o.id), s.country from observations as o
 inner join plant_species as ps on ps.id = o.plant_specie_id
 inner join "family" as f on f.id = ps.family_id 
 inner join sites as s on o.site_id = s.id
 where s.country <> '' and f.name ilike '{family_name}'
-group by plant_specie_id,site_id,ps."name",f.name,s.country order by count desc limit 1
+group by s.country order by count desc limit 1
 """
 
 QUERY_FAMILIES = """

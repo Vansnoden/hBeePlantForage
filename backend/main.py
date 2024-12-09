@@ -53,7 +53,9 @@ def get_db():
         db.close()
 
 origins = [
-    "*"
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:8000"
 ]
 
 app.add_middleware(
@@ -453,7 +455,7 @@ def get_family_data(
         query_family_distro = text(QUERY_OBS_PER_FAMILY_PER_COUNTRY.format(family_name=fname))
         family_distro_data = db.execute(query_family_distro)
         for rec in family_distro_data:
-            country = rec[5]
+            country = rec[1]
             count = rec[0]
             base_geojson = get_country_geo_json(country)
             base_geojson["features"][0]["properties"]["count"] = count
