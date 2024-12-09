@@ -19,7 +19,6 @@ export default function StatsComponent(props:{token: string}){
 
     const [currentFamilyName, setCurrentFamilyName] = useState("");
     const [dashData, setDashData] = useState<DashboardData>();
-    const [familyMax, setFamilyMax] = useState(0);
     const [familyNames, setFamilyNames] = useState<Array<string>>([]);
     const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
     const [mapVisibility, toggleMapVisibility] = useState(false);
@@ -51,13 +50,11 @@ export default function StatsComponent(props:{token: string}){
         }
         const fetchData = async () => {
             setDashData(await getDashboardData(props.token, currentFamilyName));   
-            setFamilyMax(await getFamilyDataMax(props.token, currentFamilyName));
         }
-        fetchData().then(() => {
-            toggleDropdowVisibility(false);
-            toggleMapVisibility(true);
-        })
+        fetchData()
         .catch(console.error);
+        toggleDropdowVisibility(false);
+        toggleMapVisibility(true);
     }
 
 
@@ -124,7 +121,7 @@ export default function StatsComponent(props:{token: string}){
                         </select>
                     </div>
                 </div>
-                { mapVisibility && <MiniMapComponent familyName={currentFamilyName} max={familyMax} token={props.token} update={mapVisibility}/> }
+                { mapVisibility && <MiniMapComponent familyName={currentFamilyName} token={props.token}/> }
             </div>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
                 {/* <BarChart data={dashData?.sites_per_country} show_labels={true}/> */}
