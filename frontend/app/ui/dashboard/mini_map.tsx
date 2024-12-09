@@ -73,6 +73,15 @@ const MiniMapComponent = (props: {familyName: any, token:string}) => { // eslint
                     }),
                 }))
             }
+        }else{
+            refreshMap(new Map({
+                target: "map",
+                layers: [osmLayer],
+                view: new View({
+                    center: [0, 0],
+                    zoom: 0,
+                }),
+            }))
         }
         return () => map?.setTarget()
 
@@ -85,7 +94,7 @@ const MiniMapComponent = (props: {familyName: any, token:string}) => { // eslint
                     <div id="map" className='map'></div>
                 </div>
             </div>
-            {props.familyName}
+            {/* {props.familyName} */}
         </div>
     )
 }
