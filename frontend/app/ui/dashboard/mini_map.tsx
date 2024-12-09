@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
@@ -11,7 +11,9 @@ import {Fill, Stroke, Style} from 'ol/style';
 import { lusitana } from '../fonts';
 
 
-const MiniMapComponent = (props: {geojsonObject: any}) => { // eslint-disable-line
+const MiniMapComponent = (props: {geojsonObject: any, max:number}) => { // eslint-disable-line
+
+    const [map, refreshMap] = useState<Map>();
 
     useEffect(() => {
         const osmLayer = new TileLayer({
@@ -33,24 +35,37 @@ const MiniMapComponent = (props: {geojsonObject: any}) => { // eslint-disable-li
         };
         const styleFunction = function (feature: any) { // eslint-disable-line
             // feature.getGeometry().getType() // eslint-disable-line
-            return styles(feature.getProperties().count / 100)[feature.getGeometry().getType()]; // eslint-disable-line
+            return styles(feature.getProperties().count / props.max)[feature.getGeometry().getType()]; // eslint-disable-line
         }; // eslint-disable-line
-        const vectorSource = new VectorSource({
-            features: new GeoJSON().readFeatures(props.geojsonObject, {featureProjection: 'EPSG:3857'}),
-        });
-        const vectorLayer = new VectorLayer({
-            source: vectorSource,
-            style: styleFunction,
-        });
-        const map = new Map({
-            target: "map",
-            layers: [osmLayer, vectorLayer],
-            view: new View({
-                center: [0, 0],
-                zoom: 0,
-            }),
-        });
-      return () => map.setTarget()
+        if(Object.keys(props.geojsonObject).length !== 0){
+            console.log("map refresh now. test")
+            const vectorSource = new VectorSource({
+                features: new GeoJSON().readFeatures(props.geojsonObject, {featureProjection: 'EPSG:3857'}),
+            });
+            const vectorLayer = new VectorLayer({
+                source: vectorSource,
+                style: styleFunction,
+            });
+            refreshMap(new Map({
+                target: "map",
+                layers: [osmLayer, vectorLayer],
+                view: new View({
+                    center: [0, 0],
+                    zoom: 0,
+                }),
+            }))
+        }else{
+            refreshMap(new Map({
+                target: "map",
+                layers: [osmLayer],
+                view: new View({
+                    center: [0, 0],
+                    zoom: 0,
+                }),
+            }))
+        }
+        
+      return () => map?.setTarget()
     }, []);
     
     return (

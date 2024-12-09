@@ -12,7 +12,7 @@ import { lusitana } from '../../fonts';
 // });
 
 
-const BarChart = (props: { data: CustomChartData , show_labels: boolean}) => {
+const BarChart = (props: { data: CustomChartData | undefined , show_labels: boolean}) => {
   const converted_dataset = props.data?.datasets;
   const converted_data = {
     labels: props.data?.labels,

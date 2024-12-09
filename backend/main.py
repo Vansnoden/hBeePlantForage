@@ -26,6 +26,8 @@ import random
 from random import randrange
 from sqlalchemy.sql import text
 from queries import *
+import numpy as np
+from numpy.linalg import norm
 
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
@@ -51,7 +53,9 @@ def get_db():
         db.close()
 
 origins = [
-    "localhost:3000"
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:8000"
 ]
 
 app.add_middleware(
@@ -282,28 +286,32 @@ def generate_colors(limit=0):
 @app.get("/data/dashboard")
 def get_dashboard_data( 
     user: Annotated[User, Depends(get_current_active_user)],
-    db: Session = Depends(get_db)):
+    db: Session = Depends(get_db),
+    fname: str = ""):
     res = {}
     if user:
         res["total_plants"] = db.query(models.PlantSpecie).count()
         res["total_sites"] = db.query(models.Site).count()
         # top 10 most reorted species
-        top_10_plants_labels = []
-        top_10_plants_values = []
-        query_top_10 = text(QUERY_TOP_10_MOST_REPORTED_PLANTS)
-        top_10_data = db.execute(query_top_10)
-        for rec in top_10_data:
-            top_10_plants_labels.append(rec[2])
-            top_10_plants_values.append(rec[0])
-        top10bgColor, top10borderColor = generate_colors(len(top_10_plants_values))
-        res["top_10_plants"] = {
-                "labels": top_10_plants_labels,
+        top_20_plants_labels = []
+        top_20_plants_values = []
+        if fname:
+            query_top_20 = text(QUERY_TOP_20_MOST_REPORTED_PLANTS_FOR_FAMILY.format(family_name=fname))
+        else:
+            query_top_20 = text(QUERY_TOP_20_MOST_REPORTED_PLANTS)
+        top_20_data = db.execute(query_top_20)
+        for rec in top_20_data:
+            top_20_plants_labels.append(rec[2])
+            top_20_plants_values.append(rec[0])
+        top20bgColor, top20borderColor = generate_colors(len(top_20_plants_values))
+        res["top_20_plants"] = {
+                "labels": top_20_plants_labels,
                 "datasets": [
                     {
-                        "label": 'Top 10 Most Observed Plants',
-                        "data": top_10_plants_values,
-                        "backgroundColor": top10bgColor,
-                        "borderColor": top10borderColor,
+                        "label": 'Top 20 Most Observed Plants',
+                        "data": top_20_plants_values,
+                        "backgroundColor": top20bgColor,
+                        "borderColor": top20borderColor,
                         "borderWidth": 1,
                     },
                 ],
@@ -351,27 +359,27 @@ def get_dashboard_data(
                     },
                 ],
             }
-        # total sites per country
-        sites_per_country_labels = []
-        sites_per_country_values = []
-        query_site_per_country = text("""select count(id), country from sites where country != '' group by country""")
-        sites_per_country = db.execute(query_site_per_country)
-        for rec in sites_per_country:
-            sites_per_country_labels.append(rec[1])
-            sites_per_country_values.append(rec[0])
-        spcbgColor, spcborderColor = generate_colors(len(sites_per_country_values))
-        res["sites_per_country"] = {
-                "labels": sites_per_country_labels,
-                "datasets": [
-                    {
-                        "label": 'Observation sites per country',
-                        "data": sites_per_country_values,
-                        "backgroundColor": spcbgColor,
-                        "borderColor": spcborderColor,
-                        "borderWidth": 1,
-                    },
-                ],
-            }
+        # # total sites per country
+        # sites_per_country_labels = []
+        # sites_per_country_values = []
+        # query_site_per_country = text("""select count(id), country from sites where country != '' group by country""")
+        # sites_per_country = db.execute(query_site_per_country)
+        # for rec in sites_per_country:
+        #     sites_per_country_labels.append(rec[1])
+        #     sites_per_country_values.append(rec[0])
+        # spcbgColor, spcborderColor = generate_colors(len(sites_per_country_values))
+        # res["sites_per_country"] = {
+        #         "labels": sites_per_country_labels,
+        #         "datasets": [
+        #             {
+        #                 "label": 'Observation sites per country',
+        #                 "data": sites_per_country_values,
+        #                 "backgroundColor": spcbgColor,
+        #                 "borderColor": spcborderColor,
+        #                 "borderWidth": 1,
+        #             },
+        #         ],
+        #     }
         # total observations per region
         obs_per_region_labels = []
         obs_per_region_values = []
@@ -398,10 +406,41 @@ def get_dashboard_data(
         raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
+def levenshtein_distance(s, t):
+    m, n = len(s), len(t)
+    if m < n:
+        s, t = t, s
+        m, n = n, m
+    d = [list(range(n + 1))] + [[i] + [0] * n for i in range(1, m + 1)]
+    for j in range(1, n + 1):
+        for i in range(1, m + 1):
+            if s[i - 1] == t[j - 1]:
+                d[i][j] = d[i - 1][j - 1]
+            else:
+                d[i][j] = min(d[i - 1][j], d[i][j - 1], d[i - 1][j - 1]) + 1
+    return d[m][n]
+
+
+def compute_similarity(input_string, reference_string):
+    distance = levenshtein_distance(input_string, reference_string)
+    max_length = max(len(input_string), len(reference_string))
+    similarity = 1 - (distance / max_length)
+    return similarity
+
+
+def get_country_code(country_name):
+    for k,v in COUNTRIES.items():
+        similarity = compute_similarity(country_name, k)
+        # logger.debug(f"SIMILARITY {country_name} --- {k} :   {similarity}")
+        if similarity > 0.65:
+            return v
+
+
 def get_country_geo_json(country_name):
-    random_file=random.choice(os.listdir("world.geo.json-master/countries"))
+    country_code = get_country_code(country_name)
+    country_code = country_code.upper() if country_code else "AFG"
     data = {}
-    with open(f"world.geo.json-master/countries/{random_file}", 'r') as f:
+    with open(f"world.geo.json-master/countries/{country_code}.geo.json", 'r') as f:
         data = json.load(f)
     return data
 
@@ -416,7 +455,7 @@ def get_family_data(
         query_family_distro = text(QUERY_OBS_PER_FAMILY_PER_COUNTRY.format(family_name=fname))
         family_distro_data = db.execute(query_family_distro)
         for rec in family_distro_data:
-            country = rec[5]
+            country = rec[1]
             count = rec[0]
             base_geojson = get_country_geo_json(country)
             base_geojson["features"][0]["properties"]["count"] = count
@@ -427,3 +466,38 @@ def get_family_data(
         return res
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
+
+
+@app.get("/data/family/all")
+def get_family_all_data( 
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)):
+    res = []
+    if user:
+        query_families = text(QUERY_FAMILIES)
+        families_data = db.execute(query_families)
+        for rec in families_data:
+            name = rec[0]
+            res.append(name)
+        return res
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+
+
+@app.get("/data/family/max")
+def get_family_data_max_observations( 
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db),
+    fname: str = ""):
+    res = 0
+    if user:
+        query_family_distro = text(QUERY_MAX_OBS_PER_FAMILY_PER_COUNTRY.format(family_name=fname))
+        family_distro_data = db.execute(query_family_distro)
+        for rec in family_distro_data:
+            max = rec[0]
+            if not res:
+                res = max # adding initial country
+        return res
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+
