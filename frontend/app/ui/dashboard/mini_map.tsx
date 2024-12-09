@@ -16,7 +16,7 @@ const MiniMapComponent = (props: {familyName: any, token:string}) => { // eslint
 
     const [map, refreshMap] = useState<Map>();
     const [geojsonObject, setGeojsonObject] = useState({});
-    const [familyMax, setFamilyMax] = useState(1);
+    const [familyMax, setFamilyMax] = useState(0);
 
     useEffect(() => {
         const osmLayer = new TileLayer({
