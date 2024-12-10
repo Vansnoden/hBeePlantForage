@@ -41,11 +41,14 @@ export default function StatsComponent(props:{token: string}){
             setCurrentFamilyName(familyName);
             const fetchData = async () => { 
                 setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
+                const data = await searchFamilyNames(props.token, currentFamilyName)
+                setFamilyNames(data);
             }
-            fetchData()
+            fetchData().then(() => {
+                toggleDropdowVisibility(false);
+                toggleMapVisibility(true);
+            })
             .catch(console.error);
-            toggleDropdowVisibility(false);
-            toggleMapVisibility(true);
         }
     }
 
