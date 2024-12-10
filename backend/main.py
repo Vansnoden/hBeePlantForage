@@ -295,115 +295,6 @@ def get_dashboard_data(
     if user:
         res["total_plants"] = db.query(models.PlantSpecie).count()
         res["total_sites"] = db.query(models.Site).count()
-        # top 10 most reorted species
-        top_20_plants_labels = []
-        top_20_plants_values = []
-        if fname:
-            query_top_20 = text(QUERY_TOP_20_MOST_REPORTED_PLANTS_FOR_FAMILY.format(family_name=fname))
-        else:
-            query_top_20 = text(QUERY_TOP_20_MOST_REPORTED_PLANTS)
-        top_20_data = db.execute(query_top_20)
-        for rec in top_20_data:
-            top_20_plants_labels.append(rec[2])
-            top_20_plants_values.append(rec[0])
-        top20bgColor, top20borderColor = generate_colors(len(top_20_plants_values))
-        res["top_20_plants"] = {
-                "labels": top_20_plants_labels,
-                "datasets": [
-                    {
-                        "label": 'Top 20 Most Observed Plants',
-                        "data": top_20_plants_values,
-                        "backgroundColor": top20bgColor,
-                        "borderColor": top20borderColor,
-                        "borderWidth": 1,
-                    },
-                ],
-            }
-        
-        # monthly distro of observations
-        obs_montly_distro_labels = []
-        obs_montly_distro_values = []
-        query_obs_montly_distro = text(QUERY_MONTHLY_OBS_DISTRO)
-        obs_montly_distro_data = db.execute(query_obs_montly_distro)
-        for rec in obs_montly_distro_data:
-            obs_montly_distro_labels.append(rec[1])
-            obs_montly_distro_values.append(rec[0])
-        obsmbgColor, obsmborderColor = generate_colors(len(obs_montly_distro_values))
-        res["obs_montly_distro"] = {
-                "labels": obs_montly_distro_labels,
-                "datasets": [
-                    {
-                        "label": 'Monthly Distribution of Observations',
-                        "data": obs_montly_distro_values,
-                        "backgroundColor": obsmbgColor,
-                        "borderColor": obsmborderColor,
-                        "borderWidth": 1,
-                    },
-                ],
-            }
-        # 10 years span observations
-        obs_10_year_overview_labels = []
-        obs_10_year_overview_values = []
-        query_obs_10_year_overview = text(QUERY_OBS_YEARLY_OVERVIEW.format(year_start="2015", year_end="2025"))
-        obs_10_year_overview_data = db.execute(query_obs_10_year_overview)
-        for rec in obs_10_year_overview_data:
-            obs_10_year_overview_labels.append(rec[1])
-            obs_10_year_overview_values.append(rec[0])
-        obs_10bgColor, obs_10borderColor = generate_colors(len(obs_10_year_overview_values))
-        res["obs_10_year_overview"] = {
-                "labels": obs_10_year_overview_labels,
-                "datasets": [
-                    {
-                        "label": 'Last 10 Years Observations Overview',
-                        "data": obs_10_year_overview_values,
-                        "backgroundColor": obs_10bgColor,
-                        "borderColor": obs_10borderColor,
-                        "borderWidth": 1,
-                    },
-                ],
-            }
-        # # total sites per country
-        # sites_per_country_labels = []
-        # sites_per_country_values = []
-        # query_site_per_country = text("""select count(id), country from sites where country != '' group by country""")
-        # sites_per_country = db.execute(query_site_per_country)
-        # for rec in sites_per_country:
-        #     sites_per_country_labels.append(rec[1])
-        #     sites_per_country_values.append(rec[0])
-        # spcbgColor, spcborderColor = generate_colors(len(sites_per_country_values))
-        # res["sites_per_country"] = {
-        #         "labels": sites_per_country_labels,
-        #         "datasets": [
-        #             {
-        #                 "label": 'Observation sites per country',
-        #                 "data": sites_per_country_values,
-        #                 "backgroundColor": spcbgColor,
-        #                 "borderColor": spcborderColor,
-        #                 "borderWidth": 1,
-        #             },
-        #         ],
-        #     }
-        # total observations per region
-        obs_per_region_labels = []
-        obs_per_region_values = []
-        query_obs_per_region = text(QUERY_OBS_PER_REGION)
-        obs_per_region = db.execute(query_obs_per_region)
-        for rec in obs_per_region:
-            obs_per_region_labels.append(rec[1])
-            obs_per_region_values.append(rec[0])
-        spcbgColor, spcborderColor = generate_colors(len(obs_per_region_values))
-        res["obs_per_region"] = {
-                "labels": obs_per_region_labels,
-                "datasets": [
-                    {
-                        "label": 'Observations per region',
-                        "data": obs_per_region_values,
-                        "backgroundColor": spcbgColor,
-                        "borderColor": spcborderColor,
-                        "borderWidth": 1,
-                    },
-                ],
-            }
         return res  
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
@@ -504,3 +395,140 @@ def get_family_data_max_observations(
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
 
+
+@app.get("/data/monthly/distro")
+def get_obs_monthly_distro(
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db),
+    cname: str = ""):
+    res = {}
+    if user:
+        obs_montly_distro_labels = []
+        obs_montly_distro_values = []
+        query_obs_montly_distro = text(QUERY_MONTHLY_OBS_DISTRO.format(continent=cname))
+        obs_montly_distro_data = db.execute(query_obs_montly_distro)
+        for rec in obs_montly_distro_data:
+            obs_montly_distro_labels.append(rec[1])
+            obs_montly_distro_values.append(rec[0])
+        obsmbgColor, obsmborderColor = generate_colors(len(obs_montly_distro_values))
+        res["obs_montly_distro"] = {
+                "labels": obs_montly_distro_labels,
+                "datasets": [
+                    {
+                        "label": f'Monthly distribution of observations {cname}',
+                        "data": obs_montly_distro_values,
+                        "backgroundColor": obsmbgColor,
+                        "borderColor": obsmborderColor,
+                        "borderWidth": 1,
+                    },
+                ],
+            }
+        return res
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+    
+
+@app.get("/data/region/distro")
+def get_obs_region_distribution( 
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db),
+    cname: str = ""):
+    res = {}
+    if user:
+        labels = []
+        values = []
+        query = text(QUERY_GROUP_OBS_BY_CONTINENT_REGIONS.format(continent=cname))
+        data = db.execute(query)
+        for rec in data:
+            labels.append(rec[1])
+            values.append(rec[0])
+        spcbgColor, spcborderColor = generate_colors(len(values))
+        res["data"] = {
+                "labels": labels,
+                "datasets": [
+                    {
+                        "label": f'Observations per {cname} regions',
+                        "data": values,
+                        "backgroundColor": spcbgColor,
+                        "borderColor": spcborderColor,
+                        "borderWidth": 1,
+                    },
+                ],
+            }
+        return res
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+    
+
+@app.get("/data/yearly/distro")
+def get_last_x_years_distro(
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db),
+    cname: str = "", 
+    year_start: int = 2015,
+    year_end: int = 2025):
+    res = {}
+    assert year_end > year_start, "Start Year should be inferiour to end year"
+    if user:
+        labels = []
+        values = []
+        if cname:
+            query = text(QUERY_OBS_YEARLY_OVERVIEW_CONTINENT.format(continent=cname, year_start=year_start, year_end=year_end))
+        else:
+            query = text(QUERY_OBS_YEARLY_OVERVIEW.format(year_start=year_start, year_end=year_end))
+        data = db.execute(query)
+        for rec in data:
+            labels.append(rec[1])
+            values.append(rec[0])
+        obs_10bgColor, obs_10borderColor = generate_colors(len(values))
+        res["data"] = {
+                "labels": labels,
+                "datasets": [
+                    {
+                        "label": f'{cname} last {year_end - year_start} years observations overview',
+                        "data": values,
+                        "backgroundColor": obs_10bgColor,
+                        "borderColor": obs_10borderColor,
+                        "borderWidth": 1,
+                    },
+                ],
+            }
+        return res
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+
+
+@app.get("/data/plants/top")
+def get_top_x_of_plants( 
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db),
+    fname: str = "",
+    top: int = 20):
+    res = {}
+    if user:
+        labels = []
+        values = []
+        if fname:
+            query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY.format(family_name=fname, x=top))
+        else:
+            query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS.format(x=top))
+        data = db.execute(query)
+        for rec in data:
+            labels.append(rec[2])
+            values.append(rec[0])
+        top20bgColor, top20borderColor = generate_colors(len(values))
+        res["data"] = {
+                "labels": labels,
+                "datasets": [
+                    {
+                        "label": f'{fname} top {top} most observed plants',
+                        "data": values,
+                        "backgroundColor": top20bgColor,
+                        "borderColor": top20borderColor,
+                        "borderWidth": 1,
+                    },
+                ],
+            }
+        return res
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")

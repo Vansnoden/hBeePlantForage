@@ -33,19 +33,19 @@ COUNTRIES = {
 }
 
 
-QUERY_TOP_20_MOST_REPORTED_PLANTS = """
+QUERY_TOP_X_MOST_REPORTED_PLANTS = """
     select count(o.id), o.plant_specie_id , ps.name as plant_name
     from observations as o
     inner join plant_species as ps on o.plant_specie_id = ps.id
-    group by o.plant_specie_id, ps.name order by count desc limit 20
+    group by o.plant_specie_id, ps.name order by count desc limit {x}
 """
 
-QUERY_TOP_20_MOST_REPORTED_PLANTS_FOR_FAMILY = """
+QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY = """
     select count(o.id), o.plant_specie_id , ps.name, f.name as plant_name
     from observations as o
     inner join plant_species as ps on o.plant_specie_id = ps.id
     inner join "family" as f on f.name ilike '{family_name}' 
-    group by o.plant_specie_id, ps.name, f.name order by count desc limit 20
+    group by o.plant_specie_id, ps.name, f.name order by count desc limit {x}
 """
 
 
@@ -53,8 +53,20 @@ QUERY_OBS_YEARLY_OVERVIEW = """
     select count(id), year from observations where year between {year_start} and {year_end} group by year order by year asc
 """
 
+QUERY_OBS_YEARLY_OVERVIEW_CONTINENT = """
+select count(o.id), o.year from observations as o
+inner join sites as s on s.id = o.site_id 
+where 
+	year between {year_start} and {year_end}
+	and s.region ilike '%{continent}%'
+group by year order by year asc
+"""
+
 QUERY_MONTHLY_OBS_DISTRO = """
-select count(id), month from observations where month notnull group by month order by month asc
+select count(o.id), o.month from observations as o 
+inner join sites as s on o.site_id = s.id and region ilike '%{continent}%'
+where o.month notnull
+group by month order by month asc
 """
 
 QUERY_PLANT_SUMMARY_DATA = """
@@ -154,4 +166,11 @@ group by s.country order by count desc limit 1
 
 QUERY_FAMILIES = """
 select name from family where name ilike '%{search}%' limit 20;
+"""
+
+
+QUERY_GROUP_OBS_BY_CONTINENT_REGIONS = """
+select count(o.id), s.region from observations as o 
+inner join sites as s on s.id=o.site_id and s.region ilike '%{continent}%'
+group by s.region
 """

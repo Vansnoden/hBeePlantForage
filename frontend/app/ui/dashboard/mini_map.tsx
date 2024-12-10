@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useActionState, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
@@ -22,7 +22,7 @@ const MiniMapComponent = (props: {familyName: any, token:string}) => { // eslint
         const osmLayer = new TileLayer({
             preload: Infinity,
             source: new OSM(),
-        })
+        });
         const styles = (opacity:number) => {
             return {
                 'Polygon': new Style({
@@ -39,9 +39,11 @@ const MiniMapComponent = (props: {familyName: any, token:string}) => { // eslint
         const getGeoJSON = async () => {
             const data = await getFamilyData(props.token, props.familyName);
             const max = await getFamilyDataMax(props.token, props.familyName);
-            return [data, max];
+            setGeojsonObject(data); 
+            setFamilyMax(max);
         };
-        getGeoJSON().then((res:any)=>{setGeojsonObject(res[0]); setFamilyMax(res[1])});
+        getGeoJSON()
+        .catch(console.error);
         const styleFunction = function (feature: any) { // eslint-disable-line
             // feature.getGeometry().getType() // eslint-disable-line
             return styles(feature.getProperties().count / familyMax)[feature.getGeometry().getType()]; // eslint-disable-line
@@ -85,7 +87,7 @@ const MiniMapComponent = (props: {familyName: any, token:string}) => { // eslint
         }
         return () => map?.setTarget()
 
-    }, [geojsonObject]);
+    }, [props.familyName]);
     
     return (
         <div className={`${lusitana.className}`}>

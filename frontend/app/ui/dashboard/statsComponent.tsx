@@ -1,13 +1,13 @@
 "use client"
 
-import { searchFamilyNames, getDashboardData, getFamilyData, getFamilyDataMax } from "@/app/lib/client_actions";
-import { DashboardData } from "@/app/lib/definitions";
+import { searchFamilyNames, getPlantTopX, getRegionObsDistro, getYearlyObsDistro } from "@/app/lib/client_actions";
+import { CustomChartData } from "@/app/lib/definitions";
 import BarChart from "@/app/ui/dashboard/charts/barchart";
 import MiniMapComponent from "@/app/ui/dashboard/mini_map";
 import { lusitana } from "@/app/ui/fonts";
-import { useState, useEffect, useActionState, startTransition, useRef } from 'react';
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { useState, useEffect, useRef } from 'react';
 import clsx from "clsx";
+import PieChart from "./charts/piechart";
 
 
 // async function updateGeoJSON(olsdGeoJSON, formData) {
@@ -18,49 +18,79 @@ import clsx from "clsx";
 export default function StatsComponent(props:{token: string}){
 
     const [currentFamilyName, setCurrentFamilyName] = useState("");
-    const [dashData, setDashData] = useState<DashboardData>();
     const [familyNames, setFamilyNames] = useState<Array<string>>([]);
     const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
     const [mapVisibility, toggleMapVisibility] = useState(false);
     const searchInput = useRef<HTMLInputElement>(null);
+    const focusZoneSelect = useRef<HTMLSelectElement>(null);
+    const [plantTop, setPlantTop] = useState<CustomChartData>();
+    const [yearDistro, setYearDistro] = useState<CustomChartData>();
+    const [yearDistroGlobal, setYearDistroGlobal] = useState<CustomChartData>();
+    const [regionObsDistroGlobal, setRegionObsDistroGlobal] = useState<CustomChartData>();
+    const startYear = 2015;
+    const endYear = 2025
 
+    // useEffect(() => {
+    //     console.log(familyNames);
+    // }, [familyNames])
 
-    const updateSearch = (evt: any) => {
-        let familyName = evt.target.getAttribute("value");
-        if(searchInput.current!=null){
+    const updateSearch = (evt: any) => { // eslint-disable-line
+        const familyName = evt.target.getAttribute("value");
+        if(searchInput.current){
             searchInput.current.value = familyName;
+            setCurrentFamilyName(familyName);
+            const fetchData = async () => { 
+                setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
+                const data = await searchFamilyNames(props.token, currentFamilyName)
+                setFamilyNames(data);
+            }
+            fetchData().then(() => {
+                toggleDropdowVisibility(false);
+                toggleMapVisibility(true);
+            })
+            .catch(console.error);
         }
-        setCurrentFamilyName(familyName);
-        toggleDropdowVisibility(!dropdowVisibility);
     }
 
-    const searchFamilyData = (evt: any) => {
+    const searchFamilyData = (evt: any) => { // eslint-disable-line
         setCurrentFamilyName(evt.target.value);
         const fetchData = async () => {
-            setFamilyNames(await searchFamilyNames(props.token, evt.target.value));
+            const data = await searchFamilyNames(props.token, evt.target.value)
+            setFamilyNames(data);
         }
         fetchData().then(() => {
             toggleDropdowVisibility(true);
         }).catch(console.error);
     }
 
-    const refreshData = () => {
+
+    const zoneOnChangeHandler = () => {
+        const refreshData = async ()=> {
+            setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value || ''));
+            setYearDistroGlobal(await getYearlyObsDistro(props.token, '', startYear, endYear));
+            if(focusZoneSelect.current){
+                setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, startYear, endYear))
+            }
+        }
+        refreshData()
+        .catch(console.error)
+    }
+
+    useEffect(() => {
         if(searchInput.current){
-            setCurrentFamilyName(searchInput.current.value);
+            setCurrentFamilyName(searchInput.current?.value);
         }
-        const fetchData = async () => {
-            setDashData(await getDashboardData(props.token, currentFamilyName));   
+        const refreshData = async ()=> {
+            setRegionObsDistroGlobal(await getRegionObsDistro(props.token, ''));
+            setYearDistroGlobal(await getYearlyObsDistro(props.token, '', startYear, endYear));
+            if(focusZoneSelect.current){
+                setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, startYear, endYear))
+            }
+            setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
         }
-        fetchData()
-        .catch(console.error);
-        toggleDropdowVisibility(false);
-        toggleMapVisibility(true);
-    }
-
-
-    const zoneOnChangeHandler = (evt: any) => {
-        console.log("zone changed");
-    }
+        refreshData()
+        .catch(console.error)
+    }, [searchInput, focusZoneSelect, currentFamilyName])
 
     
     return (
@@ -71,12 +101,13 @@ export default function StatsComponent(props:{token: string}){
                         <span>Country distribution of plant specie family</span><br/>
                         <div className="flex flex-row justify-between align-middle">
                             <input type="text" placeholder="Start typing family name here" 
-                                onKeyUp={searchFamilyData} defaultValue={currentFamilyName} ref={searchInput}/>
-                            <button className="bg-orange-200 rounded shadow flex flex-row justify-between align-middle p-1"
+                                onChange={searchFamilyData} defaultValue={currentFamilyName} ref={searchInput}
+                                className="p-1 rounded text-sm"/>
+                            {/* <button className="bg-orange-200 rounded shadow flex flex-row justify-between align-middle p-1"
                                 onClick={refreshData}>
                                 <MagnifyingGlassIcon className="h-5 w-5"/>
                                 <span className="ml-2">Search</span>
-                            </button>
+                            </button> */}
                         </div>
                         
                         <ul className={clsx("bg-gray-50 drop-shadow mdropdown rounded",
@@ -98,16 +129,13 @@ export default function StatsComponent(props:{token: string}){
                         <select
                             id="zone"
                             name="zone_id"
-                            defaultValue="Globe"
-                            disabled={true}
+                            defaultValue="Global"
+                            ref={focusZoneSelect}
                             onChange={zoneOnChangeHandler} 
-                            className="block w-full cursor-pointer rounded-md border py-2 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
+                            className="px-2 block w-full cursor-pointer rounded-md border py-1 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
                             >
-                            <option key={-1} value="">
-                                -- select zone of interest --
-                            </option>
-                            <option key={0} value="Globe">
-                                Globe    
+                            <option key={0} value="">
+                                Global   
                             </option>
                             <option key={1} value="Africa">
                                 Africa    
@@ -121,14 +149,19 @@ export default function StatsComponent(props:{token: string}){
                         </select>
                     </div>
                 </div>
-                { mapVisibility && <MiniMapComponent familyName={currentFamilyName} token={props.token}/> }
+                { mapVisibility && <div>
+                    <span className={`${lusitana.className} mb-2`}>Distribution per country of plants of the {currentFamilyName} family</span>
+                    <MiniMapComponent familyName={currentFamilyName} token={props.token}/>
+                </div> }
             </div>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-                {/* <BarChart data={dashData?.sites_per_country} show_labels={true}/> */}
-                { mapVisibility && <BarChart data={dashData?.top_20_plants} show_labels={true}/>}
-                {/* <BarChart data={dashData?.obs_montly_distro} show_labels={true}/> */}
-                { mapVisibility && <BarChart data={dashData?.obs_10_year_overview} show_labels={true}/>}
-                {/* <PieChart data={dashData?.obs_per_region} show_labels={true} /> */}
+                { mapVisibility && <BarChart data={plantTop} show_labels={true}/>}
+                { mapVisibility && <BarChart data={yearDistro} show_labels={true}/>}
+                <BarChart data={yearDistroGlobal} show_labels={true}/>
+                <div>
+                    <h4 className={`${lusitana.className} mb-4 text-xl`}>Distribution of observations per region</h4>
+                    <PieChart data={regionObsDistroGlobal} show_labels={true} />
+                </div>
             </div>
         </div>
     )

@@ -7,3 +7,8 @@ export const PLANT_DATA_URL = BASE_API_URL + "/data/get"
 export const FAMILY_DATA_URL = BASE_API_URL + "/data/family"
 export const FAMILY_DATA_MAX_URL = BASE_API_URL + "/data/family/max"
 export const FAMILY_NAME_SEARCH =  BASE_API_URL + "/data/family/search"
+export const MONTHLY_DISTRO_URL = BASE_API_URL + "/data/monthly/distro"
+export const REGION_DISTRO_URL = BASE_API_URL + "/data/region/distro"
+export const YEAR_DISTRO_URL = BASE_API_URL + "/data/yearly/distro"
+export const PLANT_TOP_URL = BASE_API_URL + "/data/plants/top"
+
