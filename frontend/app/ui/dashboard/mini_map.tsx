@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useActionState, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
@@ -16,7 +16,6 @@ const MiniMapComponent = (props: {familyName: any, token:string}) => { // eslint
 
     const [map, refreshMap] = useState<Map>();
     const [geojsonObject, setGeojsonObject] = useState({});
-    const [reloadMap, setReloadMap] = useState(false);
     const [familyMax, setFamilyMax] = useState(0);
 
     useEffect(() => {
@@ -38,13 +37,12 @@ const MiniMapComponent = (props: {familyName: any, token:string}) => { // eslint
             }
         };
         const getGeoJSON = async () => {
-            setReloadMap(false);
             const data = await getFamilyData(props.token, props.familyName);
             const max = await getFamilyDataMax(props.token, props.familyName);
             setGeojsonObject(data); 
             setFamilyMax(max);
         };
-        getGeoJSON().then(()=>{setReloadMap(true);})
+        getGeoJSON()
         .catch(console.error);
         const styleFunction = function (feature: any) { // eslint-disable-line
             // feature.getGeometry().getType() // eslint-disable-line

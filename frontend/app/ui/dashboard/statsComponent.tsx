@@ -1,12 +1,11 @@
 "use client"
 
-import { searchFamilyNames, getDashboardData, getFamilyData, getFamilyDataMax, getPlantTopX, getRegionObsDistro, getYearlyObsDistro } from "@/app/lib/client_actions";
-import { CustomChartData, DashboardData } from "@/app/lib/definitions";
+import { searchFamilyNames, getPlantTopX, getRegionObsDistro, getYearlyObsDistro } from "@/app/lib/client_actions";
+import { CustomChartData } from "@/app/lib/definitions";
 import BarChart from "@/app/ui/dashboard/charts/barchart";
 import MiniMapComponent from "@/app/ui/dashboard/mini_map";
 import { lusitana } from "@/app/ui/fonts";
-import { useState, useEffect, useActionState, startTransition, useRef } from 'react';
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { useState, useEffect, useRef } from 'react';
 import clsx from "clsx";
 import PieChart from "./charts/piechart";
 
@@ -19,7 +18,6 @@ import PieChart from "./charts/piechart";
 export default function StatsComponent(props:{token: string}){
 
     const [currentFamilyName, setCurrentFamilyName] = useState("");
-    const [dashData, setDashData] = useState<DashboardData>();
     const [familyNames, setFamilyNames] = useState<Array<string>>([]);
     const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
     const [mapVisibility, toggleMapVisibility] = useState(false);
@@ -27,8 +25,6 @@ export default function StatsComponent(props:{token: string}){
     const focusZoneSelect = useRef<HTMLSelectElement>(null);
     const [plantTop, setPlantTop] = useState<CustomChartData>();
     const [yearDistro, setYearDistro] = useState<CustomChartData>();
-    const [regionObsDistro, setRegionObsDistro] = useState<CustomChartData>();
-    const [plantTopGlobal, setPlantTopGlobal] = useState<CustomChartData>();
     const [yearDistroGlobal, setYearDistroGlobal] = useState<CustomChartData>();
     const [regionObsDistroGlobal, setRegionObsDistroGlobal] = useState<CustomChartData>();
     const startYear = 2015;
@@ -38,13 +34,12 @@ export default function StatsComponent(props:{token: string}){
     //     console.log(familyNames);
     // }, [familyNames])
 
-    const updateSearch = (evt: any) => {
-        let familyName = evt.target.getAttribute("value");
+    const updateSearch = (evt: any) => { // eslint-disable-line
+        const familyName = evt.target.getAttribute("value");
         if(searchInput.current){
             searchInput.current.value = familyName;
             setCurrentFamilyName(familyName);
-            const fetchData = async () => {
-                setDashData(await getDashboardData(props.token, currentFamilyName));  
+            const fetchData = async () => { 
                 setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
             }
             fetchData()
@@ -54,7 +49,7 @@ export default function StatsComponent(props:{token: string}){
         }
     }
 
-    const searchFamilyData = (evt: any) => {
+    const searchFamilyData = (evt: any) => { // eslint-disable-line
         setCurrentFamilyName(evt.target.value);
         const fetchData = async () => {
             const data = await searchFamilyNames(props.token, evt.target.value)
@@ -66,9 +61,8 @@ export default function StatsComponent(props:{token: string}){
     }
 
 
-    const zoneOnChangeHandler = (evt: any) => {
+    const zoneOnChangeHandler = () => {
         const refreshData = async ()=> {
-            setPlantTopGlobal(await getPlantTopX(props.token, "", 20));
             setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value || ''));
             setYearDistroGlobal(await getYearlyObsDistro(props.token, '', startYear, endYear));
             if(focusZoneSelect.current){
@@ -84,7 +78,6 @@ export default function StatsComponent(props:{token: string}){
             setCurrentFamilyName(searchInput.current?.value);
         }
         const refreshData = async ()=> {
-            setPlantTopGlobal(await getPlantTopX(props.token, "", 20));
             setRegionObsDistroGlobal(await getRegionObsDistro(props.token, ''));
             setYearDistroGlobal(await getYearlyObsDistro(props.token, '', startYear, endYear));
             if(focusZoneSelect.current){
