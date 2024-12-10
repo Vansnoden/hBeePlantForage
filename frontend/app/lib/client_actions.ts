@@ -1,8 +1,8 @@
 "use client";
 
-import { FAMILY_DATA_MAX_URL, FAMILY_DATA_URL, FAMILY_NAME_SEARCH, PLANT_DATA_URL } from './constants';
+import { FAMILY_DATA_MAX_URL, FAMILY_DATA_URL, FAMILY_NAME_SEARCH, PLANT_DATA_URL, PLANT_TOP_URL, REGION_DISTRO_URL, YEAR_DISTRO_URL } from './constants';
 import { DASHBOARD_DATA_URL } from "./constants";
-import { DashboardData, PlantData } from './definitions';
+import { CustomChartData, DashboardData, PlantData } from './definitions';
 
 
 export async function getDashboardData(token: string, fname: string){
@@ -14,6 +14,41 @@ export async function getDashboardData(token: string, fname: string){
     }).then((res) => res.json())
     return dashData as DashboardData;
 }
+
+
+export async function getPlantTopX(token: string, fname: string, limit:number){
+    const dashData = await fetch(PLANT_TOP_URL +"?fname="+fname+"&top="+limit, {
+        method: 'GET',
+        headers: {
+          "Authorization": token
+        }
+    }).then((res) => res.json())
+    return dashData?.data as CustomChartData;
+}
+  
+
+export async function getRegionObsDistro(token: string, cname: string){
+    const dashData = await fetch(REGION_DISTRO_URL +"?cname="+cname, {
+        method: 'GET',
+        headers: {
+          "Authorization": token
+        }
+    }).then((res) => res.json())
+    return dashData?.data as CustomChartData;
+}
+
+
+export async function getYearlyObsDistro(token: string, cname: string, yearStart:number, yearEnd:number){
+    const dashData = await fetch(YEAR_DISTRO_URL +"?cname="+cname+"&year_start="+yearStart+"&year_end="+yearEnd, {
+        method: 'GET',
+        headers: {
+          "Authorization": token
+        }
+    }).then((res) => res.json())
+    return dashData?.data as CustomChartData;
+}
+
+
 
 export async function getPlantData(token: string, query: string, currentPage: number){
     const myHeaders = new Headers();
@@ -59,6 +94,6 @@ export async function searchFamilyNames(token: string, search_string: string){
         headers: myHeaders,
     };
     let data:Array<string> = await fetch(FAMILY_NAME_SEARCH + `?search_string=${search_string}`, requestOptions)
-    .then((response) => response.json())
+    .then((response) => response.json());
     return data; 
 }

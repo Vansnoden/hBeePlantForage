@@ -1,11 +1,12 @@
 'use server'
 
 import { AuthError } from 'next-auth';
-import { FAMILY_DATA_MAX_URL, FAMILY_DATA_URL, FAMILY_NAME_SEARCH, PLANT_DATA_URL } from './constants';
+import { FAMILY_DATA_MAX_URL, FAMILY_DATA_URL, FAMILY_NAME_SEARCH, PLANT_DATA_URL, PLANT_TOP_URL, REGION_DISTRO_URL } from './constants';
 import { cookies } from 'next/headers'
 import { signIn } from '../../auth';
 import { DASHBOARD_DATA_URL } from "./constants";
-import { DashboardData, PlantData } from './definitions';
+import { CustomChartData, DashboardData, PlantData } from './definitions';
+
 
 export type State = {
     errors?: {
@@ -51,6 +52,30 @@ export async function getDashboardData(fname: string){
   }).then((res) => res.json())
   return dashData as DashboardData;
 }
+
+
+export async function getPlantTopX(fname: string, limit:number){
+  const token = await getToken() as string
+  const dashData = await fetch(PLANT_TOP_URL +"?fname="+fname+"&top="+limit, {
+      method: 'GET',
+      headers: {
+        "Authorization": token
+      }
+  }).then((res) => res.json())
+  return dashData?.data as CustomChartData;
+}
+
+export async function getRegionObsDistro(cname: string){
+  const token = await getToken() as string
+  const dashData = await fetch(REGION_DISTRO_URL +"?cname="+cname, {
+      method: 'GET',
+      headers: {
+        "Authorization": token
+      }
+  }).then((res) => res.json())
+  return dashData?.data as CustomChartData;
+}
+
 
 export async function getPlantData(query: string, currentPage: number){
   const token = await getToken() as string

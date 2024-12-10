@@ -16,6 +16,7 @@ const MiniMapComponent = (props: {familyName: any, token:string}) => { // eslint
 
     const [map, refreshMap] = useState<Map>();
     const [geojsonObject, setGeojsonObject] = useState({});
+    const [reloadMap, setReloadMap] = useState(true)
     const [familyMax, setFamilyMax] = useState(0);
 
     useEffect(() => {
@@ -41,7 +42,7 @@ const MiniMapComponent = (props: {familyName: any, token:string}) => { // eslint
             const max = await getFamilyDataMax(props.token, props.familyName);
             return [data, max];
         };
-        getGeoJSON().then((res:any)=>{setGeojsonObject(res[0]); setFamilyMax(res[1])});
+        getGeoJSON().then((res:any)=>{setGeojsonObject(res[0]); setFamilyMax(res[1]);setReloadMap(!reloadMap);});
         const styleFunction = function (feature: any) { // eslint-disable-line
             // feature.getGeometry().getType() // eslint-disable-line
             return styles(feature.getProperties().count / familyMax)[feature.getGeometry().getType()]; // eslint-disable-line
@@ -85,7 +86,7 @@ const MiniMapComponent = (props: {familyName: any, token:string}) => { // eslint
         }
         return () => map?.setTarget()
 
-    }, [geojsonObject]);
+    }, []);
     
     return (
         <div className={`${lusitana.className}`}>

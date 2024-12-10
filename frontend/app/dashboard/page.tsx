@@ -1,10 +1,11 @@
 import BarChart from "../ui/dashboard/charts/barchart";
 import CardWrapper from "../ui/dashboard/card";
 import { lusitana } from "../ui/fonts";
-import { getDashboardData } from "../lib/actions";
+import { getDashboardData, getPlantTopX, getRegionObsDistro } from "../lib/actions";
 import DataTable from "../ui/dashboard/table";
 import Search from "../ui/dashboard/search";
 import PieChart from "../ui/dashboard/charts/piechart";
+
 
 
 export default async function Dashboard(props: {
@@ -15,6 +16,8 @@ export default async function Dashboard(props: {
   }){  
 
     const dashData = await getDashboardData("");
+    const plantTop = await getPlantTopX("", 10); //global
+    const regionObsDistro = await getRegionObsDistro(""); // global
     const searchParams = await props.searchParams;
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;
@@ -33,11 +36,11 @@ export default async function Dashboard(props: {
                         Quick Stats
                     </h2>
                     <div>
-                        <BarChart data={dashData?.top_20_plants} show_labels={false}/>
+                        <BarChart data={plantTop} show_labels={false}/>
                     </div>
                     <div>
                         <h3 className={`${lusitana.className}`}>Distribution of observations per region</h3>
-                        <PieChart data={dashData?.obs_per_region} show_labels={true} />
+                        <PieChart data={regionObsDistro} show_labels={true} />
                     </div>
                 </div>
                 <div className="sm:col-span-4 md:col-span-3">
