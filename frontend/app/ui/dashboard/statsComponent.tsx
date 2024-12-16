@@ -48,13 +48,12 @@ export default function StatsComponent(props:{token: string}){
     }
 
     const searchFamilyData = (evt: any) => { // eslint-disable-line
-        setCurrentFamilyName(evt.target.value);
-        const fetchData = async () => {
-            setFamilyNames(await searchFamilyNames(props.token, evt.target.value));
-        }
-        fetchData().then(() => {
+        searchFamilyNames(props.token, evt.target.value).then((data) => {
+            console.log(`INPUT VALUE: ${evt.target.value}`);
+            console.log(data);
+            setFamilyNames(data);
             toggleDropdowVisibility(true);
-        }).catch(console.error);
+        })
     }
 
 
@@ -99,7 +98,7 @@ export default function StatsComponent(props:{token: string}){
                         <span>Country distribution of plant specie family</span><br/>
                         <div className="flex flex-row justify-between align-middle">
                             <input type="text" placeholder="Start typing family name here" 
-                                onChange={searchFamilyData} defaultValue={currentFamilyName} ref={searchInput}
+                                onKeyUp={searchFamilyData} defaultValue={currentFamilyName} ref={searchInput}
                                 className="p-1 rounded text-sm"/>
                             {/* <button className="bg-orange-200 rounded shadow flex flex-row justify-between align-middle p-1"
                                 onClick={refreshData}>
@@ -148,14 +147,14 @@ export default function StatsComponent(props:{token: string}){
                         </select>
                     </div>
                 </div>
-                { mapVisibility && <div>
+                <div>
                     <span className={`${lusitana.className} mb-2`}>Distribution per country of plants of the {currentFamilyName} family</span>
                     <MiniMapComponent familyName={currentFamilyName} geojsonData={geojsonData} max={familyMax} token={props.token}/>
-                </div> }
+                </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-                { mapVisibility && <BarChart data={plantTop} show_labels={true}/>}
-                { mapVisibility && <BarChart data={yearDistro} show_labels={true}/>}
+                <BarChart data={plantTop} show_labels={true}/>
+                <BarChart data={yearDistro} show_labels={true}/>
                 <BarChart data={yearDistroGlobal} show_labels={true}/>
                 <div>
                     <h4 className={`${lusitana.className} mb-4 text-xl`}>Distribution of observations per region</h4>

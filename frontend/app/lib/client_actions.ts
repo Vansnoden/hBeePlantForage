@@ -93,7 +93,9 @@ export async function searchFamilyNames(token: string, search_string: string){
         method: "GET",
         headers: myHeaders,
     };
-    const data:Array<string> = await fetch(FAMILY_NAME_SEARCH + `?search_string=${search_string}`, requestOptions)
+    console.log(`IN FUNC: ${search_string}`)
+    const data:Array<string> = await fetch(FAMILY_NAME_SEARCH + search_string, requestOptions)
     .then((response) => response.json());
+    console.log(`FUNC RESPONSE: ${data}`)
     return data; 
 }
