@@ -13,6 +13,8 @@ import { lusitana } from '../fonts';
 
 const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number, token:string}) => { // eslint-disable-line
 
+    const [isLoading, setLoading] = useState(false);
+
     useEffect(() => {
         const osmLayer = new TileLayer({
             preload: Infinity,
@@ -40,6 +42,7 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
 
         if(props.geojsonData){
             if(Object.keys(props.geojsonData).length !== 0){
+                setLoading(true);
                 const vectorSource = new VectorSource({
                     features: new GeoJSON().readFeatures(props.geojsonData, {featureProjection: 'EPSG:3857'}),
                 });
@@ -55,8 +58,10 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                         zoom: 0,
                     }),
                 })
+                setLoading(false);
                 return () => map.setTarget();
             }else{
+                setLoading(true);
                 const map = new Map({
                     target: "map",
                     layers: [osmLayer],
@@ -65,9 +70,11 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                         zoom: 0,
                     }),
                 })
+                setLoading(false);
                 return () => map.setTarget();
             }
         }else{
+            setLoading(true);
             const map = new Map({
                 target: "map",
                 layers: [osmLayer],
@@ -76,6 +83,7 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                     zoom: 0,
                 }),
             })
+            setLoading(false);
             return () => map.setTarget()
         }
     }, [props.familyName, props.geojsonData]); //props.familyName
@@ -87,7 +95,7 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                     <div id="map" className='map'></div>
                 </div>
             </div>
-            {props.familyName}
+            { isLoading && <span> ... Loading data for </span> } { !isLoading && <span> Loaded data for </span> } {props.familyName}
         </div>
     )
 }
