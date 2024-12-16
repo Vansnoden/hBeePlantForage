@@ -1,6 +1,6 @@
 "use client";
 
-import { FAMILY_DATA_MAX_URL, FAMILY_DATA_URL, FAMILY_NAME_SEARCH, PLANT_DATA_URL, PLANT_TOP_URL, REGION_DISTRO_URL, YEAR_DISTRO_URL } from './constants';
+import { FAMILY_DATA_MAX_URL, FAMILY_DATA_URL, FAMILY_NAME_SEARCH, PLANT_DATA_URL, PLANT_TOP_URL, POIN_DATA_URL, REGION_DISTRO_URL, YEAR_DISTRO_URL } from './constants';
 import { DASHBOARD_DATA_URL } from "./constants";
 import { CustomChartData, DashboardData, PlantData } from './definitions';
 
@@ -94,6 +94,24 @@ export async function searchFamilyNames(token: string, search_string: string){
         headers: myHeaders,
     };
     const data:Array<string> = await fetch(FAMILY_NAME_SEARCH + search_string, requestOptions)
+    .then((response) => response.json());
+    return data; 
+}
+
+
+export async function getPointData(token: string, oids: Array<number>){
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", token);
+    myHeaders.append('Accept', 'application/json')
+    myHeaders.append('Content-Type', 'application/json');
+    const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: JSON.stringify({
+            "oids": oids
+        })
+    };
+    const data = await fetch(POIN_DATA_URL, requestOptions)
     .then((response) => response.json());
     return data; 
 }

@@ -44,6 +44,8 @@ export interface PlantData{
 
 
 export interface Observation{
+    id: number,
+    fid: number,
     site_id: number,
     plant_specie_id: number,
     source: string,
@@ -51,5 +53,6 @@ export interface Observation{
     year: number,
     month: number,
     lat: number,
-    lon: number
+    lon: number,
+    specie_class: string
 }

@@ -178,5 +178,5 @@ group by s.region
 QUERY_SITE_INFO = """
 select s.name as site, s.country, ps.name as specie_name, f.name as family, o.specie_class 
 as class, o.source, o.year from observations as o, sites as s, plant_species as ps, family as f
-where  o.site_id = s.id and o.plant_specie_id = ps.id and ps.family_id = f.id and o.id={id}
+where  o.site_id = s.id and o.plant_specie_id = ps.id and ps.family_id = f.id and o.id in {oids}
 """
