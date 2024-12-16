@@ -12,46 +12,40 @@ import { lusitana } from '../fonts';
 import { getFamilyData, getFamilyDataMax } from '@/app/lib/client_actions';
 
 
-const MiniMapComponent = (props: {familyName: any, token:string}) => { // eslint-disable-line
+const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number, token:string}) => { // eslint-disable-line
 
     const [map, refreshMap] = useState<Map>();
-    const [geojsonObject, setGeojsonObject] = useState({});
-    const [familyMax, setFamilyMax] = useState(0);
+
+    const osmLayer = new TileLayer({
+        preload: Infinity,
+        source: new OSM(),
+    });
+
+    const styles = (opacity:number) => {
+        return {
+            'Polygon': new Style({
+                stroke: new Stroke({
+                    color: 'blue',
+                    width: 1,
+                }),
+                fill: new Fill({
+                    color: `rgba(0, 0, 255, ${opacity})`,
+                }),
+            }),
+        }
+    };
+
+    const styleFunction = function (feature: any) { // eslint-disable-line
+        // feature.getGeometry().getType() // eslint-disable-line
+        return styles(feature.getProperties().count / props.max)[feature.getGeometry().getType()]; // eslint-disable-line
+    }; // eslint-disable-line
+
 
     useEffect(() => {
-        const osmLayer = new TileLayer({
-            preload: Infinity,
-            source: new OSM(),
-        });
-        const styles = (opacity:number) => {
-            return {
-                'Polygon': new Style({
-                    stroke: new Stroke({
-                        color: 'blue',
-                        width: 1,
-                    }),
-                    fill: new Fill({
-                        color: `rgba(0, 0, 255, ${opacity})`,
-                    }),
-                }),
-            }
-        };
-        const getGeoJSON = async () => {
-            const data = await getFamilyData(props.token, props.familyName);
-            const max = await getFamilyDataMax(props.token, props.familyName);
-            setGeojsonObject(data); 
-            setFamilyMax(max);
-        };
-        getGeoJSON()
-        .catch(console.error);
-        const styleFunction = function (feature: any) { // eslint-disable-line
-            // feature.getGeometry().getType() // eslint-disable-line
-            return styles(feature.getProperties().count / familyMax)[feature.getGeometry().getType()]; // eslint-disable-line
-        }; // eslint-disable-line
-        if(geojsonObject){
-            if(Object.keys(geojsonObject).length !== 0){
+        if(props.geojsonData){
+            if(Object.keys(props.geojsonData).length !== 0){
                 const vectorSource = new VectorSource({
-                    features: new GeoJSON().readFeatures(geojsonObject, {featureProjection: 'EPSG:3857'}),
+                    features: new GeoJSON().readFeatures(props.geojsonData, {featureProjection: 'EPSG:3857'}),
                 });
                 const vectorLayer = new VectorLayer({
                     source: vectorSource,
@@ -86,8 +80,7 @@ const MiniMapComponent = (props: {familyName: any, token:string}) => { // eslint
             }))
         }
         return () => map?.setTarget()
-
-    }, [props.familyName]);
+    }, []); //props.familyName
     
     return (
         <div className={`${lusitana.className}`}>

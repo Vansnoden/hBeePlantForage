@@ -1,6 +1,6 @@
 "use client"
 
-import { searchFamilyNames, getPlantTopX, getRegionObsDistro, getYearlyObsDistro } from "@/app/lib/client_actions";
+import { searchFamilyNames, getPlantTopX, getRegionObsDistro, getYearlyObsDistro, getFamilyData, getFamilyDataMax } from "@/app/lib/client_actions";
 import { CustomChartData } from "@/app/lib/definitions";
 import BarChart from "@/app/ui/dashboard/charts/barchart";
 import MiniMapComponent from "@/app/ui/dashboard/mini_map";
@@ -8,12 +8,26 @@ import { lusitana } from "@/app/ui/fonts";
 import { useState, useEffect, useRef } from 'react';
 import clsx from "clsx";
 import PieChart from "./charts/piechart";
-
-
+import {Select, SelectItem} from "@nextui-org/react";
 // async function updateGeoJSON(olsdGeoJSON, formData) {
 //     return previousState + 1;
 // }
 
+const animals = [
+    {key: "cat", label: "Cat"},
+    {key: "dog", label: "Dog"},
+    {key: "elephant", label: "Elephant"},
+    {key: "lion", label: "Lion"},
+    {key: "tiger", label: "Tiger"},
+    {key: "giraffe", label: "Giraffe"},
+    {key: "dolphin", label: "Dolphin"},
+    {key: "penguin", label: "Penguin"},
+    {key: "zebra", label: "Zebra"},
+    {key: "shark", label: "Shark"},
+    {key: "whale", label: "Whale"},
+    {key: "otter", label: "Otter"},
+    {key: "crocodile", label: "Crocodile"},
+];
 
 export default function StatsComponent(props:{token: string}){
 
@@ -28,12 +42,12 @@ export default function StatsComponent(props:{token: string}){
     const [yearDistroGlobal, setYearDistroGlobal] = useState<CustomChartData>();
     const [regionObsDistroGlobal, setRegionObsDistroGlobal] = useState<CustomChartData>();
     const startYear = 2015;
-    const endYear = 2025
+    const endYear = 2025;
+    const [geojsonData, setGeojsonData] = useState({});
+    const [familyMax, setFamilyMax] = useState(0);
+    const [isLoading, setLoading] = useState(false);
 
-    // useEffect(() => {
-    //     console.log(familyNames);
-    // }, [familyNames])
-
+    
     const updateSearch = (evt: any) => { // eslint-disable-line
         const familyName = evt.target.getAttribute("value");
         if(searchInput.current){
@@ -41,8 +55,8 @@ export default function StatsComponent(props:{token: string}){
             setCurrentFamilyName(familyName);
             const fetchData = async () => { 
                 setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
-                const data = await searchFamilyNames(props.token, currentFamilyName)
-                setFamilyNames(data);
+                setGeojsonData(await getFamilyData(props.token, currentFamilyName));
+                setFamilyMax(await getFamilyDataMax(props.token, currentFamilyName));
             }
             fetchData().then(() => {
                 toggleDropdowVisibility(false);
@@ -55,8 +69,7 @@ export default function StatsComponent(props:{token: string}){
     const searchFamilyData = (evt: any) => { // eslint-disable-line
         setCurrentFamilyName(evt.target.value);
         const fetchData = async () => {
-            const data = await searchFamilyNames(props.token, evt.target.value)
-            setFamilyNames(data);
+            setFamilyNames(await searchFamilyNames(props.token, evt.target.value));
         }
         fetchData().then(() => {
             toggleDropdowVisibility(true);
@@ -77,6 +90,7 @@ export default function StatsComponent(props:{token: string}){
     }
 
     useEffect(() => {
+        setLoading(true);
         if(searchInput.current){
             setCurrentFamilyName(searchInput.current?.value);
         }
@@ -88,11 +102,14 @@ export default function StatsComponent(props:{token: string}){
             }
             setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
         }
-        refreshData()
+        refreshData().then(()=>{
+            setLoading(false);
+        })
         .catch(console.error)
-    }, [searchInput, focusZoneSelect, currentFamilyName])
+    }, [])
 
-    
+    if (isLoading) return <p>Loading book data...</p>
+
     return (
         <div>
             <div className="">
@@ -124,6 +141,13 @@ export default function StatsComponent(props:{token: string}){
                             )}
                         </ul>
                     </div>
+                    <div>
+                        <Select className="max-w-xs" label="Select an animal">
+                            {animals.map((animal) => (
+                            <SelectItem key={animal.key}>{animal.label}</SelectItem>
+                            ))}
+                        </Select>
+                    </div>
                     <div className={`${lusitana.className} ml-2 relative`}>
                         <span>Select Zone of interest</span>
                         <select
@@ -151,7 +175,7 @@ export default function StatsComponent(props:{token: string}){
                 </div>
                 { mapVisibility && <div>
                     <span className={`${lusitana.className} mb-2`}>Distribution per country of plants of the {currentFamilyName} family</span>
-                    <MiniMapComponent familyName={currentFamilyName} token={props.token}/>
+                    <MiniMapComponent familyName={currentFamilyName} geojsonData={geojsonData} max={familyMax} token={props.token}/>
                 </div> }
             </div>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
