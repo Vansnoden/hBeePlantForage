@@ -174,3 +174,9 @@ select count(o.id), s.region from observations as o
 inner join sites as s on s.id=o.site_id and s.region ilike '%{continent}%'
 group by s.region
 """
+
+QUERY_SITE_INFO = """
+select s.name as site, s.country, ps.name as specie_name, f.name as family, o.specie_class 
+as class, o.source, o.year from observations as o, sites as s, plant_species as ps, family as f
+where  o.site_id = s.id and o.plant_specie_id = ps.id and ps.family_id = f.id and o.id={id}
+"""

@@ -3,8 +3,9 @@
 import json
 import os
 import shutil
+from typing import List
 from sqlalchemy import and_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from database.utils import get_float_val
 from . import models, schemas
@@ -196,3 +197,4 @@ def load_observation_data(db:Session, row:dict, site_id, plant_id) -> int:
         return db_obs.id
     else:
         return 0
+    

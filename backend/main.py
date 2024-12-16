@@ -532,3 +532,32 @@ def get_top_x_of_plants(
         return res
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
+    
+
+
+@app.get("/map/obs")
+def get_observation_data( oid: int,
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)):
+    data = []
+    if user:
+        if oid:
+            query = text(QUERY_SITE_INFO.format(id=int(oid)))
+            dataDb = db.execute(query)
+            for row in dataDb:
+                obj = {
+                    "site": row[0],
+                    "country": row[1], 
+                    "specie_name": row[2], 
+                    "family": row[3], 
+                    "class": row[4],
+                    "source": row[5],
+                    "year": row[6]
+                }
+                data.append(obj)
+        return data
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+    
+
+
