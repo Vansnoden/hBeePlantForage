@@ -30,22 +30,21 @@ export default function StatsComponent(props:{token: string}){
 
     const updateSearch = (evt: any) => { // eslint-disable-line
         const familyName = evt.target.getAttribute("value");
+        setCurrentFamilyName(familyName);
+        toggleDropdowVisibility(false);
         if(searchInput.current){
             searchInput.current.value = familyName;
-            setCurrentFamilyName(familyName);
-            getPlantTopX(props.token, currentFamilyName, 20).then((currentPlantTop20) => {
-                setPlantTop(currentPlantTop20);
-            }).then(()=>{
-                getFamilyData(props.token, currentFamilyName).then((mgeojson)=>{
-                    setGeojsonData(mgeojson);
-                }).then(() => {
-                    getFamilyDataMax(props.token, currentFamilyName).then((currentF) => {
-                        setFamilyMax(currentF);
-                    })
-                })
-            })
         }
-        toggleDropdowVisibility(false);
+        const getData = async ()=>{
+            const familyData = await getFamilyData(props.token, familyName).then((geojsonD) => {
+                setGeojsonData(geojsonD);
+            });
+            const top20 = await getPlantTopX(props.token, familyName, 20);
+            const max = await getFamilyDataMax(props.token, familyName);
+            setPlantTop(top20);
+            setFamilyMax(max);
+        }
+        getData().catch(console.error);
     }
 
     const searchFamilyData = (evt: any) => { // eslint-disable-line
@@ -79,6 +78,7 @@ export default function StatsComponent(props:{token: string}){
                 setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, startYear, endYear))
             }
             setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
+            setGeojsonData(await getFamilyData(props.token, currentFamilyName));
         }
         refreshData().then(()=>{
             setLoading(false);
@@ -86,7 +86,7 @@ export default function StatsComponent(props:{token: string}){
         .catch(console.error)
     }, [currentFamilyName])
 
-    if (isLoading) return <p>Loading data...</p>
+    // if (isLoading) return <p>Loading data...</p>
 
     return (
         <div>

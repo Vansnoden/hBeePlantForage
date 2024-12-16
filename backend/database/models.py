@@ -80,3 +80,4 @@ class Observation(Base):
     lat = Column(Float, nullable=True)
     lon = Column(Float, nullable=True)
     geom = Column(Geometry('POINT'), nullable=True)
+    specie_class = Column(String, nullable=True)
