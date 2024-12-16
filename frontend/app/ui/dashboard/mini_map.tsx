@@ -55,7 +55,6 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                         zoom: 0,
                     }),
                 })
-                console.log(`1. ---- ${props.geojsonData}`);
                 return () => map.setTarget();
             }else{
                 const map = new Map({
@@ -66,7 +65,6 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                         zoom: 0,
                     }),
                 })
-                console.log(`2. ---- ${props.geojsonData}`);
                 return () => map.setTarget();
             }
         }else{
@@ -78,7 +76,6 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                     zoom: 0,
                 }),
             })
-            console.log(`3. ---- ${props.geojsonData}`);
             return () => map.setTarget()
         }
     }, [props.familyName, props.geojsonData]); //props.familyName
