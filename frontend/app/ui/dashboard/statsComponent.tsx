@@ -1,18 +1,13 @@
 "use client"
 
-import { searchFamilyNames, getPlantTopX, getRegionObsDistro, getYearlyObsDistro } from "@/app/lib/client_actions";
-import { CustomChartData } from "@/app/lib/definitions";
-import BarChart from "@/app/ui/dashboard/charts/barchart";
-import MiniMapComponent from "@/app/ui/dashboard/mini_map";
-import { lusitana } from "@/app/ui/fonts";
+import { searchFamilyNames, getPlantTopX, getRegionObsDistro, getYearlyObsDistro, getFamilyData, getFamilyDataMax } from "@/app/lib/client_actions";
+import { CustomChartData } from "../../lib/definitions";
+import BarChart from "../../ui/dashboard/charts/barchart";
+import MiniMapComponent from "../../ui/dashboard/mini_map";
+import { lusitana } from "../../ui/fonts";
 import { useState, useEffect, useRef } from 'react';
 import clsx from "clsx";
 import PieChart from "./charts/piechart";
-
-
-// async function updateGeoJSON(olsdGeoJSON, formData) {
-//     return previousState + 1;
-// }
 
 
 export default function StatsComponent(props:{token: string}){
@@ -28,41 +23,37 @@ export default function StatsComponent(props:{token: string}){
     const [yearDistroGlobal, setYearDistroGlobal] = useState<CustomChartData>();
     const [regionObsDistroGlobal, setRegionObsDistroGlobal] = useState<CustomChartData>();
     const startYear = 2015;
-    const endYear = 2025
-
-    // useEffect(() => {
-    //     console.log(familyNames);
-    // }, [familyNames])
+    const endYear = 2025;
+    const [geojsonData, setGeojsonData] = useState({});
+    const [familyMax, setFamilyMax] = useState(0);
+    const [isLoading, setLoading] = useState(false);
 
     const updateSearch = (evt: any) => { // eslint-disable-line
         const familyName = evt.target.getAttribute("value");
         if(searchInput.current){
             searchInput.current.value = familyName;
             setCurrentFamilyName(familyName);
-            const fetchData = async () => { 
-                setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
-                const data = await searchFamilyNames(props.token, currentFamilyName)
-                setFamilyNames(data);
-            }
-            fetchData().then(() => {
-                toggleDropdowVisibility(false);
-                toggleMapVisibility(true);
+            getPlantTopX(props.token, currentFamilyName, 20).then((currentPlantTop20) => {
+                setPlantTop(currentPlantTop20);
+            }).then(()=>{
+                getFamilyData(props.token, currentFamilyName).then((mgeojson)=>{
+                    setGeojsonData(mgeojson);
+                }).then(() => {
+                    getFamilyDataMax(props.token, currentFamilyName).then((currentF) => {
+                        setFamilyMax(currentF);
+                    })
+                })
             })
-            .catch(console.error);
         }
+        toggleDropdowVisibility(false);
     }
 
     const searchFamilyData = (evt: any) => { // eslint-disable-line
-        setCurrentFamilyName(evt.target.value);
-        const fetchData = async () => {
-            const data = await searchFamilyNames(props.token, evt.target.value)
-            setFamilyNames(data);
-        }
-        fetchData().then(() => {
+        searchFamilyNames(props.token, evt.target.value).then((families) => {
+            setFamilyNames(families);
             toggleDropdowVisibility(true);
-        }).catch(console.error);
+        })
     }
-
 
     const zoneOnChangeHandler = () => {
         const refreshData = async ()=> {
@@ -77,6 +68,7 @@ export default function StatsComponent(props:{token: string}){
     }
 
     useEffect(() => {
+        setLoading(true);
         if(searchInput.current){
             setCurrentFamilyName(searchInput.current?.value);
         }
@@ -88,11 +80,14 @@ export default function StatsComponent(props:{token: string}){
             }
             setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
         }
-        refreshData()
+        refreshData().then(()=>{
+            setLoading(false);
+        })
         .catch(console.error)
-    }, [searchInput, focusZoneSelect, currentFamilyName])
+    }, [currentFamilyName])
 
-    
+    if (isLoading) return <p>Loading data...</p>
+
     return (
         <div>
             <div className="">
@@ -101,15 +96,9 @@ export default function StatsComponent(props:{token: string}){
                         <span>Country distribution of plant specie family</span><br/>
                         <div className="flex flex-row justify-between align-middle">
                             <input type="text" placeholder="Start typing family name here" 
-                                onChange={searchFamilyData} defaultValue={currentFamilyName} ref={searchInput}
+                                onKeyUp={searchFamilyData} defaultValue={currentFamilyName} ref={searchInput}
                                 className="p-1 rounded text-sm"/>
-                            {/* <button className="bg-orange-200 rounded shadow flex flex-row justify-between align-middle p-1"
-                                onClick={refreshData}>
-                                <MagnifyingGlassIcon className="h-5 w-5"/>
-                                <span className="ml-2">Search</span>
-                            </button> */}
                         </div>
-                        
                         <ul className={clsx("bg-gray-50 drop-shadow mdropdown rounded",
                             {
                                 'hidden': dropdowVisibility === false,
@@ -149,14 +138,14 @@ export default function StatsComponent(props:{token: string}){
                         </select>
                     </div>
                 </div>
-                { mapVisibility && <div>
+                <div>
                     <span className={`${lusitana.className} mb-2`}>Distribution per country of plants of the {currentFamilyName} family</span>
-                    <MiniMapComponent familyName={currentFamilyName} token={props.token}/>
-                </div> }
+                    <MiniMapComponent familyName={currentFamilyName} geojsonData={geojsonData} max={familyMax} token={props.token}/>
+                </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-                { mapVisibility && <BarChart data={plantTop} show_labels={true}/>}
-                { mapVisibility && <BarChart data={yearDistro} show_labels={true}/>}
+                <BarChart data={plantTop} show_labels={true}/>
+                <BarChart data={yearDistro} show_labels={true}/>
                 <BarChart data={yearDistroGlobal} show_labels={true}/>
                 <div>
                     <h4 className={`${lusitana.className} mb-4 text-xl`}>Distribution of observations per region</h4>

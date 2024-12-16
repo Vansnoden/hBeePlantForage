@@ -1,5 +1,5 @@
-import { getToken } from '@/app/lib/actions'
-import StatsComponent from '@/app/ui/dashboard/statsComponent'
+import { getToken } from '../../lib/actions'
+import StatsComponent from '../../ui/dashboard/statsComponent'
 
 
 export default async function StatsPage() {
