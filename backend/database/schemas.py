@@ -85,3 +85,4 @@ class Observation(BaseModel):
     month: int
     lat: float
     lon: float
+    specie_class: str
