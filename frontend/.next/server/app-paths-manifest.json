@@ -1,5 +1,5 @@
 {
-  "/dashboard/page": "app/dashboard/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/dashboard/stats/page": "app/dashboard/stats/page.js",
-  "/dashboard/map/page": "app/dashboard/map/page.js"
+  "/dashboard/page": "app/dashboard/page.js"
 }

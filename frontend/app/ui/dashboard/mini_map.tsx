@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
@@ -12,9 +12,6 @@ import { lusitana } from '../fonts';
 
 
 const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number, token:string}) => { // eslint-disable-line
-
-    const [map, refreshMap] = useState<Map>();
-
 
     useEffect(() => {
         const osmLayer = new TileLayer({
@@ -50,27 +47,41 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                     source: vectorSource,
                     style: styleFunction,
                 });
-                refreshMap(new Map({
+                const map = new Map({
                     target: "map",
                     layers: [osmLayer, vectorLayer],
                     view: new View({
                         center: [0, 0],
                         zoom: 0,
                     }),
-                }))
+                })
+                console.log(`1. ---- ${props.geojsonData}`);
+                return () => map.setTarget();
             }else{
-                refreshMap(new Map({
+                const map = new Map({
                     target: "map",
                     layers: [osmLayer],
                     view: new View({
                         center: [0, 0],
                         zoom: 0,
                     }),
-                }))
+                })
+                console.log(`2. ---- ${props.geojsonData}`);
+                return () => map.setTarget();
             }
+        }else{
+            const map = new Map({
+                target: "map",
+                layers: [osmLayer],
+                view: new View({
+                    center: [0, 0],
+                    zoom: 0,
+                }),
+            })
+            console.log(`3. ---- ${props.geojsonData}`);
+            return () => map.setTarget()
         }
-        return () => map?.setTarget()
-    }, [props.geojsonData, props.familyName]); //props.familyName
+    }, [props.familyName, props.geojsonData]); //props.familyName
     
     return (
         <div className={`${lusitana.className}`}>
