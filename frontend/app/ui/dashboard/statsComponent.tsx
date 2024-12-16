@@ -28,34 +28,32 @@ export default function StatsComponent(props:{token: string}){
     const [familyMax, setFamilyMax] = useState(0);
     const [isLoading, setLoading] = useState(false);
 
-    
     const updateSearch = (evt: any) => { // eslint-disable-line
         const familyName = evt.target.getAttribute("value");
         if(searchInput.current){
             searchInput.current.value = familyName;
             setCurrentFamilyName(familyName);
-            const fetchData = async () => { 
-                setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
-                setGeojsonData(await getFamilyData(props.token, currentFamilyName));
-                setFamilyMax(await getFamilyDataMax(props.token, currentFamilyName));
-            }
-            fetchData().then(() => {
-                toggleDropdowVisibility(false);
-                toggleMapVisibility(true);
+            getPlantTopX(props.token, currentFamilyName, 20).then((currentPlantTop20) => {
+                setPlantTop(currentPlantTop20);
+            }).then(()=>{
+                getFamilyData(props.token, currentFamilyName).then((mgeojson)=>{
+                    setGeojsonData(mgeojson);
+                }).then(() => {
+                    getFamilyDataMax(props.token, currentFamilyName).then((currentF) => {
+                        setFamilyMax(currentF);
+                    })
+                })
             })
-            .catch(console.error);
         }
+        toggleDropdowVisibility(false);
     }
 
     const searchFamilyData = (evt: any) => { // eslint-disable-line
-        searchFamilyNames(props.token, evt.target.value).then((data) => {
-            console.log(`INPUT VALUE: ${evt.target.value}`);
-            console.log(data);
-            setFamilyNames(data);
+        searchFamilyNames(props.token, evt.target.value).then((families) => {
+            setFamilyNames(families);
             toggleDropdowVisibility(true);
         })
     }
-
 
     const zoneOnChangeHandler = () => {
         const refreshData = async ()=> {
@@ -86,9 +84,9 @@ export default function StatsComponent(props:{token: string}){
             setLoading(false);
         })
         .catch(console.error)
-    }, [])
+    }, [currentFamilyName])
 
-    if (isLoading) return <p>Loading book data...</p>
+    if (isLoading) return <p>Loading data...</p>
 
     return (
         <div>
@@ -100,13 +98,7 @@ export default function StatsComponent(props:{token: string}){
                             <input type="text" placeholder="Start typing family name here" 
                                 onKeyUp={searchFamilyData} defaultValue={currentFamilyName} ref={searchInput}
                                 className="p-1 rounded text-sm"/>
-                            {/* <button className="bg-orange-200 rounded shadow flex flex-row justify-between align-middle p-1"
-                                onClick={refreshData}>
-                                <MagnifyingGlassIcon className="h-5 w-5"/>
-                                <span className="ml-2">Search</span>
-                            </button> */}
                         </div>
-                        
                         <ul className={clsx("bg-gray-50 drop-shadow mdropdown rounded",
                             {
                                 'hidden': dropdowVisibility === false,
@@ -121,7 +113,6 @@ export default function StatsComponent(props:{token: string}){
                             )}
                         </ul>
                     </div>
-                    
                     <div className={`${lusitana.className} ml-2 relative`}>
                         <span>Select Zone of interest</span>
                         <select

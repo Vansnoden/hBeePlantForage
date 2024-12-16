@@ -70,7 +70,7 @@ export async function getFamilyData(token: string, fname: string){
         method: "GET",
         headers: myHeaders,
     };
-    const data = await fetch(FAMILY_DATA_URL +"?fname="+fname, requestOptions)
+    const data = await fetch(FAMILY_DATA_URL + fname, requestOptions)
     .then((response) => response.json());
     return data;
 }
@@ -80,7 +80,7 @@ export async function getFamilyDataMax(token: string, fname: string){
     const myHeaders = new Headers();
     myHeaders.append("Authorization", token);
     const requestOptions = { method: "GET", headers: myHeaders };
-    const data = await fetch(FAMILY_DATA_MAX_URL +"?fname="+fname, requestOptions)
+    const data = await fetch(FAMILY_DATA_MAX_URL + fname, requestOptions)
     .then((response) => response.json());
     return data; 
 }
@@ -93,9 +93,7 @@ export async function searchFamilyNames(token: string, search_string: string){
         method: "GET",
         headers: myHeaders,
     };
-    console.log(`IN FUNC: ${search_string}`)
     const data:Array<string> = await fetch(FAMILY_NAME_SEARCH + search_string, requestOptions)
     .then((response) => response.json());
-    console.log(`FUNC RESPONSE: ${data}`)
     return data; 
 }

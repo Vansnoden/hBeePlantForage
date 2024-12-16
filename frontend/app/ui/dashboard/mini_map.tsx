@@ -15,32 +15,32 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
 
     const [map, refreshMap] = useState<Map>();
 
-    const osmLayer = new TileLayer({
-        preload: Infinity,
-        source: new OSM(),
-    });
-
-    const styles = (opacity:number) => {
-        return {
-            'Polygon': new Style({
-                stroke: new Stroke({
-                    color: 'blue',
-                    width: 1,
-                }),
-                fill: new Fill({
-                    color: `rgba(0, 0, 255, ${opacity})`,
-                }),
-            }),
-        }
-    };
-
-    const styleFunction = function (feature: any) { // eslint-disable-line
-        // feature.getGeometry().getType() // eslint-disable-line
-        return styles(feature.getProperties().count / props.max)[feature.getGeometry().getType()]; // eslint-disable-line
-    }; // eslint-disable-line
-
 
     useEffect(() => {
+        const osmLayer = new TileLayer({
+            preload: Infinity,
+            source: new OSM(),
+        });
+    
+        const styles = (opacity:number) => {
+            return {
+                'Polygon': new Style({
+                    stroke: new Stroke({
+                        color: 'blue',
+                        width: 1,
+                    }),
+                    fill: new Fill({
+                        color: `rgba(0, 0, 255, ${opacity})`,
+                    }),
+                }),
+            }
+        };
+    
+        const styleFunction = function (feature: any) { // eslint-disable-line
+            // feature.getGeometry().getType() // eslint-disable-line
+            return styles(feature.getProperties().count / props.max)[feature.getGeometry().getType()]; // eslint-disable-line
+        }; // eslint-disable-line
+
         if(props.geojsonData){
             if(Object.keys(props.geojsonData).length !== 0){
                 const vectorSource = new VectorSource({
@@ -68,18 +68,9 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                     }),
                 }))
             }
-        }else{
-            refreshMap(new Map({
-                target: "map",
-                layers: [osmLayer],
-                view: new View({
-                    center: [0, 0],
-                    zoom: 0,
-                }),
-            }))
         }
         return () => map?.setTarget()
-    }, []); //props.familyName
+    }, [props.geojsonData, props.familyName]); //props.familyName
     
     return (
         <div className={`${lusitana.className}`}>
@@ -88,7 +79,7 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                     <div id="map" className='map'></div>
                 </div>
             </div>
-            {/* {props.familyName} */}
+            {props.familyName}
         </div>
     )
 }
