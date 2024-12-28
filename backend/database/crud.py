@@ -183,6 +183,16 @@ def load_site_data(db:Session, row:dict) -> int:
         return 0
 
 
+def extract_year(str_date)-> int:
+    res = re.findall(r'[0-9]{4}', str_date)
+    return int(res[0]) if res else 0
+
+
+def extract_month(str_date)-> int:
+    res = re.findall(r'[0-9]{2}', str_date)
+    return int(res[-2]) if res else 0
+
+
 def load_observation_data(db:Session, row:dict, site_id, plant_id) -> int:
     if site_id and plant_id:
         db_obs = models.Observation(
@@ -190,7 +200,12 @@ def load_observation_data(db:Session, row:dict, site_id, plant_id) -> int:
             plant_specie_id=plant_id,
             source=row["repository_name"],
             date=row["observation_date"],
+            year=extract_year(row["observation_date"]),
+            month=extract_month(row["observation_date"]),
+            lat=row["latitude"],
+            lon=row["longitude"]
         )
+        db_obs.geom = f"POINT({get_float_val(str(row['longitude']))} {get_float_val(str(row['latitude']))})"
         db.add(db_obs)
         db.commit()
         db.refresh(db_obs)
