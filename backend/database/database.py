@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 # SQLALCHEMY_DATABASE_URL = "sqlite:///./bppd.db" --- goes with  connect_args={"check_same_thread": False}
 SQLALCHEMY_DATABASE_URL = "postgresql://postgres_db:5432/bppd_db?user=postgres&password=admin"
 #---in container
-# SQLALCHEMY_DATABASE_URL = "postgresql://localhost:3001/bppd_db?user=postgres&password=admin"
+# SQLALCHEMY_DATABASE_URL = "postgresql://localhost:5432/bppd_db?user=admin&password=vansnoden1234"
 
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)

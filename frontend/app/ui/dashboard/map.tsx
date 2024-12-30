@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useEffect, useState } from 'react';
 import { Map, View } from 'ol';
@@ -11,9 +11,10 @@ import { XMarkIcon } from '@heroicons/react/20/solid';
 import { Observation } from '@/app/lib/definitions';
 import { ObservationItem } from './observation';
 import { lusitana } from '../fonts';
+import { getPointData } from '@/app/lib/client_actions';
 
 
-const MapComponent = () => {
+const MapComponent = (props:{token: string}) => {
 
     const [showDetails, setShowDetails] = useState(false);
     const [pointDetails, setPointDetails] = useState([] as Array<Observation>);
@@ -64,15 +65,21 @@ const MapComponent = () => {
               fetch(url)
                 .then((response) => response.json())
                 .then((res) => {
+                    var ids = []
                     const cleanRes = []
                     if(res){
                        for(let i=0; i<res.features.length; i++){
                         const point = res.features[i].properties;
+                        ids.push(parseInt(res.features[i].id.split(".")[1]));
                         cleanRes.push(point as Observation);
                        } 
                     }
-                    console.log(cleanRes);
+                    console.log(ids);
                     setPointDetails(cleanRes);
+                    getPointData(props.token, ids).then((ress)=>{
+                        console.log('server response')
+                        console.log(ress);
+                    })
                 });
             }
             setShowDetails(true);

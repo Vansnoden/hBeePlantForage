@@ -11,4 +11,5 @@ export const MONTHLY_DISTRO_URL = BASE_API_URL + "/data/monthly/distro"
 export const REGION_DISTRO_URL = BASE_API_URL + "/data/region/distro"
 export const YEAR_DISTRO_URL = BASE_API_URL + "/data/yearly/distro"
 export const PLANT_TOP_URL = BASE_API_URL + "/data/plants/top"
+export const POIN_DATA_URL = BASE_API_URL + "/map/obs"
 

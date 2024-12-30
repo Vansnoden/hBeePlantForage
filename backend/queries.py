@@ -34,18 +34,26 @@ COUNTRIES = {
 
 
 QUERY_TOP_X_MOST_REPORTED_PLANTS = """
-    select count(o.id), o.plant_specie_id , ps.name as plant_name
-    from observations as o
-    inner join plant_species as ps on o.plant_specie_id = ps.id
-    group by o.plant_specie_id, ps.name order by count desc limit {x}
+    drop table if exists top_x_plants;
+    select count(o.id), o.plant_specie_id into top_x_plants from observations as o
+    group by o.plant_specie_id order by count desc limit {x};
+    select tt.count, ps.name as specie_name, t.name as taxon_name from top_x_plants as tt
+    inner join plant_species as ps on ps.id=tt.plant_specie_id
+    left join taxons as t on t.id=ps.taxon_id
 """
 
 QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY = """
-    select count(o.id), o.plant_specie_id , ps.name, f.name as plant_name
-    from observations as o
-    inner join plant_species as ps on o.plant_specie_id = ps.id
-    inner join "family" as f on f.name ilike '{family_name}' 
-    group by o.plant_specie_id, ps.name, f.name order by count desc limit {x}
+    drop table if exists top_x_plants;
+    select count(o.id), o.plant_specie_id into top_x_plants from observations as o
+    where 
+    o.plant_specie_id 
+        in (select id from plant_species as ps 
+            where 
+            family_id in (select id from "family" as f where name='{family_name}'))
+    group by o.plant_specie_id order by count desc limit {x};
+    select tt.count, ps.name as specie_name, t.name as taxon_name from top_x_plants as tt
+    inner join plant_species as ps on ps.id=tt.plant_specie_id
+    left join taxons as t on t.id=ps.taxon_id
 """
 
 
@@ -70,8 +78,8 @@ group by month order by month asc
 """
 
 QUERY_PLANT_SUMMARY_DATA = """
-    select o.id, s.name as site_name, s.country, ps.name as plant_name, 
-    ps.scientific_name, f.name as family, t.name as taxon, k.name 
+    select o.id, s.name as site_name, s.country, ps.name as plant_name, t.name as taxon_name, 
+    ps.scientific_name, f.name as family, k.name 
     as kingdom from observations as o
     inner join plant_species as ps on o.plant_specie_id = ps.id 
     inner join sites as s on o.site_id = s.id
@@ -83,8 +91,8 @@ QUERY_PLANT_SUMMARY_DATA = """
 
 QUERY_COUNT_PLANT_SUMMARY_DATA = """
     select count(*) from (
-        select o.id, s.name as site_name, s.country, ps.name as plant_name, 
-        ps.scientific_name, f.name as family, t.name as taxon, k.name 
+        select o.id, s.name as site_name, s.country, ps.name as plant_name, t.name as taxon_name, 
+        ps.scientific_name, f.name as family, k.name 
         as kingdom from observations as o
         inner join plant_species as ps on o.plant_specie_id = ps.id 
         inner join sites as s on o.site_id = s.id
@@ -95,7 +103,7 @@ QUERY_COUNT_PLANT_SUMMARY_DATA = """
     """
 
 QUERY_PLANT_SUMMARY_DATA_FILTERED = """
-    select o.id, s.name as site_name, s.country, ps.name as plant_name, 
+    select o.id, s.name as site_name, s.country, t.name as plant_name, 
         ps.scientific_name, f.name as family, t.name as taxon, k.name 
         as kingdom from observations as o
         inner join plant_species as ps on o.plant_specie_id = ps.id 
@@ -112,7 +120,7 @@ QUERY_PLANT_SUMMARY_DATA_FILTERED = """
 
 QUERY_COUNT_PLANT_SUMMARY_DATA_FILTERED = """
     select count(*) from (
-        select o.id, s.name as site_name, s.country, ps.name as plant_name, 
+        select o.id, s.name as site_name, s.country, t.name as plant_name, 
         ps.scientific_name, f.name as family, t.name as taxon, k.name 
         as kingdom from observations as o
         inner join plant_species as ps on o.plant_specie_id = ps.id 
@@ -173,4 +181,10 @@ QUERY_GROUP_OBS_BY_CONTINENT_REGIONS = """
 select count(o.id), s.region from observations as o 
 inner join sites as s on s.id=o.site_id and s.region ilike '%{continent}%'
 group by s.region
+"""
+
+QUERY_SITE_INFO = """
+select s.name as site, s.country, ps.name as specie_name, f.name as family, o.specie_class 
+as class, o.source, o.year from observations as o, sites as s, plant_species as ps, family as f
+where  o.site_id = s.id and o.plant_specie_id = ps.id and ps.family_id = f.id and o.id in {oids}
 """

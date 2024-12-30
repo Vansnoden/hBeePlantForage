@@ -28,6 +28,7 @@ from sqlalchemy.sql import text
 from queries import *
 import numpy as np
 from numpy.linalg import norm
+import ast
 
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
@@ -514,7 +515,8 @@ def get_top_x_of_plants(
             query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS.format(x=top))
         data = db.execute(query)
         for rec in data:
-            labels.append(rec[2])
+            label = rec[2] if rec[2] else rec[1]
+            labels.append(label)
             values.append(rec[0])
         top20bgColor, top20borderColor = generate_colors(len(values))
         res["data"] = {
@@ -532,3 +534,39 @@ def get_top_x_of_plants(
         return res
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
+    
+
+
+@app.post("/map/obs")
+def get_observation_data( oids: str,
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)):
+    data = []
+    if user:
+        ids = ast.literal_eval(oids.replace(" ",""))
+        ids = [int(x) for x in ids]
+        str_ids = tuple(ids)
+        # "("
+        # for i in ids:
+        #     str_ids += str(i) + ","
+        # str_ids += ")"
+        logger.debug(f"S_IDS: {str_ids}")
+        query = text(QUERY_SITE_INFO.format(oids=str_ids))
+        dataDb = db.execute(query)
+        for row in dataDb:
+            obj = {
+                "site": row[0],
+                "country": row[1], 
+                "specie_name": row[2], 
+                "family": row[3], 
+                "class": row[4],
+                "source": row[5],
+                "year": row[6]
+            }
+            data.append(obj)
+        return data
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+    
+
+

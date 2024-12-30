@@ -1,14 +1,10 @@
-"use client"
-import dynamic from "next/dynamic";
 
-const MapComponent = dynamic(() => import("../../ui/dashboard/map"), { ssr:false });
+import { getToken } from "@/app/lib/actions";
+import MapComponent from "@/app/ui/dashboard/map";
 
-export default function Map(){
+export default async function Map(){
 
+    const token = await getToken() as string;
     
-    return (
-        <div>
-            <MapComponent/>
-        </div>
-    )
+    return <MapComponent token={token}/>
 }
