@@ -104,6 +104,7 @@ export async function getPointData(token: string, oids: Array<number>){
     myHeaders.append("Authorization", token);
     myHeaders.append('Accept', 'application/json')
     myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('Access-Control-Allow-Origin', '*');
     const requestOptions = {
         method: "POST",
         headers: myHeaders,

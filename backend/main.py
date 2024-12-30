@@ -515,7 +515,7 @@ def get_top_x_of_plants(
             query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS.format(x=top))
         data = db.execute(query)
         for rec in data:
-            labels.append(rec[2])
+            labels.append(rec[1])
             values.append(rec[0])
         top20bgColor, top20borderColor = generate_colors(len(values))
         res["data"] = {
