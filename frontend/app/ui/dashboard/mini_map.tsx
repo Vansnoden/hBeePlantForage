@@ -95,7 +95,7 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                     <div id="map" className='map'></div>
                 </div>
             </div>
-            { isLoading && <span> ... Loading data for </span> } { !isLoading && <span> Loaded data for </span> } {props.familyName}
+            { isLoading && <span> ... Loading </span> }
         </div>
     )
 }
