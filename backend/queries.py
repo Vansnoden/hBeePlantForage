@@ -37,8 +37,9 @@ QUERY_TOP_X_MOST_REPORTED_PLANTS = """
     drop table if exists top_x_plants;
     select count(o.id), o.plant_specie_id into top_x_plants from observations as o
     group by o.plant_specie_id order by count desc limit {x};
-    select tt.count, ps.name as specie_name from top_x_plants as tt
+    select tt.count, ps.name as specie_name, t.name as taxon_name from top_x_plants as tt
     inner join plant_species as ps on ps.id=tt.plant_specie_id
+    left join taxons as t on t.id=ps.taxon_id
 """
 
 QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY = """
@@ -50,8 +51,9 @@ QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY = """
             where 
             family_id in (select id from "family" as f where name='{family_name}'))
     group by o.plant_specie_id order by count desc limit {x};
-    select tt.count, ps.name as specie_name from top_x_plants as tt
+    select tt.count, ps.name as specie_name, t.name as taxon_name from top_x_plants as tt
     inner join plant_species as ps on ps.id=tt.plant_specie_id
+    left join taxons as t on t.id=ps.taxon_id
 """
 
 
@@ -76,8 +78,8 @@ group by month order by month asc
 """
 
 QUERY_PLANT_SUMMARY_DATA = """
-    select o.id, s.name as site_name, s.country, t.name as plant_name, 
-    ps.scientific_name, f.name as family, t.name as taxon, k.name 
+    select o.id, s.name as site_name, s.country, ps.name as plant_name, t.name as taxon_name, 
+    ps.scientific_name, f.name as family, k.name 
     as kingdom from observations as o
     inner join plant_species as ps on o.plant_specie_id = ps.id 
     inner join sites as s on o.site_id = s.id
@@ -89,8 +91,8 @@ QUERY_PLANT_SUMMARY_DATA = """
 
 QUERY_COUNT_PLANT_SUMMARY_DATA = """
     select count(*) from (
-        select o.id, s.name as site_name, s.country, t.name as plant_name, 
-        ps.scientific_name, f.name as family, t.name as taxon, k.name 
+        select o.id, s.name as site_name, s.country, ps.name as plant_name, t.name as taxon_name, 
+        ps.scientific_name, f.name as family, k.name 
         as kingdom from observations as o
         inner join plant_species as ps on o.plant_specie_id = ps.id 
         inner join sites as s on o.site_id = s.id

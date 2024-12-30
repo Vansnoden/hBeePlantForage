@@ -52,6 +52,7 @@ class PlantSpecie(Base):
     family_id = Column(Integer, ForeignKey("family.id"), nullable=True)
     kingdom_id = Column(Integer, ForeignKey("kingdoms.id"), nullable=True)
     taxon_id = Column(Integer, ForeignKey("taxons.id"), nullable=True)
+    specie_name_note = Column(String, nullable=True)
 
 
 class Site(Base):
