@@ -85,4 +85,3 @@ class Observation(Base):
     country = Column(String, nullable=True)
     region = Column(String, nullable=True)
     continent = Column(String, nullable=True)
-    family = Column(String, nullable=True)
