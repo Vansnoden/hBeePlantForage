@@ -20,8 +20,9 @@ const MapComponent = (props:{token: string}) => {
     const [pointDetails, setPointDetails] = useState([] as Array<Observation>);
     const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
     const [startYear, setStartYear] = useState(2000);
-    const [endYear, setEndYear] = useState(2025);
-    const [currentEndYear, setCurrentEndYear] = useState(2014);
+    const [endYear, setEndYear] = useState(new Date().getFullYear());
+    const [currentStartYear, setCurrentStartYear] = useState(2010);
+    const [currentEndYear, setCurrentEndYear] = useState(2020);
     const [currentFamilyName, setCurrentFamilyName] = useState("");
     const [familyNames, setFamilyNames] = useState<Array<string>>([]);
     const searchInput = useRef<HTMLInputElement>(null);
@@ -134,7 +135,11 @@ const MapComponent = (props:{token: string}) => {
         setShowDetails((showDetails) => !showDetails);
     };
 
-    const handleDateChange = (evt: any) => {
+    const handleStartYearChange = (evt: any) => {
+        setCurrentStartYear(evt.target.value)
+    }
+
+    const handleEndYearChange = (evt: any) => {
         setCurrentEndYear(evt.target.value)
     }
 
@@ -144,7 +149,7 @@ const MapComponent = (props:{token: string}) => {
     
     return (
         <div className={`${lusitana.className}`}>
-            <div className="card mb-2 bg-yellow-600 rounded flex gap-2 p-2" >
+            <div className="card mb-2 bg-yellow-600 rounded flex md:flex-row sm:flex-col gap-2 p-2 align-middle justify-start" >
                 <div className="relative">
                     <select
                         id="country"
@@ -178,10 +183,21 @@ const MapComponent = (props:{token: string}) => {
                         )}
                     </ul>
                 </div>
-                <div className="flex flex-row align-middle justify-between">
-                    <span className='mr-2 inline-block text-center bg-red p-2'>{startYear}</span>
-                    <input type="range" min={startYear} max={endYear} onChange={handleDateChange} className="slider" id="myRange"/>
-                    <span className='ml-2 inline-block text-center bg-green p-2'>{currentEndYear}</span>
+                <div>
+                    <span className='ml-2 mr-2'>Start year: {currentStartYear}</span> <br/>
+                    <div className="flex flex-row align-middle justify-between">
+                        <span className='mr-2 inline-block text-center bg-green p-2'>{startYear}</span>
+                        <input type="range" min={startYear} max={endYear} defaultValue={currentStartYear} onChange={handleStartYearChange} className="slider" id="start year"/>
+                        <span className='ml-2 inline-block text-center bg-green p-2'>{endYear}</span>
+                    </div>
+                </div>
+                <div>
+                    <span className='ml-2 mr-2'>End year: {currentEndYear}</span> <br/>
+                    <div className="flex flex-row align-middle justify-between">
+                        <span className='mr-2 inline-block text-center bg-red p-2'>{currentStartYear}</span>
+                        <input type="range" min={currentStartYear} max={endYear} defaultValue={currentEndYear} onChange={handleEndYearChange} className="slider" id="end year"/>
+                        <span className='ml-2 inline-block text-center bg-green p-2'>{endYear}</span>
+                    </div>
                 </div>
             </div>
             <div className='content grid gap-0 sm:grid-cols-1 md:grid-cols-12'>
