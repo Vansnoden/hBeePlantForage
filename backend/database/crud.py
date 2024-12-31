@@ -143,7 +143,7 @@ def load_plant_specie_data(db:Session, row:dict, kingdom_id=0, taxon_id=0, famil
     fetch_plant = db.query(models.PlantSpecie).filter(models.PlantSpecie.name == row["species"]).first()
     if not fetch_plant and row["species"]:
         db_plant = models.PlantSpecie(
-            name=row["species"],
+            name=row["species"] if not row["taxon"] else row["taxon"],
             scientific_name=row["scientific_name"],
             kingdom_id=kingdom_id if kingdom_id else None,
             taxon_id=taxon_id if taxon_id else None,

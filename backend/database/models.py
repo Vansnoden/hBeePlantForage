@@ -82,3 +82,6 @@ class Observation(Base):
     lon = Column(Float, nullable=True)
     geom = Column(Geometry('POINT'), nullable=True)
     specie_class = Column(String, nullable=True)
+    country = Column(String, nullable=True)
+    region = Column(String, nullable=True)
+    continent = Column(String, nullable=True)

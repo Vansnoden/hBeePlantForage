@@ -39,14 +39,14 @@ input[type='number']::-webkit-outer-spin-button {
 .map-container{
   height: 80vh;
   width: 100%;
-  background-color: grey;
+  background-color: transparent;
   overflow: hidden;
 }
 
 .mini-map-container{
   height: 40vh;
   width: 100%;
-  background-color: grey;
+  background-color: transparent;
   overflow: hidden;
 }
 
@@ -82,3 +82,4 @@ input[type='number']::-webkit-outer-spin-button {
   border: 1px solid black;
   width: 70%;
 }
+

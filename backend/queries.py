@@ -36,10 +36,11 @@ COUNTRIES = {
 QUERY_TOP_X_MOST_REPORTED_PLANTS = """
     drop table if exists top_x_plants;
     select count(o.id), o.plant_specie_id into top_x_plants from observations as o
-    group by o.plant_specie_id order by count desc limit {x};
-    select tt.count, ps.name as specie_name, t.name as taxon_name from top_x_plants as tt
+    group by o.plant_specie_id order by count desc;
+    select sum(tt.count), ps.name as specie_name, t.name as taxon_name from top_x_plants as tt
     inner join plant_species as ps on ps.id=tt.plant_specie_id
-    left join taxons as t on t.id=ps.taxon_id
+    inner join taxons as t on t.id=ps.taxon_id
+    group by ps.name, t.name order by sum desc limit {x}
 """
 
 QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY = """
@@ -50,10 +51,11 @@ QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY = """
         in (select id from plant_species as ps 
             where 
             family_id in (select id from "family" as f where name='{family_name}'))
-    group by o.plant_specie_id order by count desc limit {x};
-    select tt.count, ps.name as specie_name, t.name as taxon_name from top_x_plants as tt
+    group by o.plant_specie_id order by count desc;
+    select sum(tt.count), ps.name as specie_name, t.name as taxon_name from top_x_plants as tt
     inner join plant_species as ps on ps.id=tt.plant_specie_id
     left join taxons as t on t.id=ps.taxon_id
+    group by ps.name, t.name order by sum desc limit {x}
 """
 
 

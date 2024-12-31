@@ -9,6 +9,8 @@ import GeoJSON from 'ol/format/GeoJSON';
 import VectorLayer from 'ol/layer/Vector';
 import {Fill, Stroke, Style} from 'ol/style';
 import { lusitana } from '../fonts';
+import { TileWMS } from 'ol/source';
+import { GEOSERVER_BASE_URL } from '@/app/lib/constants';
 
 
 const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number, token:string}) => { // eslint-disable-line
@@ -16,10 +18,22 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
     const [isLoading, setLoading] = useState(false);
 
     useEffect(() => {
-        const osmLayer = new TileLayer({
-            preload: Infinity,
-            source: new OSM(),
-        });
+        // const osmLayer = new TileLayer({
+        //     preload: Infinity,
+        //     source: new OSM(),
+        // });
+
+        const baseLayer = new TileLayer({
+            // extent: [-13884991, 2870341, -7455066, 6338219],
+            source: new TileWMS({
+                url: GEOSERVER_BASE_URL+'/wms',
+                params: {'LAYERS': 'ne:Africa_Countries'},
+                serverType: 'geoserver',
+                // Countries have transparency, so do not fade tiles:
+                transition: 0,
+                projection: "EPSG:3857",
+            }),
+        })
     
         const styles = (opacity:number) => {
             return {
@@ -52,7 +66,7 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                 });
                 const map = new Map({
                     target: "map",
-                    layers: [osmLayer, vectorLayer],
+                    layers: [baseLayer, vectorLayer],
                     view: new View({
                         center: [0, 0],
                         zoom: 0,
@@ -64,7 +78,7 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                 setLoading(true);
                 const map = new Map({
                     target: "map",
-                    layers: [osmLayer],
+                    layers: [baseLayer],
                     view: new View({
                         center: [0, 0],
                         zoom: 0,
@@ -77,7 +91,7 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
             setLoading(true);
             const map = new Map({
                 target: "map",
-                layers: [osmLayer],
+                layers: [baseLayer],
                 view: new View({
                     center: [0, 0],
                     zoom: 0,
@@ -95,7 +109,7 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
                     <div id="map" className='map'></div>
                 </div>
             </div>
-            { isLoading && <span> ... Loading data for </span> } { !isLoading && <span> Loaded data for </span> } {props.familyName}
+            { isLoading && <span> ... Loading </span> }
         </div>
     )
 }
