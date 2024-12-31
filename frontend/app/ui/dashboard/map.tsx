@@ -26,6 +26,21 @@ const MapComponent = (props:{token: string}) => {
     const [familyNames, setFamilyNames] = useState<Array<string>>([]);
     const searchInput = useRef<HTMLInputElement>(null);
 
+    const max = 3000;
+    function normalize(value:any) {
+        return ['/', value, max];
+    }
+
+    const red = normalize(['band', 1]);
+    const green = normalize(['band', 2]);
+    const blue = normalize(['band', 3]);
+    const nir = normalize(['band', 4]);
+
+    const trueColor = {
+        color: ['array', red, green, blue, 0.2],
+        gamma: 1.1,
+    };
+
 
     const updateSearch = (evt: any) => { // eslint-disable-line
         const familyName = evt.target.getAttribute("value");
@@ -56,13 +71,14 @@ const MapComponent = (props:{token: string}) => {
 
         const pointLayer = new TileLayer({
             // extent: [-13884991, 2870341, -7455066, 6338219],
+            style: trueColor,
             source: new TileWMS({
                 url: GEOSERVER_BASE_URL+'/wms',
                 params: {'LAYERS': 'ne:observations'},
                 serverType: 'geoserver',
                 // Countries have transparency, so do not fade tiles:
                 transition: 0,
-                projection: "EPSG:4326"
+                projection: "EPSG:4326",
             }),
         })
 
@@ -76,8 +92,8 @@ const MapComponent = (props:{token: string}) => {
             view: new View({
                 center: [0, 0],
                 zoom: 0,
-              }),
-          });
+            }),
+        });
 
         map.on('singleclick', function (evt) {
             const viewResolution = map.getView().getResolution() as number;
