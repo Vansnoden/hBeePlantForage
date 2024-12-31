@@ -20,6 +20,7 @@ const MapComponent = (props:{token: string}) => {
     const [pointDetails, setPointDetails] = useState([] as Array<Observation>);
     const [startYear, setStartYear] = useState(2010);
     const [endYear, setEndYear] = useState(2025);
+    const [currentEndYear, setCurrentEndYear] = useState(2020);
 
     useEffect(() => {
         const osmLayer = new TileLayer({
@@ -40,7 +41,7 @@ const MapComponent = (props:{token: string}) => {
         })
 
         const params = pointLayer?.getSource()?.getParams();
-        params.CQL_FILTER = `year > 2010 and year < 2025`;
+        params.CQL_FILTER = `year > ${startYear} and year < ${currentEndYear}`;
         // console.log(params)
 
         const map = new Map({
@@ -85,11 +86,15 @@ const MapComponent = (props:{token: string}) => {
             setShowDetails(true);
         });
       return () => map.setTarget()
-    }, []);
+    }, [currentEndYear]);
 
     const toggleDetails = () => {
         setShowDetails((showDetails) => !showDetails);
     };
+
+    const handleDateChange = (evt: any) => {
+        setCurrentEndYear(evt.target.value)
+    }
 
     // const createMarkup = (code: string) => {
     //     return {__html: `${code}`};
@@ -145,6 +150,11 @@ const MapComponent = (props:{token: string}) => {
                         value={endYear}
                         onChange={(e) => setEndYear(parseInt(e.target.value))}
                     />
+                </div>
+                <div className="">
+                    <span>{startYear}</span>
+                    <input type="range" min={startYear} max={endYear} onChange={handleDateChange} className="slider" id="myRange"/>
+                    <span>{currentEndYear}</span>
                 </div>
             </div>
             <div className='content grid gap-0 sm:grid-cols-1 md:grid-cols-12'>
