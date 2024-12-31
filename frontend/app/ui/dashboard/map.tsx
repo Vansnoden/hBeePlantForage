@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
@@ -11,18 +11,44 @@ import { XMarkIcon } from '@heroicons/react/20/solid';
 import { Observation } from '@/app/lib/definitions';
 import { ObservationItem } from './observation';
 import { lusitana } from '../fonts';
-import { getPointData } from '@/app/lib/client_actions';
+import { getFamilyData, getPointData, searchFamilyNames } from '@/app/lib/client_actions';
 
 
 const MapComponent = (props:{token: string}) => {
 
     const [showDetails, setShowDetails] = useState(false);
     const [pointDetails, setPointDetails] = useState([] as Array<Observation>);
-    const [startYear, setStartYear] = useState(2010);
+    const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
+    const [startYear, setStartYear] = useState(2000);
     const [endYear, setEndYear] = useState(2025);
-    const [currentEndYear, setCurrentEndYear] = useState(2020);
+    const [currentEndYear, setCurrentEndYear] = useState(2014);
+    const [currentFamilyName, setCurrentFamilyName] = useState("");
+    const [familyNames, setFamilyNames] = useState<Array<string>>([]);
+    const searchInput = useRef<HTMLInputElement>(null);
+
+
+    const updateSearch = (evt: any) => { // eslint-disable-line
+        const familyName = evt.target.getAttribute("value");
+        setCurrentFamilyName(familyName);
+        toggleDropdowVisibility(false);
+        if(searchInput.current){
+            searchInput.current.value = familyName;
+        }
+    }
+
+    const searchFamilyData = (evt: any) => { // eslint-disable-line
+        searchFamilyNames(props.token, evt.target.value).then((families) => {
+            setFamilyNames(families);
+            toggleDropdowVisibility(true);
+        })
+    }
+
 
     useEffect(() => {
+        if(searchInput.current){
+            setCurrentFamilyName(searchInput.current?.value);
+        }
+
         const osmLayer = new TileLayer({
             preload: Infinity,
             source: new OSM(),
@@ -41,7 +67,7 @@ const MapComponent = (props:{token: string}) => {
         })
 
         const params = pointLayer?.getSource()?.getParams();
-        params.CQL_FILTER = `year > ${startYear} and year < ${currentEndYear}`;
+        params.CQL_FILTER = `year > ${startYear} and year < ${currentEndYear} and continent ilike '%africa%'`;
         // console.log(params)
 
         const map = new Map({
@@ -116,45 +142,30 @@ const MapComponent = (props:{token: string}) => {
                         {/* other options */}
                     </select>
                 </div>
-                <div className="relative">
-                    <select
-                        id="family"
-                        name="family_id"
-                        defaultValue=""
-                        className="block w-full cursor-pointer rounded-md border py-2 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
-                        >
-                        <option value="" disabled={true}>
-                            Select Family
-                        </option>
-                        {/* other options */}
-                    </select>
+                <div className={`${lusitana.className} relative`}>
+                    <div className="flex flex-row justify-between align-middle">
+                        <input type="text" placeholder="Provide family name ..." 
+                            onKeyUp={searchFamilyData} defaultValue={currentFamilyName} ref={searchInput}
+                            className="p-1 py-2 rounded text-sm"/>
+                    </div>
+                    <ul className={clsx("bg-gray-50 drop-shadow mdropdown rounded",
+                        {
+                            'hidden': dropdowVisibility === false,
+                            'block': dropdowVisibility === true,
+                        }
+                    )}>
+                        {/* search results go here */}
+                        {familyNames.map((item:string, index:number) =>
+                            <li key={index} value={item} onClick={updateSearch} className="bg-white hover:bg-yellow-500 bottom-1">
+                                {item}
+                            </li>
+                        )}
+                    </ul>
                 </div>
-                <div className="relative">
-                    <input
-                        className="block w-full cursor-pointer rounded-md border py-2 pl-2 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
-                        id="startYear"
-                        type="number"
-                        name="startYear"
-                        placeholder="Provide Start Year"
-                        value={startYear}
-                        onChange={(e) => setStartYear(parseInt(e.target.value))}
-                    />
-                </div>
-                <div className="relative">
-                    <input
-                        className="block w-full cursor-pointer rounded-md border py-2 pl-2 border-gray-200 bg-white text-sm outline-2 placeholder:text-gray-500"
-                        id="endYear"
-                        type="number"
-                        name="endYear"
-                        placeholder="Provide End Year"
-                        value={endYear}
-                        onChange={(e) => setEndYear(parseInt(e.target.value))}
-                    />
-                </div>
-                <div className="">
-                    <span>{startYear}</span>
+                <div className="flex flex-row align-middle justify-between">
+                    <span className='mr-2 inline-block text-center bg-red p-2'>{startYear}</span>
                     <input type="range" min={startYear} max={endYear} onChange={handleDateChange} className="slider" id="myRange"/>
-                    <span>{currentEndYear}</span>
+                    <span className='ml-2 inline-block text-center bg-green p-2'>{currentEndYear}</span>
                 </div>
             </div>
             <div className='content grid gap-0 sm:grid-cols-1 md:grid-cols-12'>
