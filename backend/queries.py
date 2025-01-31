@@ -33,7 +33,7 @@ COUNTRIES = {
 }
 
 
-QUERY_TOP_X_MOST_REPORTED_PLANTS = """
+_QUERY_TOP_X_MOST_REPORTED_PLANTS = """
     drop table if exists top_x_plants;
     select count(o.id), o.plant_specie_id into top_x_plants from observations as o
     group by o.plant_specie_id order by count desc;
@@ -43,7 +43,7 @@ QUERY_TOP_X_MOST_REPORTED_PLANTS = """
     group by ps.name, t.name order by sum desc limit {x}
 """
 
-QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY = """
+_QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY = """
     drop table if exists top_x_plants;
     select count(o.id), o.plant_specie_id into top_x_plants from observations as o
     where 
@@ -59,11 +59,11 @@ QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY = """
 """
 
 
-QUERY_OBS_YEARLY_OVERVIEW = """
+_QUERY_OBS_YEARLY_OVERVIEW = """
     select count(id), year from observations where year between {year_start} and {year_end} group by year order by year asc
 """
 
-QUERY_OBS_YEARLY_OVERVIEW_CONTINENT = """
+_QUERY_OBS_YEARLY_OVERVIEW_CONTINENT = """
 select count(o.id), o.year from observations as o
 inner join sites as s on s.id = o.site_id 
 where 
@@ -72,14 +72,14 @@ where
 group by year order by year asc
 """
 
-QUERY_MONTHLY_OBS_DISTRO = """
+_QUERY_MONTHLY_OBS_DISTRO = """
 select count(o.id), o.month from observations as o 
 inner join sites as s on o.site_id = s.id and region ilike '%{continent}%'
 where o.month notnull
 group by month order by month asc
 """
 
-QUERY_PLANT_SUMMARY_DATA = """
+_QUERY_PLANT_SUMMARY_DATA = """
     select o.id, s.name as site_name, s.country, ps.name as plant_name, t.name as taxon_name, 
     ps.scientific_name, f.name as family, k.name 
     as kingdom from observations as o
@@ -91,7 +91,7 @@ QUERY_PLANT_SUMMARY_DATA = """
     limit {items_per_page} offset {offset}
     """
 
-QUERY_COUNT_PLANT_SUMMARY_DATA = """
+_QUERY_COUNT_PLANT_SUMMARY_DATA = """
     select count(*) from (
         select o.id, s.name as site_name, s.country, ps.name as plant_name, t.name as taxon_name, 
         ps.scientific_name, f.name as family, k.name 
@@ -104,7 +104,7 @@ QUERY_COUNT_PLANT_SUMMARY_DATA = """
         limit {limit})
     """
 
-QUERY_PLANT_SUMMARY_DATA_FILTERED = """
+_QUERY_PLANT_SUMMARY_DATA_FILTERED = """
     select o.id, s.name as site_name, s.country, t.name as plant_name, 
         ps.scientific_name, f.name as family, t.name as taxon, k.name 
         as kingdom from observations as o
@@ -120,7 +120,7 @@ QUERY_PLANT_SUMMARY_DATA_FILTERED = """
 """
 
 
-QUERY_COUNT_PLANT_SUMMARY_DATA_FILTERED = """
+_QUERY_COUNT_PLANT_SUMMARY_DATA_FILTERED = """
     select count(*) from (
         select o.id, s.name as site_name, s.country, t.name as plant_name, 
         ps.scientific_name, f.name as family, t.name as taxon, k.name 
@@ -136,7 +136,7 @@ QUERY_COUNT_PLANT_SUMMARY_DATA_FILTERED = """
         limit {limit})
 """
 
-QUERY_OBS_PER_COUNTRY = """
+_QUERY_OBS_PER_COUNTRY = """
 DROP TABLE IF EXISTS obs_data_2;
 select o.id, o.year ,o.site_id, o.plant_specie_id, s.country 
 into temp obs_data_2
@@ -146,7 +146,7 @@ select count(id),country from obs_data_2 group by country
 """
 
 
-QUERY_OBS_PER_REGION = """
+_QUERY_OBS_PER_REGION = """
 DROP TABLE IF EXISTS obs_data_1;
 select o.id, o.year ,o.site_id, o.plant_specie_id, s.region 
 into temp obs_data_1
@@ -155,7 +155,7 @@ inner join sites as s on o.site_id=s.id and s.region <>'';
 select count(id),region from obs_data_1 group by region
 """
 
-QUERY_OBS_PER_FAMILY_PER_COUNTRY = """
+_QUERY_OBS_PER_FAMILY_PER_COUNTRY = """
 select count(o.id), s.country from observations as o
 inner join plant_species as ps on ps.id = o.plant_specie_id
 inner join "family" as f on f.id = ps.family_id 
@@ -165,7 +165,7 @@ group by s.country order by count desc
 """
 
 
-QUERY_MAX_OBS_PER_FAMILY_PER_COUNTRY = """
+_QUERY_MAX_OBS_PER_FAMILY_PER_COUNTRY = """
 select count(o.id), s.country from observations as o
 inner join plant_species as ps on ps.id = o.plant_specie_id
 inner join "family" as f on f.id = ps.family_id 
@@ -174,19 +174,142 @@ where s.country <> '' and f.name ilike '{family_name}'
 group by s.country order by count desc limit 1
 """
 
-QUERY_FAMILIES = """
+_QUERY_FAMILIES = """
 select name from family where name ilike '%{search}%' limit 20;
 """
 
 
-QUERY_GROUP_OBS_BY_CONTINENT_REGIONS = """
+_QUERY_GROUP_OBS_BY_CONTINENT_REGIONS = """
 select count(o.id), s.region from observations as o 
 inner join sites as s on s.id=o.site_id and s.region ilike '%{continent}%'
 group by s.region
 """
 
-QUERY_SITE_INFO = """
+_QUERY_SITE_INFO = """
 select s.name as site, s.country, ps.name as specie_name, f.name as family, o.specie_class 
 as class, o.source, o.year from observations as o, sites as s, plant_species as ps, family as f
 where  o.site_id = s.id and o.plant_specie_id = ps.id and ps.family_id = f.id and o.id in {oids}
+"""
+
+
+# SINGLE TABLE MODE ADAPTED QUERIES
+
+QUERY_TOP_X_MOST_REPORTED_PLANTS = """
+select count(id), plant_species_name from bee_plant_data 
+group by plant_species_name order by count desc limit {x}
+"""
+
+QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY = """
+select count(id), plant_species_name from bee_plant_data 
+where family_name ilike '{family_name}'
+group by plant_species_name order by count desc limit {x}
+"""
+
+QUERY_OBS_YEARLY_OVERVIEW = """
+    select count(id), year from bee_plant_data 
+    where year between {year_start} and {year_end}
+    group by year order by year asc
+"""
+
+QUERY_OBS_YEARLY_OVERVIEW_CONTINENT = """
+select count(id), year from bee_plant_data 
+where 
+    year between {year_start} and {year_end} 
+    and continent ilike '%{continent}%'
+group by year order by year asc
+"""
+
+
+QUERY_MONTHLY_OBS_DISTRO = """
+select count(id), month from bee_plant_data 
+where month <> 0 and region ilike '%{continent}%'
+group by month order by month asc
+"""
+
+
+QUERY_PLANT_SUMMARY_DATA = """
+select id, location_name as site_name, country, plant_species_name as plant_name, family_name as family 
+from bee_plant_data limit {items_per_page} offset {offset}
+"""
+
+
+QUERY_COUNT_PLANT_SUMMARY_DATA = """
+select count(*) from bee_plant_data
+"""
+
+
+QUERY_PLANT_SUMMARY_DATA_FILTERED = """
+select * from bee_plant_data
+where country ilike '%{query}%' 
+    or plant_species_name ilike '%{query}%' 
+    or family_name ilike '%{query}%' 
+    or continent ilike '%{query}%' 
+    or location_name ilike '%{query}%'
+limit {items_per_page} offset {offset}
+"""
+
+
+QUERY_COUNT_PLANT_SUMMARY_DATA_FILTERED = """
+select count(*) from bee_plant_data
+where country ilike '%{query}%' 
+    or plant_species_name ilike '%{query}%' 
+    or family_name ilike '%{query}%' 
+    or continent ilike '%{query}%' 
+    or location_name ilike '%{query}%'
+limit {limit};
+"""
+
+
+QUERY_OBS_PER_COUNTRY = """
+select count(id), country from bee_plant_data 
+group by country order by count desc;
+"""
+
+
+QUERY_OBS_PER_REGION = """
+select count(id), region from bee_plant_data 
+group by region order by count desc;
+"""
+
+
+QUERY_OBS_PER_FAMILY_PER_COUNTRY = """
+select count(id), country from bee_plant_data 
+where family_name ilike '{family_name}'
+group by country, family_name order by count desc;
+"""
+
+
+QUERY_MAX_OBS_PER_FAMILY_PER_COUNTRY = """
+select count(id), country from bee_plant_data 
+where family_name ilike '{family_name}'
+group by country, family_name order by count desc limit 1;
+"""
+
+
+QUERY_FAMILIES = """
+select distinct family_name as name from bee_plant_data 
+where family_name ilike '%{search}%' limit 20;
+"""
+
+
+QUERY_GROUP_OBS_BY_CONTINENT_REGIONS = """
+select count(id), country from bee_plant_data
+where continent ilike '%{continent}%'
+group by country order by count desc;
+"""
+
+
+QUERY_SITE_INFO = """
+select id, location_name as site_name, country, 
+plant_species_name as specie_name, family_name as family, is_native 
+as class, year from bee_plant_data 
+where id in {oids};
+"""
+
+QUERY_TOTAL_PLANT_SPECIES = """
+select count(distinct plant_species_name) from bee_plant_data;
+"""
+
+QUERY_TOTAL_SITES = """
+select count(distinct location_name) from bee_plant_data;
 """

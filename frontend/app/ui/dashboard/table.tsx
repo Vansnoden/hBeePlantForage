@@ -36,15 +36,15 @@ export default async function DataTable({
                 <th scope="col" className="px-3 py-5 font-medium">
                   Family
                 </th>
-                <th scope="col" className="px-3 py-5 font-medium">
+                {/* <th scope="col" className="px-3 py-5 font-medium">
                   Scientific Name
-                </th>
+                </th> */}
                 {/* <th scope="col" className="px-3 py-5 font-medium">
                   Taxon
                 </th> */}
-                <th scope="col" className="px-3 py-5 font-medium">
+                {/* <th scope="col" className="px-3 py-5 font-medium">
                   Kingdom
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody className="bg-white">
@@ -65,15 +65,15 @@ export default async function DataTable({
                     <td className="whitespace-nowrap px-3 py-3 break-all">
                         {plant_data.family}
                     </td>
-                    <td className="px-3 py-3 break-all">
+                    {/* <td className="px-3 py-3 break-all">
                         {plant_data.scientific_name}
-                    </td>
+                    </td> */}
                     {/* <td className=" px-3 py-3 break-all">
                         {plant_data.taxon}
                     </td> */}
-                    <td className="whitespace-nowrap px-3 py-3 break-all">
+                    {/* <td className="whitespace-nowrap px-3 py-3 break-all">
                         {plant_data.kingdom}
-                    </td>
+                    </td> */}
                 </tr>
               ))}
             </tbody>

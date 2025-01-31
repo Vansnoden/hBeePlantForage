@@ -86,3 +86,18 @@ class Observation(BaseModel):
     lat: float
     lon: float
     specie_class: str
+
+
+class BeePlantData(BaseModel):
+    id: int
+    location_name: str
+    plant_species_name: str
+    family_name: str
+    year: int
+    month: int
+    lat: float
+    lon: float
+    is_native: bool
+    country: str
+    region: str
+    continent: str

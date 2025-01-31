@@ -73,7 +73,7 @@ class Observation(Base):
 
     id = Column(Integer, primary_key=True)
     site_id = Column(Integer, ForeignKey("sites.id"), nullable=False)
-    plant_specie_id = Column(Integer, ForeignKey("plant_species.id"), nullable=False)
+    plant_specie_id = Column(Integer, ForeignKey("plant_species.id"), nullable=True)
     source = Column(String, nullable=True)
     date = Column(String, nullable=True)
     year = Column(Integer, nullable=True)
@@ -82,6 +82,26 @@ class Observation(Base):
     lon = Column(Float, nullable=True)
     geom = Column(Geometry('POINT'), nullable=True)
     specie_class = Column(String, nullable=True)
+    country = Column(String, nullable=True)
+    region = Column(String, nullable=True)
+    continent = Column(String, nullable=True)
+
+
+
+class BeePlantData(Base):
+    __tablename__ = "bee_plant_data"
+
+    id = Column(Integer, primary_key=True)
+    location_name = Column(String, nullable=True)
+    plant_species_name = Column(String, nullable=True)
+    family_name = Column(String, nullable=True)
+    date = Column(String, nullable=True)
+    year = Column(Integer, nullable=True)
+    month = Column(Integer, nullable=True)
+    lat = Column(Float, nullable=True)
+    lon = Column(Float, nullable=True)
+    geom = Column(Geometry('POINT'), nullable=True)
+    is_native = Column(Boolean, nullable=True)
     country = Column(String, nullable=True)
     region = Column(String, nullable=True)
     continent = Column(String, nullable=True)

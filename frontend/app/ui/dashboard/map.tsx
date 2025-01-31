@@ -75,7 +75,7 @@ const MapComponent = (props:{token: string}) => {
             style: trueColor,
             source: new TileWMS({
                 url: GEOSERVER_BASE_URL+'/wms',
-                params: {'LAYERS': 'ne:observations'},
+                params: {'LAYERS': 'ne:bee_plant_data'},// {'LAYERS': 'ne:observations'},
                 serverType: 'geoserver',
                 // Countries have transparency, so do not fade tiles:
                 transition: 0,
