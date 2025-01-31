@@ -48,7 +48,7 @@ def get_float_val(num:str):
 
 def get_bool_val(val:str):
     if val:
-        if val == 'yes':
+        if val.strip().lower() == 'yes':
             return True
     return False
 

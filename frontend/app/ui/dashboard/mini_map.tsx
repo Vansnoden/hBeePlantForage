@@ -18,22 +18,22 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
     const [isLoading, setLoading] = useState(false);
 
     useEffect(() => {
-        // const osmLayer = new TileLayer({
-        //     preload: Infinity,
-        //     source: new OSM(),
-        // });
-
         const baseLayer = new TileLayer({
-            // extent: [-13884991, 2870341, -7455066, 6338219],
-            source: new TileWMS({
-                url: GEOSERVER_BASE_URL+'/wms',
-                params: {'LAYERS': 'ne:Africa_Countries'},
-                serverType: 'geoserver',
-                // Countries have transparency, so do not fade tiles:
-                transition: 0,
-                projection: "EPSG:3857",
-            }),
-        })
+            preload: Infinity,
+            source: new OSM(),
+        });
+
+        // const baseLayer = new TileLayer({
+        //     // extent: [-13884991, 2870341, -7455066, 6338219],
+        //     source: new TileWMS({
+        //         url: GEOSERVER_BASE_URL+'/wms',
+        //         params: {'LAYERS': 'ne:Africa_Countries'},
+        //         serverType: 'geoserver',
+        //         // Countries have transparency, so do not fade tiles:
+        //         transition: 0,
+        //         projection: "EPSG:3857",
+        //     }),
+        // })
     
         const styles = (opacity:number) => {
             return {

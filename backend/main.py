@@ -241,6 +241,38 @@ def upload_data_file(
         raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
+@app.post("/data/upload_bee")
+def upload_bee_data_file( 
+    user: Annotated[User, Depends(get_current_active_user)],
+    files: List[UploadFile] = File(...),
+    db: Session = Depends(get_db)):
+    res = False
+    if user:
+        for file in files:
+            try:
+                contents = file.file.read().decode(encoding='utf-8')
+                # logger.debug(f'#### DEBUG + {contents}')
+                extension = os.path.basename(file.filename).split('.')[1]
+                computed_filename = os.path.join(ROOT_DIR, f"uploads/{get_uuid()}.{extension}")
+                csv_path = ""
+                with open(computed_filename, "w", encoding='utf-8', errors='replace') as f:
+                    f.write(contents)
+                if extension == "xlsx":
+                    basename = os.path.basename(computed_filename).split('.')[0]
+                    csv_path = os.path.join(ROOT_DIR, f"temp/{basename}.csv")
+                    excel_to_csv(computed_filename, target=csv_path)
+                else:
+                   csv_path = computed_filename
+                res = crud.upload_bee_data_from_file(csv_path, db)
+            except Exception as e:
+                return {"message": f"There was an error uploading the file(s) \n ---- {e}"}
+            finally:
+                file.file.close()
+        return {"message": f"Successfuly uploaded {[file.filename for file in files]}" if res else "Failure uploading Files"}   
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+    
+
 @app.get("/data/get")
 def get_data_file( 
     user: Annotated[User, Depends(get_current_active_user)],
@@ -294,8 +326,14 @@ def get_dashboard_data(
     fname: str = ""):
     res = {}
     if user:
-        res["total_plants"] = db.query(models.PlantSpecie).count()
-        res["total_sites"] = db.query(models.Site).count()
+        query_total_plants = text(QUERY_TOTAL_PLANT_SPECIES)
+        query_total_sites= text(QUERY_TOTAL_SITES)
+        query_total_plants_recs = db.execute(query_total_plants)
+        query_total_sites_recs = db.execute(query_total_sites)
+        for rec in query_total_plants_recs:
+            res["total_plants"] = rec[0]
+        for rec in query_total_sites_recs:
+            res["total_sites"] = rec[0]
         return res  
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
@@ -515,7 +553,7 @@ def get_top_x_of_plants(
             query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS.format(x=top))
         data = db.execute(query)
         for rec in data:
-            label = rec[2] if rec[2] else rec[1]
+            label = rec[1] if rec[1] else ""
             labels.append(label)
             values.append(rec[0])
         top20bgColor, top20borderColor = generate_colors(len(values))
@@ -555,12 +593,12 @@ def get_observation_data( oids: str,
         dataDb = db.execute(query)
         for row in dataDb:
             obj = {
-                "site": row[0],
-                "country": row[1], 
-                "specie_name": row[2], 
-                "family": row[3], 
-                "class": row[4],
-                "source": row[5],
+                "id":row[0],
+                "site": row[1],
+                "country": row[2], 
+                "specie_name": row[3], 
+                "family": row[4], 
+                "class": 'yes' if row[5] else 'no',
                 "year": row[6]
             }
             data.append(obj)

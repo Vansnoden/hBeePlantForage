@@ -7,7 +7,7 @@ from typing import List
 from sqlalchemy import and_
 from sqlalchemy.orm import Session, joinedload
 
-from database.utils import get_float_val
+from database.utils import get_bool_val, get_float_val, get_int_val
 from . import models, schemas
 from passlib.context import CryptContext
 from pathlib import Path
@@ -213,3 +213,41 @@ def load_observation_data(db:Session, row:dict, site_id, plant_id) -> int:
     else:
         return 0
     
+
+def load_bee_data_row(db:Session, row:dict):
+    try:
+        db_data = models.BeePlantData(
+            location_name=row["location_name"],
+            plant_species_name=row["correctPlantSpecName"],
+            family_name=row["family_name"],
+            year=get_int_val(row["year"]),
+            month=get_int_val(row["month"]),
+            lat=get_float_val(row["lat"]),
+            lon=get_float_val(row["lon"]),
+            is_native=get_bool_val(row["isNative"]),
+            country=row["Country"],
+            region=row["Region"],
+            continent=row["Continent"],
+        )
+        db_data.geom = f"POINT({get_float_val(str(row['lon']))} {get_float_val(str(row['lat']))})"
+        db.add(db_data)
+        db.commit()
+        db.refresh(db_data)
+        return 1
+    except Exception as e:
+        print(e)
+        return 0
+
+
+
+def upload_bee_data_from_file(filepath, db:Session) -> bool:
+    """filepath is more likely the path to a csv file"""
+    try:
+        with open(filepath) as file_obj: 
+            reader_obj = csv.DictReader(file_obj, delimiter=DELIMITER) 
+            for row in tqdm(list(reader_obj), unit =" rows", desc="uploading data ... "): 
+                load_bee_data_row(db, row)
+            return True
+    except Exception as e:
+        logger.debug("ERROR: ", traceback.format_exc())
+        return False
