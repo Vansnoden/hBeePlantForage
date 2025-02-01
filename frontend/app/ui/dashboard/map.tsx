@@ -22,7 +22,7 @@ const MapComponent = (props:{token: string}) => {
     const [startYear, setStartYear] = useState(2000);
     const [endYear, setEndYear] = useState(new Date().getFullYear());
     const [currentStartYear, setCurrentStartYear] = useState(2010);
-    const [currentEndYear, setCurrentEndYear] = useState(2020);
+    const [currentEndYear, setCurrentEndYear] = useState(2025);
     const [currentFamilyName, setCurrentFamilyName] = useState("");
     const [familyNames, setFamilyNames] = useState<Array<string>>([]);
     const searchInput = useRef<HTMLInputElement>(null);
