@@ -4,8 +4,8 @@ from datetime import timedelta, timezone, datetime
 import math
 import os, json, time
 from pathlib import Path
-from typing import Annotated, List
-from fastapi import Depends, FastAPI, HTTPException, status, File, UploadFile
+from typing import Annotated, List, Optional
+from fastapi import Depends, FastAPI, HTTPException, status, File, UploadFile, Body
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
@@ -576,14 +576,15 @@ def get_top_x_of_plants(
 
 
 @app.post("/map/obs")
-def get_observation_data( oids: str,
+def get_observation_data(
     user: Annotated[User, Depends(get_current_active_user)],
-    db: Session = Depends(get_db)):
+    db: Session = Depends(get_db), body: Optional[dict] = Body(None)):
     data = []
-    if user:
-        ids = ast.literal_eval(oids.replace(" ",""))
-        ids = [int(x) for x in ids]
-        str_ids = tuple(ids)
+    oids = body["oids"]
+    if user and oids:
+        # ids = ast.literal_eval(oids.replace(" ",""))
+        ids = [str(x) for x in oids]
+        str_ids = "("+",".join(ids)+")"
         # "("
         # for i in ids:
         #     str_ids += str(i) + ","

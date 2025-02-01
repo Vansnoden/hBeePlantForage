@@ -8,7 +8,7 @@ import { TileWMS } from 'ol/source';
 import { GEOSERVER_BASE_URL } from '@/app/lib/constants';
 import clsx from 'clsx';
 import { XMarkIcon } from '@heroicons/react/20/solid';
-import { Observation } from '@/app/lib/definitions';
+import { Observation, ObservationRow } from '@/app/lib/definitions';
 import { ObservationItem } from './observation';
 import { lusitana } from '../fonts';
 import { getFamilyData, getPointData, searchFamilyNames } from '@/app/lib/client_actions';
@@ -17,7 +17,7 @@ import { getFamilyData, getPointData, searchFamilyNames } from '@/app/lib/client
 const MapComponent = (props:{token: string}) => {
 
     const [showDetails, setShowDetails] = useState(false);
-    const [pointDetails, setPointDetails] = useState([] as Array<Observation>);
+    const [pointDetails, setPointDetails] = useState([] as Array<ObservationRow>);
     const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
     const [startYear, setStartYear] = useState(2000);
     const [endYear, setEndYear] = useState(new Date().getFullYear());
@@ -115,14 +115,17 @@ const MapComponent = (props:{token: string}) => {
                        for(let i=0; i<res.features.length; i++){
                         const point = res.features[i].properties;
                         ids.push(parseInt(res.features[i].id.split(".")[1]));
-                        cleanRes.push(point as Observation);
+                        cleanRes.push(point as ObservationRow);
                        } 
                     }
                     console.log(ids);
                     setPointDetails(cleanRes);
                     getPointData(props.token, ids).then((ress)=>{
-                        console.log('server response')
-                        console.log(ress);
+                        // console.log('server response')
+                        // console.log(ress);
+                        if(ress){
+                            setPointDetails(ress);
+                        }
                     })
                 });
             }
@@ -217,7 +220,7 @@ const MapComponent = (props:{token: string}) => {
                     </div>
                     {/* <div dangerouslySetInnerHTML={createMarkup(pointDetails)}></div> */}
                     <div className='p-2'>
-                        {pointDetails.map(function(item){
+                        {Array.isArray(pointDetails) && pointDetails?.map(function(item){
                             return (<ObservationItem key={pointDetails.indexOf(item)} obs={item}/>)
                         })}
                     </div>

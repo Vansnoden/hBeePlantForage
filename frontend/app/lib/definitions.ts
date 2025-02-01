@@ -56,3 +56,14 @@ export interface Observation{
     lon: number,
     specie_class: string
 }
+
+
+export interface ObservationRow{
+    id: number,
+    site: string,
+    country: string, 
+    specie_name: string, 
+    family: string, 
+    class: string,
+    year: number
+}
