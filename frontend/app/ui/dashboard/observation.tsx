@@ -34,7 +34,7 @@ export function ObservationItem(props:{ obs:ObservationRow }) {
       <hr/>
       <div className={`${lusitana.className} grid grid-cols-2`}>
         <div>
-          <b>Is Invasive</b><br/>
+          <b>Is Native</b><br/>
         </div>
         <div>
           <span>{props.obs.class}</span><br/>
