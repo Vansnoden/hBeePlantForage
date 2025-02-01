@@ -239,7 +239,7 @@ select count(*) from bee_plant_data
 
 
 QUERY_PLANT_SUMMARY_DATA_FILTERED = """
-select * from bee_plant_data
+select id, location_name as site_name, country, plant_species_name as plant_name, family_name as family from bee_plant_data
 where country ilike '%{query}%' 
     or plant_species_name ilike '%{query}%' 
     or family_name ilike '%{query}%' 
