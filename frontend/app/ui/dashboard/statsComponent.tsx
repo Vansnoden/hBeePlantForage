@@ -126,13 +126,16 @@ export default function StatsComponent(props:{token: string}){
                             <option key={0} value="">
                                 Global   
                             </option>
-                            <option key={1} value="Africa">
+                            <option key={1} value="America">
+                                America    
+                            </option>
+                            <option key={2} value="Africa">
                                 Africa    
                             </option>
-                            <option key={2} value="Europe">
+                            <option key={3} value="Europe">
                                 Europe    
                             </option>
-                            <option key={3} value="Asia">
+                            <option key={4} value="Asia">
                                 Asia    
                             </option>
                         </select>
