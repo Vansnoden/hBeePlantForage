@@ -138,6 +138,9 @@ export default function StatsComponent(props:{token: string}){
                             <option key={4} value="Asia">
                                 Asia    
                             </option>
+                            <option key={5} value="Oceania">
+                                Oceania    
+                            </option>
                         </select>
                     </div>
                 </div>
