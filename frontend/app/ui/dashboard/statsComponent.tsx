@@ -5,7 +5,7 @@ import { CustomChartData } from "../../lib/definitions";
 import BarChart from "../../ui/dashboard/charts/barchart";
 import MiniMapComponent from "../../ui/dashboard/mini_map";
 import { lusitana } from "../../ui/fonts";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import clsx from "clsx";
 import PieChart from "./charts/piechart";
 
@@ -150,9 +150,15 @@ export default function StatsComponent(props:{token: string}){
                 </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-                <BarChart data={plantTop} show_labels={true}/>
-                <BarChart data={yearDistro} show_labels={true}/>
-                <BarChart data={yearDistroGlobal} show_labels={true}/>
+                <Suspense fallback={<p>Loading top 20 plants distribution...</p>}>
+                    <BarChart data={plantTop} show_labels={true}/>
+                </Suspense>
+                <Suspense fallback={<p>Loading yearly distribution...</p>}>
+                    <BarChart data={yearDistro} show_labels={true}/>
+                </Suspense>
+                <Suspense fallback={<p>Loading yearly distribution...</p>}>
+                    <BarChart data={yearDistroGlobal} show_labels={true}/>
+                </Suspense>
                 <div>
                     <h4 className={`${lusitana.className} mb-4 text-xl`}>Distribution of observations per region</h4>
                     <PieChart data={regionObsDistroGlobal} show_labels={true} />
