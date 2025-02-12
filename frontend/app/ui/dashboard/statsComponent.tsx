@@ -13,6 +13,7 @@ import PieChart from "./charts/piechart";
 export default function StatsComponent(props:{token: string}){
 
     const [currentFamilyName, setCurrentFamilyName] = useState("");
+    const [currentZone, setCurrentZone] = useState("Global");
     const [familyNames, setFamilyNames] = useState<Array<string>>([]);
     const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
     const [mapVisibility, toggleMapVisibility] = useState(false);
@@ -59,6 +60,9 @@ export default function StatsComponent(props:{token: string}){
             setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value || ''));
             setYearDistroGlobal(await getYearlyObsDistro(props.token, '', '', startYear, endYear));
             if(focusZoneSelect.current && searchInput.current){
+                setCurrentZone(focusZoneSelect.current?.value);
+                console.log('--> zchange - selected family: ', searchInput.current?.value);
+                console.log('--> zchange - selected zone of interest: ', focusZoneSelect.current?.value);
                 setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
         }
@@ -75,6 +79,8 @@ export default function StatsComponent(props:{token: string}){
             setRegionObsDistroGlobal(await getRegionObsDistro(props.token, ''));
             setYearDistroGlobal(await getYearlyObsDistro(props.token, '', '', startYear, endYear));
             if(focusZoneSelect.current && searchInput.current){
+                console.log('--> fchange - selected family: ', searchInput.current?.value);
+                console.log('--> fchange - selected zone of interest: ', focusZoneSelect.current?.value);
                 setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
             setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));

@@ -512,22 +512,25 @@ def get_last_x_years_distro(
     if user:
         labels = []
         values = []
-        if cname:
+        if cname and not fname:
             query = text(QUERY_OBS_YEARLY_OVERVIEW_CONTINENT.format(continent=cname, year_start=year_start, year_end=year_end))
         elif cname and fname:
             query = text(QUERY_OBS_YEARLY_OVERVIEW_CONTINENT_FAMILY.format(continent=cname, family_name=fname, year_start=year_start, year_end=year_end))
         else:
             query = text(QUERY_OBS_YEARLY_OVERVIEW.format(year_start=year_start, year_end=year_end))
+        print(query)
         data = db.execute(query)
         for rec in data:
             labels.append(rec[1])
             values.append(rec[0])
         obs_10bgColor, obs_10borderColor = generate_colors(len(values))
+        continent_family_label = f"{fname + ': '} {cname} last {year_end - year_start} years observations overview"
+        default_label = f"{cname} last {year_end - year_start} years observations overview"
         res["data"] = {
                 "labels": labels,
                 "datasets": [
                     {
-                        "label": f'{cname} last {year_end - year_start} years observations overview',
+                        "label": continent_family_label if fname else default_label,
                         "data": values,
                         "backgroundColor": obs_10bgColor,
                         "borderColor": obs_10borderColor,
