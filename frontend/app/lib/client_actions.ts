@@ -38,8 +38,8 @@ export async function getRegionObsDistro(token: string, cname: string){
 }
 
 
-export async function getYearlyObsDistro(token: string, cname: string, yearStart:number, yearEnd:number){
-    const dashData = await fetch(YEAR_DISTRO_URL +"?cname="+cname+"&year_start="+yearStart+"&year_end="+yearEnd, {
+export async function getYearlyObsDistro(token: string, cname: string, fname: string, yearStart:number, yearEnd:number){
+    const dashData = await fetch(YEAR_DISTRO_URL +"?cname="+cname+"&fname="+fname+"&year_start="+yearStart+"&year_end="+yearEnd, {
         method: 'GET',
         headers: {
           "Authorization": token

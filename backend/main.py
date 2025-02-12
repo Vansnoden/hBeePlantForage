@@ -504,6 +504,7 @@ def get_last_x_years_distro(
     user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db),
     cname: str = "", 
+    fname: str = "",
     year_start: int = 2015,
     year_end: int = 2025):
     res = {}
@@ -513,6 +514,8 @@ def get_last_x_years_distro(
         values = []
         if cname:
             query = text(QUERY_OBS_YEARLY_OVERVIEW_CONTINENT.format(continent=cname, year_start=year_start, year_end=year_end))
+        elif cname and fname:
+            query = text(QUERY_OBS_YEARLY_OVERVIEW_CONTINENT_FAMILY.format(continent=cname, family_name=fname, year_start=year_start, year_end=year_end))
         else:
             query = text(QUERY_OBS_YEARLY_OVERVIEW.format(year_start=year_start, year_end=year_end))
         data = db.execute(query)

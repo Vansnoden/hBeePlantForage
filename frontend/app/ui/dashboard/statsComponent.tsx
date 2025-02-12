@@ -57,9 +57,9 @@ export default function StatsComponent(props:{token: string}){
     const zoneOnChangeHandler = () => {
         const refreshData = async ()=> {
             setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value || ''));
-            setYearDistroGlobal(await getYearlyObsDistro(props.token, '', startYear, endYear));
-            if(focusZoneSelect.current){
-                setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, startYear, endYear))
+            setYearDistroGlobal(await getYearlyObsDistro(props.token, '', '', startYear, endYear));
+            if(focusZoneSelect.current && searchInput.current){
+                setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
         }
         refreshData()
@@ -73,9 +73,9 @@ export default function StatsComponent(props:{token: string}){
         }
         const refreshData = async ()=> {
             setRegionObsDistroGlobal(await getRegionObsDistro(props.token, ''));
-            setYearDistroGlobal(await getYearlyObsDistro(props.token, '', startYear, endYear));
-            if(focusZoneSelect.current){
-                setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, startYear, endYear))
+            setYearDistroGlobal(await getYearlyObsDistro(props.token, '', '', startYear, endYear));
+            if(focusZoneSelect.current && searchInput.current){
+                setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
             setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
             setGeojsonData(await getFamilyData(props.token, currentFamilyName));
@@ -150,15 +150,9 @@ export default function StatsComponent(props:{token: string}){
                 </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-                <Suspense fallback={<p>Loading top 20 plants distribution...</p>}>
-                    <BarChart data={plantTop} show_labels={true}/>
-                </Suspense>
-                <Suspense fallback={<p>Loading yearly distribution...</p>}>
-                    <BarChart data={yearDistro} show_labels={true}/>
-                </Suspense>
-                <Suspense fallback={<p>Loading yearly distribution...</p>}>
-                    <BarChart data={yearDistroGlobal} show_labels={true}/>
-                </Suspense>
+                <BarChart data={plantTop} show_labels={true}/>
+                <BarChart data={yearDistro} show_labels={true}/>
+                <BarChart data={yearDistroGlobal} show_labels={true}/>
                 <div>
                     <h4 className={`${lusitana.className} mb-4 text-xl`}>Distribution of observations per region</h4>
                     <PieChart data={regionObsDistroGlobal} show_labels={true} />

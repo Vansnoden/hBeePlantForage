@@ -220,6 +220,16 @@ group by year order by year asc
 """
 
 
+QUERY_OBS_YEARLY_OVERVIEW_CONTINENT_FAMILY = """
+select count(id), year from bee_plant_data 
+where 
+    year between {year_start} and {year_end} 
+    and continent ilike '%{continent}%'
+    and family_name ilike '%{family_name}%'
+group by year order by year asc
+"""
+
+
 QUERY_MONTHLY_OBS_DISTRO = """
 select count(id), month from bee_plant_data 
 where month <> 0 and region ilike '%{continent}%'
