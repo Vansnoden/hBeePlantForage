@@ -7,7 +7,7 @@ import { lusitana } from '../../fonts';
 
 
 const PieChart = (props: { data: CustomChartData |undefined , show_labels: boolean})  => {
-    const title = props.data?.datasets.label;
+    const title = props.data? props.data.datasets[0].label: 'no title';
     const converted_dataset = props.data?.datasets;
     const converted_data = {
         labels: props.data?.labels,
@@ -15,13 +15,16 @@ const PieChart = (props: { data: CustomChartData |undefined , show_labels: boole
     }
     return (
     <div style={{ width: '100%', height: '400px', padding:'0px' }} className={`${lusitana.className}`}>
-        <h1>{title}</h1>
         <Pie options={{
             plugins: {
                 legend: {
                     display: props.show_labels,
                     position: "right",
                 },
+                title: {
+                    display: true,
+                    text: title
+                }
             }
         }} data={converted_data} />
     </div>

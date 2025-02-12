@@ -303,9 +303,19 @@ where family_name ilike '%{search}%' limit 20;
 
 
 QUERY_GROUP_OBS_BY_CONTINENT_REGIONS = """
-select count(id), country from bee_plant_data
+select count(id), region from bee_plant_data
 where continent ilike '%{continent}%'
-group by country order by count desc;
+and  year between {year_start} and {year_end}
+group by region order by count desc;
+"""
+
+QUERY_GROUP_OBS_BY_CONTINENT_REGIONS_FAMILY = """
+select count(id), region from bee_plant_data
+where 
+    continent ilike '%{continent}%'
+    and  family_name ilike '%{family_name}%'
+    and  year between {year_start} and {year_end}
+group by region order by count desc;
 """
 
 

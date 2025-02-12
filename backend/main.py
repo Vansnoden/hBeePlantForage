@@ -471,22 +471,33 @@ def get_obs_monthly_distro(
 def get_obs_region_distribution( 
     user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db),
-    cname: str = ""):
+    cname: str = "",
+    fname: str = "",
+    year_start: int = 2015,
+    year_end: int = 2025):
+
     res = {}
     if user:
         labels = []
         values = []
-        query = text(QUERY_GROUP_OBS_BY_CONTINENT_REGIONS.format(continent=cname))
+        if cname and not fname:
+            query = text(QUERY_GROUP_OBS_BY_CONTINENT_REGIONS.format(continent=cname, year_start=year_start, year_end=year_end))
+        elif fname:
+            query = text(QUERY_GROUP_OBS_BY_CONTINENT_REGIONS_FAMILY.format(continent=cname, family_name=fname, year_start=year_start, year_end=year_end))
+        else:
+            query = text(QUERY_GROUP_OBS_BY_CONTINENT_REGIONS.format(continent=cname, year_start=year_start, year_end=year_end))
         data = db.execute(query)
         for rec in data:
             labels.append(rec[1])
             values.append(rec[0])
         spcbgColor, spcborderColor = generate_colors(len(values))
+        continent_family_label = f"{fname + ': '} observations distribution in {cname} regions for the last {year_end - year_start} years"
+        default_label = f"observations distribution in {cname} regions for the last {year_end - year_start} years"
         res["data"] = {
                 "labels": labels,
                 "datasets": [
                     {
-                        "label": f'Observations per {cname} regions',
+                        "label": continent_family_label if fname else default_label,
                         "data": values,
                         "backgroundColor": spcbgColor,
                         "borderColor": spcborderColor,
@@ -514,11 +525,10 @@ def get_last_x_years_distro(
         values = []
         if cname and not fname:
             query = text(QUERY_OBS_YEARLY_OVERVIEW_CONTINENT.format(continent=cname, year_start=year_start, year_end=year_end))
-        elif cname and fname:
+        elif fname:
             query = text(QUERY_OBS_YEARLY_OVERVIEW_CONTINENT_FAMILY.format(continent=cname, family_name=fname, year_start=year_start, year_end=year_end))
         else:
             query = text(QUERY_OBS_YEARLY_OVERVIEW.format(year_start=year_start, year_end=year_end))
-        print(query)
         data = db.execute(query)
         for rec in data:
             labels.append(rec[1])

@@ -13,7 +13,6 @@ import PieChart from "./charts/piechart";
 export default function StatsComponent(props:{token: string}){
 
     const [currentFamilyName, setCurrentFamilyName] = useState("");
-    const [currentZone, setCurrentZone] = useState("Global");
     const [familyNames, setFamilyNames] = useState<Array<string>>([]);
     const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
     const [mapVisibility, toggleMapVisibility] = useState(false);
@@ -57,12 +56,9 @@ export default function StatsComponent(props:{token: string}){
 
     const zoneOnChangeHandler = () => {
         const refreshData = async ()=> {
-            setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value || ''));
             setYearDistroGlobal(await getYearlyObsDistro(props.token, '', '', startYear, endYear));
             if(focusZoneSelect.current && searchInput.current){
-                setCurrentZone(focusZoneSelect.current?.value);
-                console.log('--> zchange - selected family: ', searchInput.current?.value);
-                console.log('--> zchange - selected zone of interest: ', focusZoneSelect.current?.value);
+                setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value || '', searchInput.current?.value, startYear, endYear));
                 setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
         }
@@ -76,11 +72,9 @@ export default function StatsComponent(props:{token: string}){
             setCurrentFamilyName(searchInput.current?.value);
         }
         const refreshData = async ()=> {
-            setRegionObsDistroGlobal(await getRegionObsDistro(props.token, ''));
             setYearDistroGlobal(await getYearlyObsDistro(props.token, '', '', startYear, endYear));
             if(focusZoneSelect.current && searchInput.current){
-                console.log('--> fchange - selected family: ', searchInput.current?.value);
-                console.log('--> fchange - selected zone of interest: ', focusZoneSelect.current?.value);
+                setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear));
                 setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
             setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
@@ -158,11 +152,8 @@ export default function StatsComponent(props:{token: string}){
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
                 <BarChart data={plantTop} show_labels={true}/>
                 <BarChart data={yearDistro} show_labels={true}/>
-                <BarChart data={yearDistroGlobal} show_labels={true}/>
-                <div>
-                    <h4 className={`${lusitana.className} mb-4 text-xl`}>Distribution of observations per region</h4>
-                    <PieChart data={regionObsDistroGlobal} show_labels={true} />
-                </div>
+                {/* <BarChart data={yearDistroGlobal} show_labels={true}/> */}
+                <PieChart data={regionObsDistroGlobal} show_labels={true}/>
             </div>
         </div>
     )

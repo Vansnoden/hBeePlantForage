@@ -27,13 +27,15 @@ export async function getPlantTopX(token: string, fname: string, limit:number){
 }
   
 
-export async function getRegionObsDistro(token: string, cname: string){
-    const dashData = await fetch(REGION_DISTRO_URL +"?cname="+cname, {
+export async function getRegionObsDistro(token: string, cname: string, fname: string, yearStart:number, yearEnd:number){
+    const dashData = await fetch(REGION_DISTRO_URL +"?cname="+cname+"&fname="+fname+"&year_start="+yearStart+"&year_end="+yearEnd, {
         method: 'GET',
         headers: {
           "Authorization": token
         }
     }).then((res) => res.json())
+    console.log('---> data <---');
+    console.log(dashData?.data);
     return dashData?.data as CustomChartData;
 }
 
