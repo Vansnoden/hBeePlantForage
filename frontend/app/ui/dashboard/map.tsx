@@ -92,7 +92,7 @@ const MapComponent = (props:{token: string}) => {
             layers: [osmLayer, pointLayer],
             view: new View({
                 center: [0, 0],
-                zoom: 0,
+                zoom: 3.5,
             }),
         });
 
