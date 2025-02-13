@@ -84,7 +84,7 @@ export default function StatsComponent(props:{token: string}){
             }
         ]
     }
-    // const [yearAgg, setYearAgg] = useState(testData);
+    const [yearAgg, setYearAgg] = useState(testData);
 
     const updateSearch = (evt: any) => { // eslint-disable-line
         const familyName = evt.target.getAttribute("value");
@@ -118,7 +118,7 @@ export default function StatsComponent(props:{token: string}){
             if(focusZoneSelect.current && searchInput.current){
                 setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value || '', searchInput.current?.value, startYear, endYear));
                 setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
-                // setYearAgg(await getYearAggregate(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
+                setYearAgg(await getYearAggregate(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
         }
         refreshData()
@@ -135,7 +135,7 @@ export default function StatsComponent(props:{token: string}){
             if(focusZoneSelect.current && searchInput.current){
                 setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear));
                 setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
-                // setYearAgg(await getYearAggregate(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
+                setYearAgg(await getYearAggregate(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
             setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
             setGeojsonData(await getFamilyData(props.token, currentFamilyName));
@@ -215,7 +215,7 @@ export default function StatsComponent(props:{token: string}){
                 <BarChart data={yearDistro} show_labels={true}/>
                 {/* <BarChart data={yearDistroGlobal} show_labels={true}/> */}
                 <PieChart data={regionObsDistroGlobal} width={700} show_labels={true}/>
-                {/*<SunburstChart data={yearAgg} width={700} height={700} show_labels={true}/>*/}
+                <SunburstChart data={yearAgg} width={700} height={700} show_labels={true}/>
             </div>
         </div>
     )
