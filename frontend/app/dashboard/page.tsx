@@ -39,8 +39,7 @@ export default async function Dashboard(props: {
                         <BarChart data={plantTop} show_labels={false}/>
                     </div>
                     <div>
-                        <h3 className={`${lusitana.className}`}>Distribution of observations per region</h3>
-                        <PieChart data={regionObsDistro} show_labels={true} />
+                        <PieChart data={regionObsDistro} width={300} show_labels={false} />
                     </div>
                 </div>
                 <div className="sm:col-span-4 md:col-span-3">

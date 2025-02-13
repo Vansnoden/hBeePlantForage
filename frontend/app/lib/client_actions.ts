@@ -1,6 +1,6 @@
 "use client";
 
-import { FAMILY_DATA_MAX_URL, FAMILY_DATA_URL, FAMILY_NAME_SEARCH, PLANT_DATA_URL, PLANT_TOP_URL, POIN_DATA_URL, REGION_DISTRO_URL, YEAR_DISTRO_URL } from './constants';
+import { FAMILY_DATA_MAX_URL, FAMILY_DATA_URL, FAMILY_NAME_SEARCH, PLANT_DATA_URL, PLANT_TOP_URL, POIN_DATA_URL, REGION_DISTRO_URL, YEAR_AGG_URL, YEAR_DISTRO_URL } from './constants';
 import { DASHBOARD_DATA_URL } from "./constants";
 import { CustomChartData, DashboardData, PlantData } from './definitions';
 
@@ -34,11 +34,20 @@ export async function getRegionObsDistro(token: string, cname: string, fname: st
           "Authorization": token
         }
     }).then((res) => res.json())
-    console.log('---> data <---');
-    console.log(dashData?.data);
     return dashData?.data as CustomChartData;
 }
 
+
+export async function getYearAggregate(token: string, cname: string, fname: string, yearStart:number, yearEnd:number){
+    const dashData = await fetch(YEAR_AGG_URL +"?cname="+cname+"&fname="+fname+"&year_start="+yearStart+"&year_end="+yearEnd, {
+        method: 'GET',
+        headers: {
+          "Authorization": token
+        }
+    }).then((res) => res.json())
+    console.log(dashData)
+    return dashData;
+}
 
 export async function getYearlyObsDistro(token: string, cname: string, fname: string, yearStart:number, yearEnd:number){
     const dashData = await fetch(YEAR_DISTRO_URL +"?cname="+cname+"&fname="+fname+"&year_start="+yearStart+"&year_end="+yearEnd, {

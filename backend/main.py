@@ -477,6 +477,7 @@ def get_obs_region_distribution(
     year_end: int = 2025):
 
     res = {}
+    new_res = {'data':[]}
     if user:
         labels = []
         values = []
@@ -490,6 +491,9 @@ def get_obs_region_distribution(
         for rec in data:
             labels.append(rec[1])
             values.append(rec[0])
+            new_res["data"].append({
+                "label": rec[1], "value": rec[0]
+            })
         spcbgColor, spcborderColor = generate_colors(len(values))
         continent_family_label = f"{fname + ': '} observations distribution in {cname} regions for the last {year_end - year_start} years"
         default_label = f"observations distribution in {cname} regions for the last {year_end - year_start} years"
@@ -551,6 +555,67 @@ def get_last_x_years_distro(
         return res
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
+
+
+
+@app.get("/data/yearly/aggregate")
+def get_last_x_years_aggregate(
+    user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db),
+    cname: str = "", 
+    fname: str = "",
+    year_start: int = 2015,
+    year_end: int = 2025):
+    res = {
+        "name": "data",
+        "children":[]
+    }
+    assert year_end > year_start, "Start Year should be inferiour to end year"
+    if user:
+        labels = []
+        values = []
+        if cname and not fname:
+            query = text(QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT.format(continent=cname, year_start=year_start, year_end=year_end))
+        elif fname:
+            query = text(QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT_FAMILY.format(continent=cname, family_name=fname, year_start=year_start, year_end=year_end))
+        else:
+            query = text(QUERY_AGGREGATE_SUMMARY_DATA.format(year_start=year_start, year_end=year_end))
+        data = db.execute(query)
+        
+        continents = {}
+        regions = {}
+        countries = {}
+        families = {}
+        species = {}
+
+        for rec in data:
+            specie_child = {
+                "name": rec[4],
+                "value": rec[5]
+            },
+            family_child = {
+                "name": rec[3],
+                "children": [specie_child]
+            }
+            country_child = {
+                "name": rec[2],
+                "children": [family_child]
+            }
+            region_child = {
+                "name": rec[1],
+                "children": [country_child]
+            }
+            continent_child = {
+                "name": rec[0],
+                "children": [region_child]
+            }
+            res["children"].append(continent_child)
+
+        return res
+    else:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
+
+
 
 
 @app.get("/data/plants/top")
