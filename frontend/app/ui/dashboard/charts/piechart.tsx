@@ -9,7 +9,7 @@ import * as d3 from 'd3';
 
 
 
-const PieChart = (props: { data: CustomChartData, width: number, show_labels: boolean})  => {
+const PieChart = (props: { data: CustomChartData | undefined, width: number, show_labels: boolean})  => {
     const title = props.data? props.data.datasets[0].label: 'no title';
     const converted_dataset = props.data?.datasets;
     const converted_data = {

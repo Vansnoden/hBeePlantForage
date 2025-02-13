@@ -135,7 +135,7 @@ export default function StatsComponent(props:{token: string}){
             if(focusZoneSelect.current && searchInput.current){
                 setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear));
                 setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
-                setYearAgg(await getYearAggregate(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
+                // setYearAgg(await getYearAggregate(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
             setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
             setGeojsonData(await getFamilyData(props.token, currentFamilyName));
@@ -213,7 +213,7 @@ export default function StatsComponent(props:{token: string}){
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
                 <BarChart data={plantTop} show_labels={true}/>
                 <BarChart data={yearDistro} show_labels={true}/>
-                <BarChart data={yearDistroGlobal} show_labels={true}/>
+                {/* <BarChart data={yearDistroGlobal} show_labels={true}/> */}
                 <PieChart data={regionObsDistroGlobal} width={700} show_labels={true}/>
                 {/*<SunburstChart data={yearAgg} width={700} height={700} show_labels={true}/>*/}
             </div>
