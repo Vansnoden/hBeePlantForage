@@ -607,8 +607,31 @@ def get_last_x_years_aggregate(
                 for nnchild in level_three_children:
                     refined_data[-1]['children'][-1]['children'].append({
                         "name": nnchild,
-                        "value": 1
+                        "children": []
                     })
+                    level_four_children = []
+                    for x in data:
+                        if x['country'] == nnchild:
+                            level_four_children.append(x['family_name'])
+                    level_four_children = list(set([y for y in level_four_children]))
+                    for nnnchild in level_four_children:
+                        refined_data[-1]['children'][-1]['children'][-1]['children'].append({
+                            "name": nnnchild,
+                            "value": 0
+                        })
+                        for x in data:
+                            if x['family_name'] == nnnchild:
+                                refined_data[-1]['children'][-1]['children'][-1]['children'][-1]['value'] += 1
+                        # level_five_children = []
+                        # for x in data:
+                        #     if x['family_name'] == nnnchild:
+                        #         level_five_children.append(x['plant_species_name'])
+                        #     level_five_children = list(set([y for y in level_five_children]))
+                        #     for nnnnchild in level_five_children:
+                        #         refined_data[-1]['children'][-1]['children'][-1]['children'].append({
+                        #             "name": nnnnchild,
+                        #             "value": x['count']
+                        #         })
         res["children"] = refined_data
         return res
     else:
