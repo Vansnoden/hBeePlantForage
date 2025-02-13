@@ -572,45 +572,44 @@ def get_last_x_years_aggregate(
     }
     assert year_end > year_start, "Start Year should be inferiour to end year"
     if user:
-        labels = []
-        values = []
         if cname and not fname:
             query = text(QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT.format(continent=cname, year_start=year_start, year_end=year_end))
         elif fname:
             query = text(QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT_FAMILY.format(continent=cname, family_name=fname, year_start=year_start, year_end=year_end))
         else:
             query = text(QUERY_AGGREGATE_SUMMARY_DATA.format(year_start=year_start, year_end=year_end))
-        data = db.execute(query)
-        
-        continents = {}
-        regions = {}
-        countries = {}
-        families = {}
-        species = {}
-
-        for rec in data:
-            specie_child = {
-                "name": rec[4],
-                "value": rec[5]
-            },
-            family_child = {
-                "name": rec[3],
-                "children": [specie_child]
-            }
-            country_child = {
-                "name": rec[2],
-                "children": [family_child]
-            }
-            region_child = {
-                "name": rec[1],
-                "children": [country_child]
-            }
-            continent_child = {
-                "name": rec[0],
-                "children": [region_child]
-            }
-            res["children"].append(continent_child)
-
+        db_recs = db.execute(query)
+        data = []
+        for rec in db_recs:
+            data.append(rec._mapping)
+        level_one_children = list(set([x['continent'] for x in data]))
+        refined_data = []
+        for child in level_one_children:
+            level_two_children = []
+            refined_data.append({
+                'name': child,
+                'children':[]
+            })
+            for x in data:
+                if x['continent'] == child:
+                    level_two_children.append(x['region'])
+            level_two_children = list(set([y for y in level_two_children]))
+            for nchild in level_two_children:
+                refined_data[-1]['children'].append({
+                    "name": nchild,
+                    "children": []
+                })
+                level_three_children = []
+                for x in data:
+                    if x['region'] == nchild:
+                        level_three_children.append(x['country'])
+                level_three_children = list(set([y for y in level_three_children]))
+                for nnchild in level_three_children:
+                    refined_data[-1]['children'][-1]['children'].append({
+                        "name": nnchild,
+                        "value": 1
+                    })
+        res["children"] = refined_data
         return res
     else:
         raise HTTPException(status_code=403, detail="Unauthorized access")
