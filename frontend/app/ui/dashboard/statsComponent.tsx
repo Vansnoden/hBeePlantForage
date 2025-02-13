@@ -1,13 +1,14 @@
 "use client"
 
-import { searchFamilyNames, getPlantTopX, getRegionObsDistro, getYearlyObsDistro, getFamilyData, getFamilyDataMax } from "@/app/lib/client_actions";
+import { searchFamilyNames, getPlantTopX, getRegionObsDistro, getYearlyObsDistro, getFamilyData, getFamilyDataMax, getYearAggregate } from "@/app/lib/client_actions";
 import { CustomChartData } from "../../lib/definitions";
 import BarChart from "../../ui/dashboard/charts/barchart";
 import MiniMapComponent from "../../ui/dashboard/mini_map";
 import { lusitana } from "../../ui/fonts";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import clsx from "clsx";
 import PieChart from "./charts/piechart";
+import SunburstChart from "./charts/sunburst";
 
 
 export default function StatsComponent(props:{token: string}){
@@ -21,12 +22,69 @@ export default function StatsComponent(props:{token: string}){
     const [plantTop, setPlantTop] = useState<CustomChartData>();
     const [yearDistro, setYearDistro] = useState<CustomChartData>();
     const [yearDistroGlobal, setYearDistroGlobal] = useState<CustomChartData>();
-    const [regionObsDistroGlobal, setRegionObsDistroGlobal] = useState<CustomChartData>();
+    const [regionObsDistroGlobal, setRegionObsDistroGlobal] = useState<CustomChartData>(); //useState([]);
     const startYear = 2015;
     const endYear = 2025;
     const [geojsonData, setGeojsonData] = useState({});
     const [familyMax, setFamilyMax] = useState(0);
     const [isLoading, setLoading] = useState(false);
+    const testData = {
+        name: "root",
+        children: [
+            {
+                name:'level 1',
+                children: [
+                    {
+                        name:'level 1.1',
+                        value: 4
+                    },
+                    {
+                        name:'level 1.2',
+                        value: 1
+                    },
+                    {
+                        name:'level 1.3',
+                        value: 5
+                    }
+                ]
+            },
+            {
+                name:'level 2',
+                children: [
+                    {
+                        name:'level 2.1',
+                        value: 10
+                    },
+                    {
+                        name:'level 2.2',
+                        value: 3
+                    }
+                ]
+            },
+            {
+                name:'level 3',
+                children: [
+                    {
+                        name:'level 3.1',
+                        value: 4
+                    },
+                    {
+                        name:'level 3.2',
+                        value: 3
+                    },
+                    {
+                        name:'level 3.3',
+                        value: 3
+                    },
+                    {
+                        name:'level 3.4',
+                        value: 3
+                    },
+                ]
+            }
+        ]
+    }
+    // const [yearAgg, setYearAgg] = useState(testData);
 
     const updateSearch = (evt: any) => { // eslint-disable-line
         const familyName = evt.target.getAttribute("value");
@@ -56,10 +114,11 @@ export default function StatsComponent(props:{token: string}){
 
     const zoneOnChangeHandler = () => {
         const refreshData = async ()=> {
-            setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value || ''));
-            setYearDistroGlobal(await getYearlyObsDistro(props.token, '', startYear, endYear));
-            if(focusZoneSelect.current){
-                setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, startYear, endYear))
+            setYearDistroGlobal(await getYearlyObsDistro(props.token, '', '', startYear, endYear));
+            if(focusZoneSelect.current && searchInput.current){
+                setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value || '', searchInput.current?.value, startYear, endYear));
+                setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
+                // setYearAgg(await getYearAggregate(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
         }
         refreshData()
@@ -72,10 +131,11 @@ export default function StatsComponent(props:{token: string}){
             setCurrentFamilyName(searchInput.current?.value);
         }
         const refreshData = async ()=> {
-            setRegionObsDistroGlobal(await getRegionObsDistro(props.token, ''));
-            setYearDistroGlobal(await getYearlyObsDistro(props.token, '', startYear, endYear));
-            if(focusZoneSelect.current){
-                setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, startYear, endYear))
+            setYearDistroGlobal(await getYearlyObsDistro(props.token, '', '', startYear, endYear));
+            if(focusZoneSelect.current && searchInput.current){
+                setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear));
+                setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
+                // setYearAgg(await getYearAggregate(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
             setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
             setGeojsonData(await getFamilyData(props.token, currentFamilyName));
@@ -85,6 +145,7 @@ export default function StatsComponent(props:{token: string}){
         })
         .catch(console.error)
     }, [currentFamilyName])
+
 
     // if (isLoading) return <p>Loading data...</p>
 
@@ -152,11 +213,9 @@ export default function StatsComponent(props:{token: string}){
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
                 <BarChart data={plantTop} show_labels={true}/>
                 <BarChart data={yearDistro} show_labels={true}/>
-                <BarChart data={yearDistroGlobal} show_labels={true}/>
-                <div>
-                    <h4 className={`${lusitana.className} mb-4 text-xl`}>Distribution of observations per region</h4>
-                    <PieChart data={regionObsDistroGlobal} show_labels={true} />
-                </div>
+                {/* <BarChart data={yearDistroGlobal} show_labels={true}/> */}
+                <PieChart data={regionObsDistroGlobal} width={700} show_labels={true}/>
+                {/*<SunburstChart data={yearAgg} width={700} height={700} show_labels={true}/>*/}
             </div>
         </div>
     )

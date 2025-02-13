@@ -10,7 +10,7 @@ export interface CustomChartDataset {
 
 export interface CustomChartData{
     labels: Array<string>;
-    datasets: CustomChartDataset;
+    datasets: Array<CustomChartDataset>;
 }
 
 

@@ -13,6 +13,7 @@ import { lusitana } from '../../fonts';
 
 
 const BarChart = (props: { data: CustomChartData | undefined , show_labels: boolean}) => {
+  const title = props.data?.datasets[0].label;
   const converted_dataset = props.data?.datasets;
   const converted_data = {
     labels: props.data?.labels,
@@ -22,11 +23,19 @@ const BarChart = (props: { data: CustomChartData | undefined , show_labels: bool
 
   return (
     <div style={{ width: '100%', height: '100%' }} className={`${lusitana.className}`}>
-      <h1>{props.data?.datasets.label}</h1>
       <Bar options={{
           scales:{
             x: {
-                display: props.show_labels ////this will remove all the x-axis grid lines
+              display: props.show_labels
+            }
+          },
+          plugins: {
+            legend: {
+              display: false,
+            },
+            title: {
+                display: true,
+                text: title
             }
           }
         }} 

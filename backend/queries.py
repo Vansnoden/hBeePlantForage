@@ -220,6 +220,16 @@ group by year order by year asc
 """
 
 
+QUERY_OBS_YEARLY_OVERVIEW_CONTINENT_FAMILY = """
+select count(id), year from bee_plant_data 
+where 
+    year between {year_start} and {year_end} 
+    and continent ilike '%{continent}%'
+    and family_name ilike '%{family_name}%'
+group by year order by year asc
+"""
+
+
 QUERY_MONTHLY_OBS_DISTRO = """
 select count(id), month from bee_plant_data 
 where month <> 0 and region ilike '%{continent}%'
@@ -293,9 +303,19 @@ where family_name ilike '%{search}%' limit 20;
 
 
 QUERY_GROUP_OBS_BY_CONTINENT_REGIONS = """
-select count(id), country from bee_plant_data
+select count(id), region from bee_plant_data
 where continent ilike '%{continent}%'
-group by country order by count desc;
+and  year between {year_start} and {year_end}
+group by region order by count desc;
+"""
+
+QUERY_GROUP_OBS_BY_CONTINENT_REGIONS_FAMILY = """
+select count(id), region from bee_plant_data
+where 
+    continent ilike '%{continent}%'
+    and  family_name ilike '%{family_name}%'
+    and  year between {year_start} and {year_end}
+group by region order by count desc;
 """
 
 
@@ -312,4 +332,27 @@ select count(distinct plant_species_name) from bee_plant_data;
 
 QUERY_TOTAL_SITES = """
 select count(distinct location_name) from bee_plant_data;
+"""
+
+QUERY_AGGREGATE_SUMMARY_DATA = """
+select continent,region,country,family_name,plant_species_name,count(plant_species_name) from bee_plant_data
+where  year between {year_start} and {year_end}
+group by continent,region,country,family_name,plant_species_name
+"""
+
+QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT = """
+select continent,region,country,family_name,plant_species_name,count(plant_species_name) from bee_plant_data
+where 
+    continent ilike '%{continent}%'
+    and  year between {year_start} and {year_end}
+group by continent,region,country,family_name,plant_species_name
+"""
+
+QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT_FAMILY = """
+select continent,region,country,family_name,plant_species_name,count(plant_species_name) from bee_plant_data
+where 
+    continent ilike '%{continent}%'
+    and family_name ilike '%{family_name}%'
+    and  year between {year_start} and {year_end}
+group by continent,region,country,family_name,plant_species_name
 """

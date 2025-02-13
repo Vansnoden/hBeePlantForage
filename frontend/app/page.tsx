@@ -24,7 +24,12 @@ export default async function HomePage(){
                         and the enhancement of pollinator-friendly habitats.
                     </div>
                     <div>
-                        <Button><Link href="/dashboard">Go to Dashboard</Link><ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" /></Button>
+                        <Link href="/dashboard">
+                            <Button> 
+                                Go to Dashboard
+                                <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </div>
