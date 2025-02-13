@@ -5,7 +5,7 @@ import { CustomChartData } from '@/app/lib/definitions';
 import { Pie } from 'react-chartjs-2';
 import { lusitana } from '../../fonts';
 import { useEffect, createRef } from 'react';
-import * as d3 from 'd3';
+// import * as d3 from 'd3';
 
 
 
