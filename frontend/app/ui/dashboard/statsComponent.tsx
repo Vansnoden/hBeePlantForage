@@ -215,7 +215,8 @@ export default function StatsComponent(props:{token: string}){
                 <BarChart data={yearDistro} show_labels={true}/>
                 {/* <BarChart data={yearDistroGlobal} show_labels={true}/> */}
                 {/* <PieChart data={regionObsDistroGlobal} width={700} show_labels={true}/> */}
-                <SunburstChart data={yearAgg} width={700} height={700} show_labels={true}/>
+                { !plantTop && <p>Loading regional distribution of observations ...</p> }
+                { plantTop &&  <SunburstChart data={yearAgg} width={700} height={700} show_labels={true}/>}
             </div>
         </div>
     )
