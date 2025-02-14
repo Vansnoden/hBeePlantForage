@@ -309,7 +309,7 @@ def generate_colors(limit=0):
         green = randrange(255)
         blue = randrange(255)
         bgcolor.append(
-            f"rgba({red}, {green}, {blue}, 0.2)"
+            f"rgba({red}, {green}, {blue}, 0.6)"
         )
         border_color.append(
             f"rgba({red}, {green}, {blue}, 1)"

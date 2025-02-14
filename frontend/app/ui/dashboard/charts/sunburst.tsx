@@ -151,6 +151,7 @@ const SunburstChart = (props: { data: any, width:number, height:number , show_la
 
     return(
         <div style={{ width: '100%', height: '400px', padding:'0px' }} className={`${lusitana.className}`}>
+            <h4><center>Regional distribution of observations</center></h4>
             <svg ref={chartCtnRef}></svg>
         </div>
     )
