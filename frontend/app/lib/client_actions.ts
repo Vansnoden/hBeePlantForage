@@ -39,6 +39,8 @@ export async function getRegionObsDistro(token: string, cname: string, fname: st
 
 
 export async function getYearAggregate(token: string, cname: string, fname: string, yearStart:number, yearEnd:number){
+    yearStart = 0;
+    yearEnd = 2025;
     const dashData = await fetch(YEAR_AGG_URL +"?cname="+cname+"&fname="+fname+"&year_start="+yearStart+"&year_end="+yearEnd, {
         method: 'GET',
         headers: {
