@@ -14,6 +14,7 @@ import SunburstChart from "./charts/sunburst";
 export default function StatsComponent(props:{token: string}){
 
     const [currentFamilyName, setCurrentFamilyName] = useState("");
+    const [currentFocusZone, setcurrentFocusZone] = useState("");
     const [familyNames, setFamilyNames] = useState<Array<string>>([]);
     const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
     const [mapVisibility, toggleMapVisibility] = useState(false);
@@ -97,7 +98,7 @@ export default function StatsComponent(props:{token: string}){
             const familyData = await getFamilyData(props.token, familyName).then((geojsonD) => {
                 setGeojsonData(geojsonD);
             });
-            const top20 = await getPlantTopX(props.token, familyName, 20);
+            const top20 = await getPlantTopX(props.token, familyName, currentFocusZone, 20);
             const max = await getFamilyDataMax(props.token, familyName);
             setPlantTop(top20);
             setFamilyMax(max);
@@ -116,9 +117,11 @@ export default function StatsComponent(props:{token: string}){
         const refreshData = async ()=> {
             setYearDistroGlobal(await getYearlyObsDistro(props.token, '', '', startYear, endYear));
             if(focusZoneSelect.current && searchInput.current){
+                setcurrentFocusZone(focusZoneSelect.current?.value);
                 // setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value || '', searchInput.current?.value, startYear, endYear));
                 setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
                 setYearAgg(await getYearAggregate(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
+                setPlantTop(await getPlantTopX(props.token, searchInput.current?.value, focusZoneSelect.current?.value, 20));
             }
         }
         refreshData()
@@ -137,7 +140,7 @@ export default function StatsComponent(props:{token: string}){
                 setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
                 setYearAgg(await getYearAggregate(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
-            setPlantTop(await getPlantTopX(props.token, currentFamilyName, 20));
+            setPlantTop(await getPlantTopX(props.token, currentFamilyName, currentFocusZone, 20));
             setGeojsonData(await getFamilyData(props.token, currentFamilyName));
         }
         refreshData().then(()=>{

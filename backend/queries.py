@@ -199,9 +199,22 @@ select count(id), plant_species_name from bee_plant_data
 group by plant_species_name order by count desc limit {x}
 """
 
+QUERY_TOP_X_MOST_REPORTED_PLANTS_CONTINENT = """
+select count(id), plant_species_name from bee_plant_data 
+where continent ilike '%{cname}%'
+group by plant_species_name order by count desc limit {x}
+"""
+
 QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY = """
 select count(id), plant_species_name from bee_plant_data 
-where family_name ilike '{family_name}'
+where family_name ilike '%{family_name}%'
+group by plant_species_name order by count desc limit {x}
+"""
+
+QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY_CONTINENT = """
+select count(id), plant_species_name from bee_plant_data 
+where continent ilike '%{cname}%'
+and family_name ilike '%{family_name}%'
 group by plant_species_name order by count desc limit {x}
 """
 
