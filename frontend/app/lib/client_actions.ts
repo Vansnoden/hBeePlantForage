@@ -16,8 +16,8 @@ export async function getDashboardData(token: string, fname: string){
 }
 
 
-export async function getPlantTopX(token: string, fname: string, limit:number){
-    const dashData = await fetch(PLANT_TOP_URL +"?fname="+fname+"&top="+limit, {
+export async function getPlantTopX(token: string, fname: string, cname: string, limit:number){
+    const dashData = await fetch(PLANT_TOP_URL +"?fname="+fname+"&cname="+cname+"&top="+limit, {
         method: 'GET',
         headers: {
           "Authorization": token

@@ -645,13 +645,18 @@ def get_top_x_of_plants(
     user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db),
     fname: str = "",
+    cname: str = "",
     top: int = 20):
     res = {}
     if user:
         labels = []
         values = []
-        if fname:
+        if fname and not cname:
             query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY.format(family_name=fname, x=top))
+        elif fname and cname:
+            query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY_CONTINENT.format(family_name=fname, cname=cname, x=top))
+        elif cname:
+            query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS_CONTINENT.format(cname=cname, x=top))
         else:
             query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS.format(x=top))
         data = db.execute(query)
@@ -664,7 +669,7 @@ def get_top_x_of_plants(
                 "labels": labels,
                 "datasets": [
                     {
-                        "label": f'{fname} top {top} most observed plants',
+                        "label": f'{cname}: {fname} top {top} most observed plants' if cname else f'{fname} top {top} most observed plants',
                         "data": values,
                         "backgroundColor": top20bgColor,
                         "borderColor": top20borderColor,
