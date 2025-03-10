@@ -73,7 +73,7 @@ input[type='number']::-webkit-outer-spin-button {
   width: fit-content;
   text-transform: uppercase;
   color: black;
-  z-index: 1000!important;
+  z-index: 11!important;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   width: 50%;
   font-size: 2vw;
