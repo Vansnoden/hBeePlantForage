@@ -13,6 +13,7 @@ export default async function HomePage(){
                 <nav className="bg-white fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
                     <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                         <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+                            <Image src="/icipe_logo.png" alt="icipe logo" width="140" height="40" className="rounded-lg mr-2"></Image>
                             <img src="/bee-logo.svg" className="h-8" alt="Flowbite Logo"/>
                             <span className="flex flex-col">
                                 <span className="self-left text-sm font-semibold whitespace-nowrap dark:text-white">Bee Plant</span><br/>
@@ -45,11 +46,11 @@ export default async function HomePage(){
                         <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
                             Welcome to the Bee Plant Preference Dashboard
                         </h1>
-                        <div className="grid gap-6 grid-cols-2">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
                             <div>
                                 <Image src="/bg_home.jpg" alt="Banner image" width="600" height="500" className="rounded-lg shadow-2xl"></Image>
                             </div>
-                            <div className={`${lusitana.className} mt-4 mb-4 text-wrap`}>
+                            <div className={`${lusitana.className} mt-4 mb-4 text-wrap text-justify`}>
                                 This platform offers a deep dive into the floral preferences of different bee species, 
                                 providing valuable insights into which plants they favor most. By analyzing extensive 
                                 data on plant-bee interactions, it helps researchers, conservationists, and enthusiasts 
@@ -72,6 +73,8 @@ export default async function HomePage(){
             </div>
             {/* footer */}
             <div  className="bg-white w-full border-b border-gray-200 dark:border-gray-600 mt-5 py-4 flex justify-center items-center">
+                <Image src="/icipe_logo.png" alt="icipe logo" width="120" height="20" className="rounded-lg mr-2"></Image>
+                <img src="/bee-logo.svg" className="h-8 mr-2" alt="Flowbite Logo"/>
                 <span>Copyright bppd@2025</span>
             </div>
         </div>
