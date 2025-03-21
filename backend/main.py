@@ -541,8 +541,8 @@ def get_last_x_years_distro(
             labels.append(rec[1])
             values.append(rec[0])
         obs_10bgColor, obs_10borderColor = generate_colors(len(values))
-        continent_family_label = f"{fname + ': '} {cname} last {year_end - year_start} years observations overview"
-        default_label = f"{cname} last {year_end - year_start} years observations overview"
+        continent_family_label = f"{fname + ': '} {cname} last {year_end - year_start} years reporting overview"
+        default_label = f"{cname} last {year_end - year_start} years reporting overview"
         res["data"] = {
                 "labels": labels,
                 "datasets": [
