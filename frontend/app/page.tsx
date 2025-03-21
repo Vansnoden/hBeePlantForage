@@ -16,8 +16,8 @@ export default async function HomePage(){
                             <Image src="/icipe_logo.png" alt="icipe logo" width="140" height="40" className="rounded-lg mr-2"></Image>
                             <img src="/bee-logo.svg" className="h-8" alt="Flowbite Logo"/>
                             <span className="flex flex-col">
-                                <span className="self-left text-sm font-semibold whitespace-nowrap dark:text-white">Bee Plant</span><br/>
-                                <span className="self-left text-sm font-semibold whitespace-nowrap dark:text-white">Preference Dashboard</span>
+                                <span className="self-left text-sm font-semibold whitespace-nowrap dark:text-white">Honey Bee Forage</span><br/>
+                                <span className="self-left text-sm font-semibold whitespace-nowrap dark:text-white">Plants Dashboard</span>
                             </span>
                         </a>
                         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
@@ -35,8 +35,7 @@ export default async function HomePage(){
             <div className="mx-auto mt-5 flex flex-col items-center justify-center">
                 <div className="p-0 home-banner flex justify-start align-middle items-center">
                     <div className="max-w-screen-xl b-text mx-auto mt-14">
-                        Overview of the distribution of key bee 
-                        pollinators plants species in Africa and beyond
+                        Overview of the distribution of honey bee forage plant species in Africa
                     </div>
                     <div className="bannerOverlay"></div>
                 </div>
@@ -44,27 +43,23 @@ export default async function HomePage(){
                 <div className="py-10">
                     <div className="max-w-screen-xl bg-white p-4 rounded-md">
                         <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
-                            Welcome to the Bee Plant Preference Dashboard
+                            Welcome to the African Honey Bee Forage Plants Dashboard
                         </h1>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
                             <div>
                                 <Image src="/bg_home.jpg" alt="Banner image" width="600" height="500" className="rounded-lg shadow-2xl"></Image>
                             </div>
                             <div className={`${lusitana.className} mt-4 mb-4 text-wrap text-justify`}>
-                                This platform offers a deep dive into the floral preferences of different bee species, 
-                                providing valuable insights into which plants they favor most. By analyzing extensive 
-                                data on plant-bee interactions, it helps researchers, conservationists, and enthusiasts 
-                                understand the crucial role of specific flowers in supporting pollinator populations. 
-                                Whether you're studying native bee species, tracking seasonal foraging patterns, or 
-                                identifying key plants for pollinator-friendly gardens, this resource enables a detailed 
-                                exploration of these ecological relationships.
-                                With interactive data visualizations and in-depth analyses, users can uncover trends 
-                                that inform conservation strategies and habitat restoration efforts. By highlighting 
-                                the plants that attract and sustain diverse bee populations, the tool aids in fostering 
-                                environments where pollinators can thrive. Whether used for scientific research or 
-                                practical land management, this platform serves as a bridge between ecological data 
-                                and real-world applications, ultimately contributing to the protection of pollinators 
-                                and the ecosystems they support.
+                                This interactive tool, developed by the International Centre of Insect Physiology 
+                                and Ecology (icipe) in Nairobi, Kenya, provides detailed information on honey bee 
+                                forage plants across Africa and beyond. By mapping species distributions, the 
+                                dashboard helps researchers, conservationists, and land managers identify key 
+                                forage plants that support honey bee nutrition in different African regions and 
+                                other continents. It also highlights gaps in species occurrence, guiding future 
+                                research and conservation efforts to improve data coverage and enhance plant-pollinator 
+                                management strategies. Expanding field surveys and updating species records will be 
+                                crucial to filling these gaps and strengthening the database. Please note that the 
+                                database is still being developed, and some plant species may not yet be included.
                             </div>
                         </div>
                     </div>
