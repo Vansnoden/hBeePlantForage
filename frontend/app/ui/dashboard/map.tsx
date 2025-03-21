@@ -61,9 +61,6 @@ const MapComponent = (props:{token: string}) => {
 
 
     useEffect(() => {
-        if(searchInput.current){
-            setCurrentFamilyName(searchInput.current?.value);
-        }
 
         const osmLayer = new TileLayer({
             preload: Infinity,
@@ -86,6 +83,11 @@ const MapComponent = (props:{token: string}) => {
         const params = pointLayer?.getSource()?.getParams();
         params.CQL_FILTER = `year > ${startYear} and year < ${currentEndYear} and continent ilike '%africa%'`;
         // console.log(params)
+
+        if(searchInput.current){
+            setCurrentFamilyName(searchInput.current?.value);
+            params.CQL_FILTER = `family_name ilike '%${searchInput.current?.value}%'`;
+        }
 
         const map = new Map({
             target: "map",
@@ -132,7 +134,7 @@ const MapComponent = (props:{token: string}) => {
             setShowDetails(true);
         });
       return () => map.setTarget()
-    }, [currentEndYear]);
+    }, [currentEndYear, currentFamilyName]);
 
     const toggleDetails = () => {
         setShowDetails((showDetails) => !showDetails);
