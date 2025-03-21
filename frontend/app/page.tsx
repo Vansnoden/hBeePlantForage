@@ -50,16 +50,15 @@ export default async function HomePage(){
                                 <Image src="/bg_home.jpg" alt="Banner image" width="600" height="500" className="rounded-lg shadow-2xl"></Image>
                             </div>
                             <div className={`${lusitana.className} mt-4 mb-4 text-wrap text-justify`}>
-                                This interactive tool, developed by the International Centre of Insect Physiology 
-                                and Ecology (icipe) in Nairobi, Kenya, provides detailed information on honey bee 
-                                forage plants across Africa and beyond. By mapping species distributions, the 
-                                dashboard helps researchers, conservationists, and land managers identify key 
-                                forage plants that support honey bee nutrition in different African regions and 
-                                other continents. It also highlights gaps in species occurrence, guiding future 
-                                research and conservation efforts to improve data coverage and enhance plant-pollinator 
-                                management strategies. Expanding field surveys and updating species records will be 
-                                crucial to filling these gaps and strengthening the database. Please note that the 
-                                database is still being developed, and some plant species may not yet be included.
+                                This interactive tool, developed by the International Centre of Insect Physiology and Ecology 
+                                (icipe) in Nairobi, Kenya, provides detailed information on honey bee forage plants identified 
+                                across Africa. By mapping their global geospatial distribution, the dashboard helps researchers, 
+                                conservationists, and land managers identify key forage plants that support honey bee nutrition 
+                                in different African regions and beyond. It also highlights gaps in species occurrence in Africa, 
+                                guiding future research and conservation efforts to improve data coverage and enhance plant-pollinator 
+                                management strategies. Expanding field surveys and updating species records will be crucial for filling 
+                                these gaps and strengthening the database. Please note that the database is still under development, 
+                                and some plant species may not yet be included.
                             </div>
                         </div>
                     </div>
