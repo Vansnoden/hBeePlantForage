@@ -86,7 +86,7 @@ const MapComponent = (props:{token: string}) => {
 
         if(searchInput.current){
             setCurrentFamilyName(searchInput.current?.value);
-            params.CQL_FILTER = `family_name ilike '%${searchInput.current?.value}%'`;
+            params.CQL_FILTER += ` and family_name ilike '%${searchInput.current?.value}%'`;
         }
 
         const map = new Map({
