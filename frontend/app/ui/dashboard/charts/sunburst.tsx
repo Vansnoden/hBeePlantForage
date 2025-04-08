@@ -61,7 +61,7 @@ const SunburstChart = (props: { data: any, width:number, height:number , show_la
             .attr("fill-opacity", d => arcVisible(d.current) ? (d.children ? 0.6 : 0.4) : 0)// eslint-disable-line
             .attr("pointer-events", d => arcVisible(d.current) ? "auto" : "none")// eslint-disable-line
     
-            .attr("d", d:any => arc(d.current));// eslint-disable-line
+            .attr("d", d => arc(d.current));// eslint-disable-line
   
         // Make them clickable if they have children.
         path.filter(d => d?.children)// eslint-disable-line
