@@ -37,10 +37,10 @@ const MapComponent = (props:{token: string}) => {
     const blue = normalize(['band', 3]);
     // const nir = normalize(['band', 4]);
 
-    const trueColor = {
-        color: ['array', red, green, blue, 0.2],
-        gamma: 1.1,
-    };
+    // const trueColor = {
+    //     color: ['array', red, green, blue, 0.2],
+    //     gamma: 1.1,
+    // };
 
 
     const updateSearch = (evt: any) => { // eslint-disable-line
