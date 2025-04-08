@@ -117,7 +117,7 @@ const SunburstChart = (props: { data: any, width:number, height:number , show_la
                 })
                 .attr("fill-opacity", d => arcVisible((d as any).target) ? (d.children ? 0.6 : 0.4) : 0)// eslint-disable-line
                 .attr("pointer-events", d => arcVisible((d as any).target) ? "auto" : "none")// eslint-disable-line
-                .attrTween("d", d => () => arc((d as any).current)); // eslint-disable-line
+                .attrTween("d", d => () => arc((d as any).current) || "") // eslint-disable-line
         
             label.filter(function(this: any, d: d3.HierarchyRectangularNode<any>){// eslint-disable-line
                     return this.getAttribute("fill-opacity") || labelVisible((d as any).target);// eslint-disable-line
