@@ -1,13 +1,12 @@
 "use client"
 
-import { searchFamilyNames, getPlantTopX, getRegionObsDistro, getYearlyObsDistro, getFamilyData, getFamilyDataMax, getYearAggregate } from "@/app/lib/client_actions";
+import { searchFamilyNames, getPlantTopX, getYearlyObsDistro, getFamilyData, getFamilyDataMax, getYearAggregate } from "@/app/lib/client_actions";
 import { CustomChartData } from "../../lib/definitions";
 import BarChart from "../../ui/dashboard/charts/barchart";
 import MiniMapComponent from "../../ui/dashboard/mini_map";
 import { lusitana } from "../../ui/fonts";
-import { useState, useEffect, useRef, Suspense } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import clsx from "clsx";
-import PieChart from "./charts/piechart";
 import SunburstChart from "./charts/sunburst";
 
 
@@ -17,18 +16,18 @@ export default function StatsComponent(props:{token: string}){
     const [currentFocusZone, setcurrentFocusZone] = useState("");
     const [familyNames, setFamilyNames] = useState<Array<string>>([]);
     const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
-    const [mapVisibility, toggleMapVisibility] = useState(false);
+    const [mapVisibility, toggleMapVisibility] = useState(false); // eslint-disable-line
     const searchInput = useRef<HTMLInputElement>(null);
     const focusZoneSelect = useRef<HTMLSelectElement>(null);
     const [plantTop, setPlantTop] = useState<CustomChartData>();
     const [yearDistro, setYearDistro] = useState<CustomChartData>();
-    const [yearDistroGlobal, setYearDistroGlobal] = useState<CustomChartData>();
-    const [regionObsDistroGlobal, setRegionObsDistroGlobal] = useState<CustomChartData>(); //useState([]);
+    const [yearDistroGlobal, setYearDistroGlobal] = useState<CustomChartData>(); // eslint-disable-line
+    const [regionObsDistroGlobal, setRegionObsDistroGlobal] = useState<CustomChartData>(); // eslint-disable-line
     const startYear = 2015;
     const endYear = 2025;
     const [geojsonData, setGeojsonData] = useState({});
     const [familyMax, setFamilyMax] = useState(0);
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(false); // eslint-disable-line
     const testData = {
         name: "root",
         children: [
@@ -95,7 +94,7 @@ export default function StatsComponent(props:{token: string}){
             searchInput.current.value = familyName;
         }
         const getData = async ()=>{
-            const familyData = await getFamilyData(props.token, familyName).then((geojsonD) => {
+            const familyData = await getFamilyData(props.token, familyName).then((geojsonD) => { // eslint-disable-line
                 setGeojsonData(geojsonD);
             });
             const top20 = await getPlantTopX(props.token, familyName, currentFocusZone, 20);

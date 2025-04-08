@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
@@ -9,8 +9,6 @@ import GeoJSON from 'ol/format/GeoJSON';
 import VectorLayer from 'ol/layer/Vector';
 import {Fill, Stroke, Style} from 'ol/style';
 import { lusitana } from '../fonts';
-import { TileWMS } from 'ol/source';
-import { GEOSERVER_BASE_URL } from '@/app/lib/constants';
 
 
 const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number, token:string}) => { // eslint-disable-line

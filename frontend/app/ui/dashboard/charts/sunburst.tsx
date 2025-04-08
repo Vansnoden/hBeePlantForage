@@ -6,7 +6,7 @@ import { useEffect, createRef } from 'react';
 import * as d3 from 'd3';
 
 
-const SunburstChart = (props: { data: any, width:number, height:number , show_labels: boolean})  => {
+const SunburstChart = (props: { data: any, width:number, height:number , show_labels: boolean})  => { // eslint-disable-line
     const chartCtnRef = createRef();
     const data = props.data;
 
@@ -136,17 +136,6 @@ const SunburstChart = (props: { data: any, width:number, height:number , show_la
         }
     
         return svg.node();
-    }
-
-    const draw = () => {
-        const svg = d3.select(chartCtnRef.current)
-        svg.selectAll('*').remove()
-        svg
-        .append('circle')
-        .attr('r', 80)
-        .attr('cx', 100)
-        .attr('cy', 100)
-        .attr('fill', 'green')
     }
 
     return(
