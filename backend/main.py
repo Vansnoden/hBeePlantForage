@@ -672,7 +672,7 @@ def get_top_x_of_plants(
                 "labels": labels,
                 "datasets": [
                     {
-                        "label": f'{cname}: {fname} top {top} most observed plants' if cname else f'{fname} top {top} most observed plants',
+                        "label": f'{cname}: {fname} top {top} most reported plants' if cname else f'{fname} top {top} most reported plants',
                         "data": values,
                         "backgroundColor": top20bgColor,
                         "borderColor": top20borderColor,
