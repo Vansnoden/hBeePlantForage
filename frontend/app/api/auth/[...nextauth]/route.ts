@@ -64,6 +64,7 @@ const authOptions: NextAuthConfig = {
 
 
 const handler = (req: NextRequest) => {
+    console.log("request: "+req);
     return NextAuth(authOptions);
 };
 
