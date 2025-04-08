@@ -70,7 +70,7 @@ services:
   frontend:
     build: 
       context: ./frontend
-      dockerfile: ./Dockerfile.dev
+      dockerfile: ./Dockerfile.prod
     depends_on:
       - backend
     container_name: frontend
