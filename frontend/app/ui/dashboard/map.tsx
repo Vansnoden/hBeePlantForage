@@ -32,9 +32,9 @@ const MapComponent = (props:{token: string}) => {
         return ['/', value, max];
     }
 
-    const red = normalize(['band', 1]);
-    const green = normalize(['band', 2]);
-    const blue = normalize(['band', 3]);
+    // const red = normalize(['band', 1]);
+    // const green = normalize(['band', 2]);
+    // const blue = normalize(['band', 3]);
     // const nir = normalize(['band', 4]);
 
     // const trueColor = {
