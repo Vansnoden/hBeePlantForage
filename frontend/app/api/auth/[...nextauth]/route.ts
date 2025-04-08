@@ -3,7 +3,6 @@ import NextAuth from "next-auth";
 import { NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { z } from 'zod';
-import { cookies } from 'next/headers';
 import { AUTH_URL, USERINFO_URL } from '@/app/lib/constants';
 
 
@@ -37,27 +36,42 @@ const authOptions: NextAuthConfig = {
                     method: 'POST',
                     body: formData
                 })
-                const res_content = response.json();
-                if ((await res_content).token_type){
-                    // set cookie
-                    const cookieStore = await cookies();
-                    cookieStore.set("auth-token", (await res_content).token_type + "__" + (await res_content).access_token, {
-                        maxAge: 60 * 60 * 24 * 7, // One week
-                        secure: false,
-                        httpOnly: false,
-                        path: "/"
-                    })
-                    const userData = await getUser((await res_content).token_type + " " + (await res_content).access_token)
-                    return userData;
-                }else{
-                    console.log('Invalid credentials');
-                    return null;
-                }
+        
+                const data = await response.json();
+        
+                if (!data?.access_token || !data?.token_type) return null;
+        
+                const token = `${data.token_type} ${data.access_token}`;
+                const user = await getUser(token);
+        
+                if (!user) return null;
+        
+                return {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    accessToken: token,
+                    tokenType: data.token_type,
+                };
             }
         })
     ],
     pages: {
         signIn: "/login"
+    },
+    callbacks: {
+        async jwt({token, user}){
+            if (user) {
+                token.accessToken = (user as any).accessToken;// eslint-disable-line
+                token.tokenType = (user as any).tokenType;// eslint-disable-line
+            }
+            return token;
+        },
+        async session({session, token}){
+            (session.user as any).accessToken = token.accessToken;// eslint-disable-line
+            (session.user as any).tokenType = token.tokenType;// eslint-disable-line
+            return session;
+        }
     }
 };
 

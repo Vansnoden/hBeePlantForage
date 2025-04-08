@@ -38,6 +38,7 @@ export async function getToken(){
   const cookieStore = await cookies()
   const base_token = cookieStore.get('auth-token')
   const token = base_token?.value.split("__").join(" ")
+  // return (session?.user as any).accessToken; // eslint-disable-line
   return token
 }
 
