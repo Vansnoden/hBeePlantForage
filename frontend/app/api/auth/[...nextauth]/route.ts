@@ -5,7 +5,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { z } from 'zod';
 import { cookies } from 'next/headers';
 import { AUTH_URL, USERINFO_URL } from '@/app/lib/constants';
-import { NextRequest } from "next/server";
 
 
 async function getUser(token: string) {
