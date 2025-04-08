@@ -8,10 +8,10 @@ import { TileWMS } from 'ol/source';
 import { GEOSERVER_BASE_URL } from '@/app/lib/constants';
 import clsx from 'clsx';
 import { XMarkIcon } from '@heroicons/react/20/solid';
-import { Observation, ObservationRow } from '@/app/lib/definitions';
+import { ObservationRow } from '@/app/lib/definitions';
 import { ObservationItem } from './observation';
 import { lusitana } from '../fonts';
-import { getFamilyData, getPointData, searchFamilyNames } from '@/app/lib/client_actions';
+import { getPointData, searchFamilyNames } from '@/app/lib/client_actions';
 
 
 const MapComponent = (props:{token: string}) => {
@@ -19,8 +19,8 @@ const MapComponent = (props:{token: string}) => {
     const [showDetails, setShowDetails] = useState(false);
     const [pointDetails, setPointDetails] = useState([] as Array<ObservationRow>);
     const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
-    const [startYear, setStartYear] = useState(2000);
-    const [endYear, setEndYear] = useState(new Date().getFullYear());
+    const [startYear, setStartYear] = useState(2000); // eslint-disable-line
+    const [endYear, setEndYear] = useState(new Date().getFullYear()); // eslint-disable-line
     const [currentStartYear, setCurrentStartYear] = useState(2010);
     const [currentEndYear, setCurrentEndYear] = useState(2025);
     const [currentFamilyName, setCurrentFamilyName] = useState("");
@@ -28,14 +28,14 @@ const MapComponent = (props:{token: string}) => {
     const searchInput = useRef<HTMLInputElement>(null);
 
     const max = 3000;
-    function normalize(value:any) {
+    function normalize(value:any) { // eslint-disable-line
         return ['/', value, max];
     }
 
     const red = normalize(['band', 1]);
     const green = normalize(['band', 2]);
     const blue = normalize(['band', 3]);
-    const nir = normalize(['band', 4]);
+    // const nir = normalize(['band', 4]);
 
     const trueColor = {
         color: ['array', red, green, blue, 0.2],
@@ -111,7 +111,7 @@ const MapComponent = (props:{token: string}) => {
               fetch(url)
                 .then((response) => response.json())
                 .then((res) => {
-                    var ids = []
+                    const ids = [];
                     const cleanRes = []
                     if(res){
                        for(let i=0; i<res.features.length; i++){
@@ -140,11 +140,11 @@ const MapComponent = (props:{token: string}) => {
         setShowDetails((showDetails) => !showDetails);
     };
 
-    const handleStartYearChange = (evt: any) => {
+    const handleStartYearChange = (evt: any) => { // eslint-disable-line
         setCurrentStartYear(evt.target.value)
     }
 
-    const handleEndYearChange = (evt: any) => {
+    const handleEndYearChange = (evt: any) => { // eslint-disable-line
         setCurrentEndYear(evt.target.value)
     }
 
