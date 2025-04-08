@@ -5,6 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { z } from 'zod';
 import { cookies } from 'next/headers';
 import { AUTH_URL, USERINFO_URL } from '@/app/lib/constants';
+import { NextRequest } from "next/server";
 
 
 async function getUser(token: string) {
@@ -61,7 +62,10 @@ const authOptions: NextAuthConfig = {
     }
 };
 
-const handler = NextAuth(authOptions);
+
+const handler = (req: NextRequest) => {
+    return NextAuth(authOptions);
+};
 
 export {handler as GET, handler as POST};
 
