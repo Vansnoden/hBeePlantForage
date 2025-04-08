@@ -17,11 +17,6 @@ COPY --from=base /app/package.json ./package.json
 COPY --from=base /app/.next ./.next
 COPY --from=base /app/public ./public
 COPY --from=base /app/app ./app
-COPY --from=base /app/auth.config.ts ./auth.config.ts
-COPY --from=base /app/auth.ts ./auth.ts
-COPY --from=base /app/next-env.d.ts ./next-env.d.ts
-COPY --from=base /app/middleware.ts ./middleware.ts
-COPY --from=base /app/tsconfig.json ./tsconfig.json
 
 EXPOSE 3000
 
