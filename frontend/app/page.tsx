@@ -68,7 +68,7 @@ export default async function HomePage(){
             {/* footer */}
             <div  className="bg-white w-full border-b border-gray-200 dark:border-gray-600 mt-5 py-4 flex justify-center items-center">
                 <Image src="/icipe_logo.png" alt="icipe logo" width="120" height="20" className="rounded-lg mr-2"></Image>
-                <Image src="/bee-logo.svg" className="h-8 mr-2" alt="Flowbite Logo"></Image>
+                <Image src="/bee-logo.svg" width="120" height="20" className="h-8 mr-2" alt="Flowbite Logo"></Image>
                 <span>Copyright bppd@2025</span>
             </div>
         </div>
