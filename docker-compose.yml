@@ -58,6 +58,14 @@ services:
       - POSTGRES_URL=jdbc:postgresql://postgres_db:5432/bppd_db
       - POSTGRES_USERNAME=postgres
       - POSTGRES_PASSWORD=admin
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+          memory: 1000M
+        reservations:
+          cpus: '0.5'
+          memory: 1000M
 
   frontend:
     build: 
@@ -68,6 +76,14 @@ services:
     container_name: frontend
     ports:
       - 3000:3000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+          memory: 1000M
+        reservations:
+          cpus: '0.5'
+          memory: 1000M
 
 volumes:
   postgres-data:
