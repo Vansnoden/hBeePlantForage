@@ -49,7 +49,7 @@ const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number,
     
         const styleFunction = function (feature: any) { // eslint-disable-line
             // feature.getGeometry().getType() // eslint-disable-line
-            return styles(feature.getProperties().count / props.max*0.6)[feature.getGeometry().getType()]; // eslint-disable-line
+            return (styles(feature.getProperties().count / props.max*0.6) as any)[feature.getGeometry().getType()]; // eslint-disable-line
         }; // eslint-disable-line
 
         if(props.geojsonData){
