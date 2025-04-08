@@ -7,7 +7,7 @@ import * as d3 from 'd3';
 
 
 const SunburstChart = (props: { data: any, width:number, height:number , show_labels: boolean})  => { // eslint-disable-line
-    const chartCtnRef = createRef();
+    const chartCtnRef = createRef<SVGSVGElement | null>();
     const data = props.data;
 
     useEffect(() => {
