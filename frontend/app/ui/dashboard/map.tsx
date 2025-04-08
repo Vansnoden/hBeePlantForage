@@ -69,7 +69,6 @@ const MapComponent = (props:{token: string}) => {
 
         const pointLayer = new TileLayer({
             // extent: [-13884991, 2870341, -7455066, 6338219],
-            style: trueColor,
             source: new TileWMS({
                 url: GEOSERVER_BASE_URL+'/wms',
                 params: {'LAYERS': 'ne:bee_plant_data'},// {'LAYERS': 'ne:observations'},
