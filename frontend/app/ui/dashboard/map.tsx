@@ -14,7 +14,7 @@ import { lusitana } from '../fonts';
 import { getPointData, searchFamilyNames } from '@/app/lib/client_actions';
 
 
-const MapComponent = (props:{token: string}) => {
+const MapComponent = () => {
 
     const [showDetails, setShowDetails] = useState(false);
     const [pointDetails, setPointDetails] = useState([] as Array<ObservationRow>);
@@ -53,7 +53,7 @@ const MapComponent = (props:{token: string}) => {
     }
 
     const searchFamilyData = (evt: any) => { // eslint-disable-line
-        searchFamilyNames(props.token, evt.target.value).then((families) => {
+        searchFamilyNames( evt.target.value).then((families) => {
             setFamilyNames(families);
             toggleDropdowVisibility(true);
         })
@@ -133,7 +133,7 @@ const MapComponent = (props:{token: string}) => {
                     }
                     console.log(ids);
                     setPointDetails(cleanRes);
-                    getPointData(props.token, ids).then((ress)=>{
+                    getPointData( ids).then((ress)=>{
                         // console.log('server response')
                         // console.log(ress);
                         if(ress){

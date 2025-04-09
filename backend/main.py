@@ -151,7 +151,7 @@ def validate_user(user: User):
 
 
 # users
-@app.post("/users", response_model=schemas.User)
+@app.post("/users", response_model=schemas.User, include_in_schema=False)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_username(db, username=user.username)
     if db_user:
@@ -160,13 +160,13 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         return crud.create_user(db=db, user=user)
 
 
-@app.get("/users/", response_model=list[schemas.User])
+@app.get("/users/", response_model=list[schemas.User], include_in_schema=False)
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
     return users
 
 
-@app.get("/users/{user_id}", response_model=schemas.User)
+@app.get("/users/{user_id}", response_model=schemas.User,include_in_schema=False)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:
@@ -174,7 +174,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.post("/token")
+@app.post("/token",include_in_schema=False)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)
 ) -> Token:
@@ -192,12 +192,12 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@app.get("/users/details/me")
+@app.get("/users/details/me", include_in_schema=False)
 async def read_users_me(current_user: Annotated[User, Depends(get_current_active_user)]):
     return current_user
 
 
-@app.post("/users/delete/{user_id}")
+@app.post("/users/delete/{user_id}", include_in_schema=False)
 async def delete_user(user: Annotated[User, Depends(get_current_active_user)], db: Session = Depends(get_db)):
     if user:
         response = crud.delete_user(db, user_id=user.id)
@@ -209,7 +209,7 @@ async def delete_user(user: Annotated[User, Depends(get_current_active_user)], d
 
 
 # upload data
-@app.post("/data/upload")
+@app.post("/data/upload", include_in_schema=False)
 def upload_data_file( 
     user: Annotated[User, Depends(get_current_active_user)],
     files: List[UploadFile] = File(...),
@@ -230,7 +230,7 @@ def upload_data_file(
                     csv_path = os.path.join(ROOT_DIR, f"temp/{basename}.csv")
                     excel_to_csv(computed_filename, target=csv_path)
                 else:
-                   csv_path = computed_filename
+                    csv_path = computed_filename
                 res = crud.upload_data_from_file(csv_path, db)
             except Exception as e:
                 return {"message": f"There was an error uploading the file(s) \n ---- {e}"}
@@ -262,7 +262,7 @@ def upload_bee_data_file(
                     csv_path = os.path.join(ROOT_DIR, f"temp/{basename}.csv")
                     excel_to_csv(computed_filename, target=csv_path)
                 else:
-                   csv_path = computed_filename
+                    csv_path = computed_filename
                 res = crud.upload_bee_data_from_file(csv_path, db)
             except Exception as e:
                 return {"message": f"There was an error uploading the file(s) \n ---- {e}"}
@@ -275,7 +275,7 @@ def upload_bee_data_file(
 
 @app.get("/data/get")
 def get_data_file( 
-    user: Annotated[User, Depends(get_current_active_user)],
+    # user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db), query="", page=1, limit=100000):
     res = {
         "total_pages": 0,
@@ -284,21 +284,21 @@ def get_data_file(
     }
     offset = (int(page) - 1) * int(ITEMS_PER_PAGE)
 
-    if user:
-        plant_summary_data_query = text(QUERY_PLANT_SUMMARY_DATA.format(items_per_page=ITEMS_PER_PAGE, offset=offset))
-        plant_summary_data_count_query = text( QUERY_COUNT_PLANT_SUMMARY_DATA.format(limit=limit))
-        if query:
-            plant_summary_data_query = text(QUERY_PLANT_SUMMARY_DATA_FILTERED.format(query=query, items_per_page=ITEMS_PER_PAGE, offset=offset))
-            plant_summary_data_count_query = text(QUERY_COUNT_PLANT_SUMMARY_DATA_FILTERED.format(query=query, limit=limit))
-        datarows = db.execute(plant_summary_data_query)
-        for row in datarows:
-            res["data"].append(dict(row._mapping))
-        datarows_count = db.execute(plant_summary_data_count_query)
-        for row in datarows_count:
-            res["total_pages"] = math.floor((dict(row._mapping)["count"]) / ITEMS_PER_PAGE)
-        return res
-    else:
-        raise HTTPException(status_code=403, detail="Unauthorized access")
+    # if user:
+    plant_summary_data_query = text(QUERY_PLANT_SUMMARY_DATA.format(items_per_page=ITEMS_PER_PAGE, offset=offset))
+    plant_summary_data_count_query = text( QUERY_COUNT_PLANT_SUMMARY_DATA.format(limit=limit))
+    if query:
+        plant_summary_data_query = text(QUERY_PLANT_SUMMARY_DATA_FILTERED.format(query=query, items_per_page=ITEMS_PER_PAGE, offset=offset))
+        plant_summary_data_count_query = text(QUERY_COUNT_PLANT_SUMMARY_DATA_FILTERED.format(query=query, limit=limit))
+    datarows = db.execute(plant_summary_data_query)
+    for row in datarows:
+        res["data"].append(dict(row._mapping))
+    datarows_count = db.execute(plant_summary_data_count_query)
+    for row in datarows_count:
+        res["total_pages"] = math.floor((dict(row._mapping)["count"]) / ITEMS_PER_PAGE)
+    return res
+    # else:
+    #     raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
 def generate_colors(limit=0):
@@ -321,22 +321,22 @@ def generate_colors(limit=0):
 # get dashboard data
 @app.get("/data/dashboard")
 def get_dashboard_data( 
-    user: Annotated[User, Depends(get_current_active_user)],
+    # user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db),
     fname: str = ""):
     res = {}
-    if user:
-        query_total_plants = text(QUERY_TOTAL_PLANT_SPECIES)
-        query_total_sites= text(QUERY_TOTAL_SITES)
-        query_total_plants_recs = db.execute(query_total_plants)
-        query_total_sites_recs = db.execute(query_total_sites)
-        for rec in query_total_plants_recs:
-            res["total_plants"] = rec[0]
-        for rec in query_total_sites_recs:
-            res["total_sites"] = rec[0]
-        return res  
-    else:
-        raise HTTPException(status_code=403, detail="Unauthorized access")
+    # if user:
+    query_total_plants = text(QUERY_TOTAL_PLANT_SPECIES)
+    query_total_sites= text(QUERY_TOTAL_SITES)
+    query_total_plants_recs = db.execute(query_total_plants)
+    query_total_sites_recs = db.execute(query_total_sites)
+    for rec in query_total_plants_recs:
+        res["total_plants"] = rec[0]
+    for rec in query_total_sites_recs:
+        res["total_sites"] = rec[0]
+    return res  
+    # else:
+    #     raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
 def levenshtein_distance(s, t):
@@ -380,96 +380,96 @@ def get_country_geo_json(country_name):
 
 @app.get("/data/family")
 def get_family_data( 
-    user: Annotated[User, Depends(get_current_active_user)],
+    # user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db),
     fname: str = ""):
     res = []
-    if user:
-        query_family_distro = text(QUERY_OBS_PER_FAMILY_PER_COUNTRY.format(family_name=fname))
-        family_distro_data = db.execute(query_family_distro)
-        for rec in family_distro_data:
-            country = rec[1]
-            count = rec[0]
-            base_geojson = get_country_geo_json(country)
-            base_geojson["features"][0]["properties"]["count"] = count
-            if not res:
-                res = base_geojson # adding initial country
-            else:
-                res["features"].append(base_geojson["features"][0]) # adding other countries as features
-        return res
-    else:
-        raise HTTPException(status_code=403, detail="Unauthorized access")
+    # if user:
+    query_family_distro = text(QUERY_OBS_PER_FAMILY_PER_COUNTRY.format(family_name=fname))
+    family_distro_data = db.execute(query_family_distro)
+    for rec in family_distro_data:
+        country = rec[1]
+        count = rec[0]
+        base_geojson = get_country_geo_json(country)
+        base_geojson["features"][0]["properties"]["count"] = count
+        if not res:
+            res = base_geojson # adding initial country
+        else:
+            res["features"].append(base_geojson["features"][0]) # adding other countries as features
+    return res
+    # else:
+    #     raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
 @app.get("/data/family/search")
 def get_family_search_data( 
-    user: Annotated[User, Depends(get_current_active_user)],
+    # user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db), search_filter:str=""):
     res = []
-    if user:
-        query_families = text(QUERY_FAMILIES.format(search=search_filter))
-        families_data = db.execute(query_families)
-        for rec in families_data:
-            name = rec[0]
-            res.append(name)
-        return res
-    else:
-        raise HTTPException(status_code=403, detail="Unauthorized access")
+    # if user:
+    query_families = text(QUERY_FAMILIES.format(search=search_filter))
+    families_data = db.execute(query_families)
+    for rec in families_data:
+        name = rec[0]
+        res.append(name)
+    return res
+    # else:
+    #     raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
 @app.get("/data/family/max")
 def get_family_data_max_observations( 
-    user: Annotated[User, Depends(get_current_active_user)],
+    # user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db),
     fname: str = ""):
     res = 0
-    if user:
-        query_family_distro = text(QUERY_MAX_OBS_PER_FAMILY_PER_COUNTRY.format(family_name=fname))
-        family_distro_data = db.execute(query_family_distro)
-        for rec in family_distro_data:
-            max = rec[0]
-            if not res:
-                res = max # adding initial country
-        return res
-    else:
-        raise HTTPException(status_code=403, detail="Unauthorized access")
+    # if user:
+    query_family_distro = text(QUERY_MAX_OBS_PER_FAMILY_PER_COUNTRY.format(family_name=fname))
+    family_distro_data = db.execute(query_family_distro)
+    for rec in family_distro_data:
+        max = rec[0]
+        if not res:
+            res = max # adding initial country
+    return res
+    # else:
+    #     raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
 @app.get("/data/monthly/distro")
 def get_obs_monthly_distro(
-    user: Annotated[User, Depends(get_current_active_user)],
+    # user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db),
     cname: str = ""):
     res = {}
-    if user:
-        obs_montly_distro_labels = []
-        obs_montly_distro_values = []
-        query_obs_montly_distro = text(QUERY_MONTHLY_OBS_DISTRO.format(continent=cname))
-        obs_montly_distro_data = db.execute(query_obs_montly_distro)
-        for rec in obs_montly_distro_data:
-            obs_montly_distro_labels.append(rec[1])
-            obs_montly_distro_values.append(rec[0])
-        obsmbgColor, obsmborderColor = generate_colors(len(obs_montly_distro_values))
-        res["obs_montly_distro"] = {
-                "labels": obs_montly_distro_labels,
-                "datasets": [
-                    {
-                        "label": f'Monthly distribution of observations {cname}',
-                        "data": obs_montly_distro_values,
-                        "backgroundColor": obsmbgColor,
-                        "borderColor": obsmborderColor,
-                        "borderWidth": 1,
-                    },
-                ],
-            }
-        return res
-    else:
-        raise HTTPException(status_code=403, detail="Unauthorized access")
+    # if user:
+    obs_montly_distro_labels = []
+    obs_montly_distro_values = []
+    query_obs_montly_distro = text(QUERY_MONTHLY_OBS_DISTRO.format(continent=cname))
+    obs_montly_distro_data = db.execute(query_obs_montly_distro)
+    for rec in obs_montly_distro_data:
+        obs_montly_distro_labels.append(rec[1])
+        obs_montly_distro_values.append(rec[0])
+    obsmbgColor, obsmborderColor = generate_colors(len(obs_montly_distro_values))
+    res["obs_montly_distro"] = {
+            "labels": obs_montly_distro_labels,
+            "datasets": [
+                {
+                    "label": f'Monthly distribution of observations {cname}',
+                    "data": obs_montly_distro_values,
+                    "backgroundColor": obsmbgColor,
+                    "borderColor": obsmborderColor,
+                    "borderWidth": 1,
+                },
+            ],
+        }
+    return res
+    # else:
+    #     raise HTTPException(status_code=403, detail="Unauthorized access")
     
 
 @app.get("/data/region/distro")
 def get_obs_region_distribution( 
-    user: Annotated[User, Depends(get_current_active_user)],
+    # user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db),
     cname: str = "",
     fname: str = "",
@@ -478,45 +478,45 @@ def get_obs_region_distribution(
 
     res = {}
     new_res = {'data':[]}
-    if user:
-        labels = []
-        values = []
-        if cname and not fname:
-            query = text(QUERY_GROUP_OBS_BY_CONTINENT_REGIONS.format(continent=cname, year_start=year_start, year_end=year_end))
-        elif fname:
-            query = text(QUERY_GROUP_OBS_BY_CONTINENT_REGIONS_FAMILY.format(continent=cname, family_name=fname, year_start=year_start, year_end=year_end))
-        else:
-            query = text(QUERY_GROUP_OBS_BY_CONTINENT_REGIONS.format(continent=cname, year_start=year_start, year_end=year_end))
-        data = db.execute(query)
-        for rec in data:
-            labels.append(rec[1])
-            values.append(rec[0])
-            new_res["data"].append({
-                "label": rec[1], "value": rec[0]
-            })
-        spcbgColor, spcborderColor = generate_colors(len(values))
-        continent_family_label = f"{fname + ': '} observations distribution in {cname} regions for the last {year_end - year_start} years"
-        default_label = f"observations distribution in {cname} regions for the last {year_end - year_start} years"
-        res["data"] = {
-                "labels": labels,
-                "datasets": [
-                    {
-                        "label": continent_family_label if fname else default_label,
-                        "data": values,
-                        "backgroundColor": spcbgColor,
-                        "borderColor": spcborderColor,
-                        "borderWidth": 1,
-                    },
-                ],
-            }
-        return res
+    # if user:
+    labels = []
+    values = []
+    if cname and not fname:
+        query = text(QUERY_GROUP_OBS_BY_CONTINENT_REGIONS.format(continent=cname, year_start=year_start, year_end=year_end))
+    elif fname:
+        query = text(QUERY_GROUP_OBS_BY_CONTINENT_REGIONS_FAMILY.format(continent=cname, family_name=fname, year_start=year_start, year_end=year_end))
     else:
-        raise HTTPException(status_code=403, detail="Unauthorized access")
+        query = text(QUERY_GROUP_OBS_BY_CONTINENT_REGIONS.format(continent=cname, year_start=year_start, year_end=year_end))
+    data = db.execute(query)
+    for rec in data:
+        labels.append(rec[1])
+        values.append(rec[0])
+        new_res["data"].append({
+            "label": rec[1], "value": rec[0]
+        })
+    spcbgColor, spcborderColor = generate_colors(len(values))
+    continent_family_label = f"{fname + ': '} observations distribution in {cname} regions for the last {year_end - year_start} years"
+    default_label = f"observations distribution in {cname} regions for the last {year_end - year_start} years"
+    res["data"] = {
+            "labels": labels,
+            "datasets": [
+                {
+                    "label": continent_family_label if fname else default_label,
+                    "data": values,
+                    "backgroundColor": spcbgColor,
+                    "borderColor": spcborderColor,
+                    "borderWidth": 1,
+                },
+            ],
+        }
+    return res
+    # else:
+    #     raise HTTPException(status_code=403, detail="Unauthorized access")
     
 
 @app.get("/data/yearly/distro")
 def get_last_x_years_distro(
-    user: Annotated[User, Depends(get_current_active_user)],
+    # user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db),
     cname: str = "", 
     fname: str = "",
@@ -524,43 +524,43 @@ def get_last_x_years_distro(
     year_end: int = 2025):
     res = {}
     assert year_end > year_start, "Start Year should be inferiour to end year"
-    if user:
-        labels = []
-        values = []
-        if cname and not fname:
-            query = text(QUERY_OBS_YEARLY_OVERVIEW_CONTINENT.format(continent=cname, year_start=year_start, year_end=year_end))
-        elif fname:
-            query = text(QUERY_OBS_YEARLY_OVERVIEW_CONTINENT_FAMILY.format(continent=cname, family_name=fname, year_start=year_start, year_end=year_end))
-        else:
-            query = text(QUERY_OBS_YEARLY_OVERVIEW.format(year_start=year_start, year_end=year_end))
-        data = db.execute(query)
-        for rec in data:
-            labels.append(rec[1])
-            values.append(rec[0])
-        obs_10bgColor, obs_10borderColor = generate_colors(len(values))
-        continent_family_label = f"{fname + ': '} {cname} last {year_end - year_start} years reporting overview"
-        default_label = f"{cname} last {year_end - year_start} years reporting overview"
-        res["data"] = {
-                "labels": labels,
-                "datasets": [
-                    {
-                        "label": continent_family_label if fname else default_label,
-                        "data": values,
-                        "backgroundColor": obs_10bgColor,
-                        "borderColor": obs_10borderColor,
-                        "borderWidth": 1,
-                    },
-                ],
-            }
-        return res
+    # if user:
+    labels = []
+    values = []
+    if cname and not fname:
+        query = text(QUERY_OBS_YEARLY_OVERVIEW_CONTINENT.format(continent=cname, year_start=year_start, year_end=year_end))
+    elif fname:
+        query = text(QUERY_OBS_YEARLY_OVERVIEW_CONTINENT_FAMILY.format(continent=cname, family_name=fname, year_start=year_start, year_end=year_end))
     else:
-        raise HTTPException(status_code=403, detail="Unauthorized access")
+        query = text(QUERY_OBS_YEARLY_OVERVIEW.format(year_start=year_start, year_end=year_end))
+    data = db.execute(query)
+    for rec in data:
+        labels.append(rec[1])
+        values.append(rec[0])
+    obs_10bgColor, obs_10borderColor = generate_colors(len(values))
+    continent_family_label = f"{fname + ': '} {cname} last {year_end - year_start} years reporting overview"
+    default_label = f"{cname} last {year_end - year_start} years reporting overview"
+    res["data"] = {
+            "labels": labels,
+            "datasets": [
+                {
+                    "label": continent_family_label if fname else default_label,
+                    "data": values,
+                    "backgroundColor": obs_10bgColor,
+                    "borderColor": obs_10borderColor,
+                    "borderWidth": 1,
+                },
+            ],
+        }
+    return res
+    # else:
+    #     raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
 
 @app.get("/data/yearly/aggregate")
 def get_last_x_years_aggregate(
-    user: Annotated[User, Depends(get_current_active_user)],
+    # user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db),
     cname: str = "", 
     fname: str = "",
@@ -571,149 +571,149 @@ def get_last_x_years_aggregate(
         "children":[]
     }
     assert year_end > year_start, "Start Year should be inferiour to end year"
-    if user:
-        if cname and not fname:
-            query = text(QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT.format(continent=cname, year_start=year_start, year_end=year_end))
-        elif fname:
-            query = text(QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT_FAMILY.format(continent=cname, family_name=fname, year_start=year_start, year_end=year_end))
-        else:
-            query = text(QUERY_AGGREGATE_SUMMARY_DATA.format(year_start=year_start, year_end=year_end))
-        db_recs = db.execute(query)
-        data = []
-        for rec in db_recs:
-            data.append(rec._mapping)
-        level_one_children = list(set([x['continent'] for x in data]))
-        refined_data = []
-        for child in level_one_children:
-            level_two_children = []
-            refined_data.append({
-                'name': child,
-                'children':[]
+    # if user:
+    if cname and not fname:
+        query = text(QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT.format(continent=cname, year_start=year_start, year_end=year_end))
+    elif fname:
+        query = text(QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT_FAMILY.format(continent=cname, family_name=fname, year_start=year_start, year_end=year_end))
+    else:
+        query = text(QUERY_AGGREGATE_SUMMARY_DATA.format(year_start=year_start, year_end=year_end))
+    db_recs = db.execute(query)
+    data = []
+    for rec in db_recs:
+        data.append(rec._mapping)
+    level_one_children = list(set([x['continent'] for x in data]))
+    refined_data = []
+    for child in level_one_children:
+        level_two_children = []
+        refined_data.append({
+            'name': child,
+            'children':[]
+        })
+        for x in data:
+            if x['continent'] == child:
+                level_two_children.append(x['region'])
+        level_two_children = list(set([y for y in level_two_children]))
+        for nchild in level_two_children:
+            refined_data[-1]['children'].append({
+                "name": nchild,
+                "children": []
             })
+            level_three_children = []
             for x in data:
-                if x['continent'] == child:
-                    level_two_children.append(x['region'])
-            level_two_children = list(set([y for y in level_two_children]))
-            for nchild in level_two_children:
-                refined_data[-1]['children'].append({
-                    "name": nchild,
+                if x['region'] == nchild:
+                    level_three_children.append(x['country'])
+            level_three_children = list(set([y for y in level_three_children]))
+            for nnchild in level_three_children:
+                refined_data[-1]['children'][-1]['children'].append({
+                    "name": nnchild,
                     "children": []
                 })
-                level_three_children = []
+                level_four_children = []
                 for x in data:
-                    if x['region'] == nchild:
-                        level_three_children.append(x['country'])
-                level_three_children = list(set([y for y in level_three_children]))
-                for nnchild in level_three_children:
-                    refined_data[-1]['children'][-1]['children'].append({
-                        "name": nnchild,
-                        "children": []
+                    if x['country'] == nnchild:
+                        level_four_children.append(x['family_name'])
+                level_four_children = list(set([y for y in level_four_children]))
+                for nnnchild in level_four_children:
+                    refined_data[-1]['children'][-1]['children'][-1]['children'].append({
+                        "name": nnnchild,
+                        "value": 0
                     })
-                    level_four_children = []
                     for x in data:
-                        if x['country'] == nnchild:
-                            level_four_children.append(x['family_name'])
-                    level_four_children = list(set([y for y in level_four_children]))
-                    for nnnchild in level_four_children:
-                        refined_data[-1]['children'][-1]['children'][-1]['children'].append({
-                            "name": nnnchild,
-                            "value": 0
-                        })
-                        for x in data:
-                            if x['family_name'] == nnnchild:
-                                refined_data[-1]['children'][-1]['children'][-1]['children'][-1]['value'] += 1
-                        # level_five_children = []
-                        # for x in data:
-                        #     if x['family_name'] == nnnchild:
-                        #         level_five_children.append(x['plant_species_name'])
-                        #     level_five_children = list(set([y for y in level_five_children]))
-                        #     for nnnnchild in level_five_children:
-                        #         refined_data[-1]['children'][-1]['children'][-1]['children'].append({
-                        #             "name": nnnnchild,
-                        #             "value": x['count']
-                        #         })
-        res["children"] = refined_data
-        return res
-    else:
-        raise HTTPException(status_code=403, detail="Unauthorized access")
+                        if x['family_name'] == nnnchild:
+                            refined_data[-1]['children'][-1]['children'][-1]['children'][-1]['value'] += 1
+                    # level_five_children = []
+                    # for x in data:
+                    #     if x['family_name'] == nnnchild:
+                    #         level_five_children.append(x['plant_species_name'])
+                    #     level_five_children = list(set([y for y in level_five_children]))
+                    #     for nnnnchild in level_five_children:
+                    #         refined_data[-1]['children'][-1]['children'][-1]['children'].append({
+                    #             "name": nnnnchild,
+                    #             "value": x['count']
+                    #         })
+    res["children"] = refined_data
+    return res
+    # else:
+    #     raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
 
 
 @app.get("/data/plants/top")
 def get_top_x_of_plants( 
-    user: Annotated[User, Depends(get_current_active_user)],
+    # user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db),
     fname: str = "",
     cname: str = "",
     top: int = 20):
     res = {}
-    if user:
-        labels = []
-        values = []
-        if fname and not cname:
-            query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY.format(family_name=fname, x=top))
-        elif fname and cname:
-            query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY_CONTINENT.format(family_name=fname, cname=cname, x=top))
-        elif cname:
-            query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS_CONTINENT.format(cname=cname, x=top))
-        else:
-            query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS.format(x=top))
-        data = db.execute(query)
-        for rec in data:
-            label = rec[1] if rec[1] else ""
-            labels.append(label)
-            values.append(rec[0])
-        top20bgColor, top20borderColor = generate_colors(len(values))
-        res["data"] = {
-                "labels": labels,
-                "datasets": [
-                    {
-                        "label": f'{cname}: {fname} top {top} most reported plants' if cname else f'{fname} top {top} most reported plants',
-                        "data": values,
-                        "backgroundColor": top20bgColor,
-                        "borderColor": top20borderColor,
-                        "borderWidth": 1,
-                    },
-                ],
-            }
-        return res
+    # if user:
+    labels = []
+    values = []
+    if fname and not cname:
+        query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY.format(family_name=fname, x=top))
+    elif fname and cname:
+        query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS_FOR_FAMILY_CONTINENT.format(family_name=fname, cname=cname, x=top))
+    elif cname:
+        query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS_CONTINENT.format(cname=cname, x=top))
     else:
-        raise HTTPException(status_code=403, detail="Unauthorized access")
+        query = text(QUERY_TOP_X_MOST_REPORTED_PLANTS.format(x=top))
+    data = db.execute(query)
+    for rec in data:
+        label = rec[1] if rec[1] else ""
+        labels.append(label)
+        values.append(rec[0])
+    top20bgColor, top20borderColor = generate_colors(len(values))
+    res["data"] = {
+            "labels": labels,
+            "datasets": [
+                {
+                    "label": f'{cname}: {fname} top {top} most reported plants' if cname else f'{fname} top {top} most reported plants',
+                    "data": values,
+                    "backgroundColor": top20bgColor,
+                    "borderColor": top20borderColor,
+                    "borderWidth": 1,
+                },
+            ],
+        }
+    return res
+    # else:
+    #     raise HTTPException(status_code=403, detail="Unauthorized access")
     
 
 
 @app.post("/map/obs")
 def get_observation_data(
-    user: Annotated[User, Depends(get_current_active_user)],
+    # user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db), body: Optional[dict] = Body(None)):
     data = []
     oids = body["oids"]
-    if user and oids:
-        # ids = ast.literal_eval(oids.replace(" ",""))
-        ids = [str(x) for x in oids]
-        str_ids = "("+",".join(ids)+")"
-        # "("
-        # for i in ids:
-        #     str_ids += str(i) + ","
-        # str_ids += ")"
-        logger.debug(f"S_IDS: {str_ids}")
-        query = text(QUERY_SITE_INFO.format(oids=str_ids))
-        dataDb = db.execute(query)
-        for row in dataDb:
-            obj = {
-                "id":row[0],
-                "site": row[1],
-                "country": row[2], 
-                "specie_name": row[3], 
-                "family": row[4], 
-                "class": 'yes' if row[5] else 'no',
-                "year": row[6]
-            }
-            data.append(obj)
-        return data
-    else:
-        raise HTTPException(status_code=403, detail="Unauthorized access")
+    # if user and oids:
+    # ids = ast.literal_eval(oids.replace(" ",""))
+    ids = [str(x) for x in oids]
+    str_ids = "("+",".join(ids)+")"
+    # "("
+    # for i in ids:
+    #     str_ids += str(i) + ","
+    # str_ids += ")"
+    logger.debug(f"S_IDS: {str_ids}")
+    query = text(QUERY_SITE_INFO.format(oids=str_ids))
+    dataDb = db.execute(query)
+    for row in dataDb:
+        obj = {
+            "id":row[0],
+            "site": row[1],
+            "country": row[2], 
+            "specie_name": row[3], 
+            "family": row[4], 
+            "class": 'yes' if row[5] else 'no',
+            "year": row[6]
+        }
+        data.append(obj)
+    return data
+    # else:
+    #     raise HTTPException(status_code=403, detail="Unauthorized access")
     
 
 
