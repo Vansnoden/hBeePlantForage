@@ -33,7 +33,7 @@ services:
       # - GEOWEBCACHE_CACHE_DIR=${GEOWEBCACHE_CACHE_DIR}
       # - NETCDF_DATA_DIR=${NETCDF_DATA_DIR}
       # - GRIB_CACHE_DIR=${GRIB_CACHE_DIR}=value
-      - GEOSERVER_WEB_ROOT=/geomap
+      # - GEOSERVER_WEB_ROOT=/geomap
     volumes:
       - ./geodatadir:/var/geoserver/datadir
       - ./geo_settings:/settings
