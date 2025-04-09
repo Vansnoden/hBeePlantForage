@@ -44,48 +44,48 @@ export async function getToken(){
 
 
 export async function getDashboardData(fname: string){
-  const token = await getToken() as string
+  // const token = await getToken() as string
   const dashData = await fetch(DASHBOARD_DATA_URL +"?fname="+fname, {
       method: 'GET',
-      headers: {
-          "Authorization": token
-      }
+      // headers: {
+      //     "Authorization": token
+      // }
   }).then((res) => res.json())
   return dashData as DashboardData;
 }
 
 
 export async function getPlantTopX(fname: string, limit:number){
-  const token = await getToken() as string
+  // const token = await getToken() as string
   const dashData = await fetch(PLANT_TOP_URL +"?fname="+fname+"&top="+limit, {
       method: 'GET',
-      headers: {
-        "Authorization": token
-      }
+      // headers: {
+      //   "Authorization": token
+      // }
   }).then((res) => res.json())
   return dashData?.data as CustomChartData;
 }
 
 export async function getRegionObsDistro(cname: string){
-  const token = await getToken() as string
+  // const token = await getToken() as string
   const dashData = await fetch(REGION_DISTRO_URL +"?cname="+cname, {
       method: 'GET',
-      headers: {
-        "Authorization": token
-      }
+      // headers: {
+      //   "Authorization": token
+      // }
   }).then((res) => res.json())
   return dashData?.data as CustomChartData;
 }
 
 
 export async function getPlantData(query: string, currentPage: number){
-  const token = await getToken() as string
-  const myHeaders = new Headers();
-  myHeaders.append("Authorization", token);
+  // const token = await getToken() as string
+  // const myHeaders = new Headers();
+  // myHeaders.append("Authorization", token);
 
   const requestOptions = {
     method: "GET",
-    headers: myHeaders,
+    // headers: myHeaders,
   };
 
   const plant_data = await fetch(PLANT_DATA_URL +"?query="+query+"&page="+currentPage, 
@@ -96,13 +96,13 @@ export async function getPlantData(query: string, currentPage: number){
 
 
 export async function getFamilyData(fname: string){
-  const token = await getToken() as string
-  const myHeaders = new Headers();
-  myHeaders.append("Authorization", token);
+  // const token = await getToken() as string
+  // const myHeaders = new Headers();
+  // myHeaders.append("Authorization", token);
 
   const requestOptions = {
     method: "GET",
-    headers: myHeaders,
+    // headers: myHeaders,
   };
 
   const data = await fetch(FAMILY_DATA_URL +"?fname="+fname, 
@@ -113,13 +113,13 @@ export async function getFamilyData(fname: string){
 
 
 export async function getFamilyDataMax(fname: string){
-  const token = await getToken() as string
-  const myHeaders = new Headers();
-  myHeaders.append("Authorization", token);
+  // const token = await getToken() as string
+  // const myHeaders = new Headers();
+  // myHeaders.append("Authorization", token);
 
   const requestOptions = {
     method: "GET",
-    headers: myHeaders,
+    // headers: myHeaders,
   };
 
   const data = await fetch(FAMILY_DATA_MAX_URL +"?fname="+fname, 
@@ -130,13 +130,13 @@ export async function getFamilyDataMax(fname: string){
 
 
 export async function getAllFamilyNames(){
-  const token = await getToken() as string
-  const myHeaders = new Headers();
-  myHeaders.append("Authorization", token);
+  // const token = await getToken() as string
+  // const myHeaders = new Headers();
+  // myHeaders.append("Authorization", token);
 
   const requestOptions = {
     method: "GET",
-    headers: myHeaders,
+    // headers: myHeaders,
   };
 
   const data = await fetch(FAMILY_NAME_SEARCH, 

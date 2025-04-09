@@ -11,7 +11,7 @@ import {Fill, Stroke, Style} from 'ol/style';
 import { lusitana } from '../fonts';
 
 
-const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number, token:string}) => { // eslint-disable-line
+const MiniMapComponent = (props: {familyName: any, geojsonData: any, max:number}) => { // eslint-disable-line
 
     const [isLoading, setLoading] = useState(false);
 

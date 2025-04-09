@@ -10,7 +10,7 @@ import clsx from "clsx";
 import SunburstChart from "./charts/sunburst";
 
 
-export default function StatsComponent(props:{token: string}){
+export default function StatsComponent(){
 
     const [currentFamilyName, setCurrentFamilyName] = useState("");
     const [currentFocusZone, setcurrentFocusZone] = useState("");
@@ -94,11 +94,11 @@ export default function StatsComponent(props:{token: string}){
             searchInput.current.value = familyName;
         }
         const getData = async ()=>{
-            const familyData = await getFamilyData(props.token, familyName).then((geojsonD) => { // eslint-disable-line
+            const familyData = await getFamilyData(familyName).then((geojsonD) => { // eslint-disable-line
                 setGeojsonData(geojsonD);
             });
-            const top20 = await getPlantTopX(props.token, familyName, currentFocusZone, 20);
-            const max = await getFamilyDataMax(props.token, familyName);
+            const top20 = await getPlantTopX(familyName, currentFocusZone, 20);
+            const max = await getFamilyDataMax(familyName);
             setPlantTop(top20);
             setFamilyMax(max);
         }
@@ -106,7 +106,7 @@ export default function StatsComponent(props:{token: string}){
     }
 
     const searchFamilyData = (evt: any) => { // eslint-disable-line
-        searchFamilyNames(props.token, evt.target.value).then((families) => {
+        searchFamilyNames(evt.target.value).then((families) => {
             setFamilyNames(families);
             toggleDropdowVisibility(true);
         })
@@ -114,13 +114,13 @@ export default function StatsComponent(props:{token: string}){
 
     const zoneOnChangeHandler = () => {
         const refreshData = async ()=> {
-            setYearDistroGlobal(await getYearlyObsDistro(props.token, '', '', startYear, endYear));
+            setYearDistroGlobal(await getYearlyObsDistro('', '', startYear, endYear));
             if(focusZoneSelect.current && searchInput.current){
                 setcurrentFocusZone(focusZoneSelect.current?.value);
-                // setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value || '', searchInput.current?.value, startYear, endYear));
-                setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
-                setYearAgg(await getYearAggregate(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
-                setPlantTop(await getPlantTopX(props.token, searchInput.current?.value, focusZoneSelect.current?.value, 20));
+                // setRegionObsDistroGlobal(await getRegionObsDistro(focusZoneSelect.current?.value || '', searchInput.current?.value, startYear, endYear));
+                setYearDistro(await getYearlyObsDistro(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
+                setYearAgg(await getYearAggregate(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
+                setPlantTop(await getPlantTopX(searchInput.current?.value, focusZoneSelect.current?.value, 20));
             }
         }
         refreshData()
@@ -133,14 +133,14 @@ export default function StatsComponent(props:{token: string}){
             setCurrentFamilyName(searchInput.current?.value);
         }
         const refreshData = async ()=> {
-            setYearDistroGlobal(await getYearlyObsDistro(props.token, '', '', startYear, endYear));
+            setYearDistroGlobal(await getYearlyObsDistro('', '', startYear, endYear));
             if(focusZoneSelect.current && searchInput.current){
-                // setRegionObsDistroGlobal(await getRegionObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear));
-                setYearDistro(await getYearlyObsDistro(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
-                setYearAgg(await getYearAggregate(props.token, focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
+                // setRegionObsDistroGlobal(await getRegionObsDistro(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear));
+                setYearDistro(await getYearlyObsDistro(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
+                setYearAgg(await getYearAggregate(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
-            setPlantTop(await getPlantTopX(props.token, currentFamilyName, currentFocusZone, 20));
-            setGeojsonData(await getFamilyData(props.token, currentFamilyName));
+            setPlantTop(await getPlantTopX(currentFamilyName, currentFocusZone, 20));
+            setGeojsonData(await getFamilyData(currentFamilyName));
         }
         refreshData().then(()=>{
             setLoading(false);
@@ -209,7 +209,7 @@ export default function StatsComponent(props:{token: string}){
                 </div>
                 <div>
                     <span className={`${lusitana.className} mb-2`}>Distribution per country of plants of the {currentFamilyName} family</span>
-                    <MiniMapComponent familyName={currentFamilyName} geojsonData={geojsonData} max={familyMax} token={props.token}/>
+                    <MiniMapComponent familyName={currentFamilyName} geojsonData={geojsonData} max={familyMax}/>
                 </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
