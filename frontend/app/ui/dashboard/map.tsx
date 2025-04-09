@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
+// import OSM from 'ol/source/OSM';
 import { TileWMS } from 'ol/source';
 import { GEOSERVER_BASE_URL } from '@/app/lib/constants';
 import clsx from 'clsx';
