@@ -47,7 +47,6 @@ export async function getYearAggregate(token: string, cname: string, fname: stri
           "Authorization": token
         }
     }).then((res) => res.json())
-    console.log(dashData)
     return dashData;
 }
 
