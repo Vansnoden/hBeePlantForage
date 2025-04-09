@@ -62,9 +62,21 @@ const MapComponent = (props:{token: string}) => {
 
     useEffect(() => {
 
+        // const osmLayer = new TileLayer({
+        //     preload: Infinity,
+        //     source: new OSM(),
+        // })
+
         const osmLayer = new TileLayer({
-            preload: Infinity,
-            source: new OSM(),
+            // extent: [-13884991, 2870341, -7455066, 6338219],
+            source: new TileWMS({
+                url: GEOSERVER_BASE_URL+'/wms',
+                params: {'LAYERS': 'ne:countries'},// {'LAYERS': 'ne:observations'},
+                serverType: 'geoserver',
+                // Countries have transparency, so do not fade tiles:
+                transition: 0,
+                projection: "EPSG:4326",
+            }),
         })
 
         const pointLayer = new TileLayer({
