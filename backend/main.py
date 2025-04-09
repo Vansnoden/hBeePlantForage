@@ -43,7 +43,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 ITEMS_PER_PAGE = 10
 
-app = FastAPI()
+app = FastAPI(root_path="/api")
 
 # Dependency
 def get_db():
