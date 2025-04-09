@@ -43,6 +43,10 @@ input[type='number']::-webkit-outer-spin-button {
   overflow: hidden;
 }
 
+#map{
+  background: skyblue;
+}
+
 .mini-map-container{
   height: 40vh;
   width: 100%;
