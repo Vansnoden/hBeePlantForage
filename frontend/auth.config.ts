@@ -1,5 +1,4 @@
 import type { NextAuthConfig } from 'next-auth';
-import { getToken } from './app/lib/actions';
  
 export const authConfig = {
     pages: {
