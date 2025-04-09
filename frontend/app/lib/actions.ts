@@ -80,7 +80,7 @@ export async function getRegionObsDistro(cname: string){
 
 export async function getPlantData(query: string, currentPage: number){
   // const token = await getToken() as string
-  const myHeaders = new Headers();
+  // const myHeaders = new Headers();
   // myHeaders.append("Authorization", token);
 
   const requestOptions = {

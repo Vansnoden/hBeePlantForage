@@ -90,7 +90,7 @@ export async function getPlantData(
 export async function getFamilyData(
     // token: string, 
     fname: string){
-    const myHeaders = new Headers();
+    // const myHeaders = new Headers();
     // myHeaders.append("Authorization", token);
     const requestOptions = {
         method: "GET",
