@@ -14,7 +14,7 @@ export default async function HomePage(){
                     <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                         <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
                             <Image src="/icipe_logo.png" alt="icipe logo" width="140" height="40" className="rounded-lg mr-2"></Image>
-                            <Image src="/bee-logo.svg" className="h-8" width="140" height="40" alt="Flowbite Logo"></Image>
+                            <Image src="/bee-logo.svg" className="h-8" width="40" height="40" alt="Flowbite Logo"></Image>
                             <span className="flex flex-col">
                                 <span className="self-left text-sm font-semibold whitespace-nowrap dark:text-white">Honey Bee Forage</span><br/>
                                 <span className="self-left text-sm font-semibold whitespace-nowrap dark:text-white">Plants Dashboard</span>
@@ -68,7 +68,7 @@ export default async function HomePage(){
             {/* footer */}
             <div  className="bg-white w-full border-b border-gray-200 dark:border-gray-600 mt-5 py-4 flex justify-center items-center">
                 <Image src="/icipe_logo.png" alt="icipe logo" width="120" height="20" className="rounded-lg mr-2"></Image>
-                <Image src="/bee-logo.svg" width="120" height="20" className="h-8 mr-2" alt="Flowbite Logo"></Image>
+                <Image src="/bee-logo.svg" width="20" height="20" className="h-8 mr-2" alt="Flowbite Logo"></Image>
                 <span>Copyright bppd@2025</span>
             </div>
         </div>
