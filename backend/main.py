@@ -581,60 +581,11 @@ def get_last_x_years_aggregate(
     else:
         query = text(QUERY_AGGREGATE_SUMMARY_DATA.format(year_start=year_start, year_end=year_end))
     db_recs = db.execute(query)
-    data = []
-    for rec in db_recs:
-        data.append(rec._mapping)
-    level_one_children = list(set([x['continent'] for x in data]))
-    refined_data = []
-    for child in level_one_children:
-        level_two_children = []
-        refined_data.append({
-            'name': child,
-            'children':[]
-        })
-        for x in data:
-            if x['continent'] == child:
-                level_two_children.append(x['region'])
-        level_two_children = list(set([y for y in level_two_children]))
-        for nchild in level_two_children:
-            refined_data[-1]['children'].append({
-                "name": nchild,
-                "children": []
-            })
-            level_three_children = []
-            for x in data:
-                if x['region'] == nchild:
-                    level_three_children.append(x['country'])
-            level_three_children = list(set([y for y in level_three_children]))
-            for nnchild in level_three_children:
-                refined_data[-1]['children'][-1]['children'].append({
-                    "name": nnchild,
-                    "children": []
-                })
-                level_four_children = []
-                for x in data:
-                    if x['country'] == nnchild:
-                        level_four_children.append(x['family_name'])
-                level_four_children = list(set([y for y in level_four_children]))
-                for nnnchild in level_four_children:
-                    refined_data[-1]['children'][-1]['children'][-1]['children'].append({
-                        "name": nnnchild,
-                        "value": 0
-                    })
-                    for x in data:
-                        if x['family_name'] == nnnchild:
-                            refined_data[-1]['children'][-1]['children'][-1]['children'][-1]['value'] += 1
-                    # level_five_children = []
-                    # for x in data:
-                    #     if x['family_name'] == nnnchild:
-                    #         level_five_children.append(x['plant_species_name'])
-                    #     level_five_children = list(set([y for y in level_five_children]))
-                    #     for nnnnchild in level_five_children:
-                    #         refined_data[-1]['children'][-1]['children'][-1]['children'].append({
-                    #             "name": nnnnchild,
-                    #             "value": x['count']
-                    #         })
-    res["children"] = refined_data
+    db_records = db_recs.fetchall()
+    data = None
+    for rec in db_records:
+        data = json.loads(rec[0])
+    res["children"] = data
     return res
     # else:
     #     raise HTTPException(status_code=403, detail="Unauthorized access")
