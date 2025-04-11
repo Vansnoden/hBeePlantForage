@@ -252,7 +252,7 @@ group by month order by month asc
 
 QUERY_PLANT_SUMMARY_DATA = """
 select id, location_name as site_name, country, plant_species_name as plant_name, family_name as family 
-from bee_plant_data limit {items_per_page} offset {offset}
+from bee_plant_data  order by country asc limit {items_per_page} offset {offset}
 """
 
 
@@ -268,7 +268,7 @@ where country ilike '%{query}%'
     or family_name ilike '%{query}%' 
     or continent ilike '%{query}%' 
     or location_name ilike '%{query}%'
-limit {items_per_page} offset {offset}
+order by country asc limit {items_per_page} offset {offset}
 """
 
 
@@ -348,24 +348,328 @@ select count(distinct location_name) from bee_plant_data;
 """
 
 QUERY_AGGREGATE_SUMMARY_DATA = """
-select continent,region,country,family_name,plant_species_name,count(plant_species_name) from bee_plant_data
-where  year between {year_start} and {year_end}
-group by continent,region,country,family_name,plant_species_name
+WITH all_levels AS (
+  SELECT
+    continent,
+    region,
+    country,
+    family_name,
+    plant_species_name
+  FROM bee_plant_data
+  WHERE year between {year_start} and {year_end}
+),
+
+-- Species level (leaf)
+species_nodes AS (
+  SELECT 
+    continent,
+    region,
+    country,
+    family_name,
+    plant_species_name,
+    COUNT(*) AS value  -- Number of rows for this specific species
+  FROM all_levels
+  GROUP BY continent, region, country, family_name, plant_species_name
+),
+
+-- Family level
+family_nodes AS (
+  SELECT 
+    continent,
+    region,
+    country,
+    family_name,
+    SUM(s.value) AS value,
+    jsonb_agg(
+      jsonb_build_object(
+        'name', s.plant_species_name,
+        'value', s.value
+      )
+    ) AS children
+  FROM species_nodes s
+  GROUP BY continent, region, country, family_name
+),
+
+-- Country level
+country_nodes AS (
+  SELECT 
+    continent,
+    region,
+    country,
+    SUM(f.value) AS value,
+    jsonb_agg(
+      jsonb_build_object(
+        'name', f.family_name,
+        'value', f.value,
+        'children', f.children
+      )
+    ) AS children
+  FROM family_nodes f
+  GROUP BY continent, region, country
+),
+
+-- Region level
+region_nodes AS (
+  SELECT 
+    continent,
+    region,
+    SUM(c.value) AS value,
+    jsonb_agg(
+      jsonb_build_object(
+        'name', c.country,
+        'value', c.value,
+        'children', c.children
+      )
+    ) AS children
+  FROM country_nodes c
+  GROUP BY continent, region
+),
+
+-- Continent level (final root)
+continent_nodes AS (
+  SELECT 
+    jsonb_build_object(
+      'name', continent,
+      'value', SUM(r.value),
+      'children', jsonb_agg(r_child ORDER BY r_child->>'name')
+    ) AS node
+  FROM (
+    SELECT 
+      continent,
+      region,
+      value,
+      jsonb_build_object(
+        'name', region,
+        'value', value,
+        'children', children
+      ) AS r_child
+    FROM region_nodes
+  ) r
+  GROUP BY continent
+)
+
+-- Final output
+SELECT jsonb_pretty(jsonb_agg(node ORDER BY node->>'name')) AS tree
+FROM continent_nodes;
+
 """
 
 QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT = """
-select continent,region,country,family_name,plant_species_name,count(plant_species_name) from bee_plant_data
-where 
+WITH all_levels AS (
+  SELECT
+    continent,
+    region,
+    country,
+    family_name,
+    plant_species_name
+  FROM bee_plant_data
+  WHERE
     continent ilike '%{continent}%'
     and  year between {year_start} and {year_end}
-group by continent,region,country,family_name,plant_species_name
+),
+
+-- Species level (leaf)
+species_nodes AS (
+  SELECT 
+    continent,
+    region,
+    country,
+    family_name,
+    plant_species_name,
+    COUNT(*) AS value  -- Number of rows for this specific species
+  FROM all_levels
+  GROUP BY continent, region, country, family_name, plant_species_name
+),
+
+-- Family level
+family_nodes AS (
+  SELECT 
+    continent,
+    region,
+    country,
+    family_name,
+    SUM(s.value) AS value,
+    jsonb_agg(
+      jsonb_build_object(
+        'name', s.plant_species_name,
+        'value', s.value
+      )
+    ) AS children
+  FROM species_nodes s
+  GROUP BY continent, region, country, family_name
+),
+
+-- Country level
+country_nodes AS (
+  SELECT 
+    continent,
+    region,
+    country,
+    SUM(f.value) AS value,
+    jsonb_agg(
+      jsonb_build_object(
+        'name', f.family_name,
+        'value', f.value,
+        'children', f.children
+      )
+    ) AS children
+  FROM family_nodes f
+  GROUP BY continent, region, country
+),
+
+-- Region level
+region_nodes AS (
+  SELECT 
+    continent,
+    region,
+    SUM(c.value) AS value,
+    jsonb_agg(
+      jsonb_build_object(
+        'name', c.country,
+        'value', c.value,
+        'children', c.children
+      )
+    ) AS children
+  FROM country_nodes c
+  GROUP BY continent, region
+),
+
+-- Continent level (final root)
+continent_nodes AS (
+  SELECT 
+    jsonb_build_object(
+      'name', continent,
+      'value', SUM(r.value),
+      'children', jsonb_agg(r_child ORDER BY r_child->>'name')
+    ) AS node
+  FROM (
+    SELECT 
+      continent,
+      region,
+      value,
+      jsonb_build_object(
+        'name', region,
+        'value', value,
+        'children', children
+      ) AS r_child
+    FROM region_nodes
+  ) r
+  GROUP BY continent
+)
+
+-- Final output
+SELECT jsonb_pretty(jsonb_agg(node ORDER BY node->>'name')) AS tree
+FROM continent_nodes;
+
 """
 
 QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT_FAMILY = """
-select continent,region,country,family_name,plant_species_name,count(plant_species_name) from bee_plant_data
-where 
+
+WITH all_levels AS (
+  SELECT
+    continent,
+    region,
+    country,
+    family_name,
+    plant_species_name
+  FROM bee_plant_data
+  WHERE 
     continent ilike '%{continent}%'
     and family_name ilike '%{family_name}%'
     and  year between {year_start} and {year_end}
-group by continent,region,country,family_name,plant_species_name
+),
+
+-- Species level (leaf)
+species_nodes AS (
+  SELECT 
+    continent,
+    region,
+    country,
+    family_name,
+    plant_species_name,
+    COUNT(*) AS value  -- Number of rows for this specific species
+  FROM all_levels
+  GROUP BY continent, region, country, family_name, plant_species_name
+),
+
+-- Family level
+family_nodes AS (
+  SELECT 
+    continent,
+    region,
+    country,
+    family_name,
+    SUM(s.value) AS value,
+    jsonb_agg(
+      jsonb_build_object(
+        'name', s.plant_species_name,
+        'value', s.value
+      )
+    ) AS children
+  FROM species_nodes s
+  GROUP BY continent, region, country, family_name
+),
+
+-- Country level
+country_nodes AS (
+  SELECT 
+    continent,
+    region,
+    country,
+    SUM(f.value) AS value,
+    jsonb_agg(
+      jsonb_build_object(
+        'name', f.family_name,
+        'value', f.value,
+        'children', f.children
+      )
+    ) AS children
+  FROM family_nodes f
+  GROUP BY continent, region, country
+),
+
+-- Region level
+region_nodes AS (
+  SELECT 
+    continent,
+    region,
+    SUM(c.value) AS value,
+    jsonb_agg(
+      jsonb_build_object(
+        'name', c.country,
+        'value', c.value,
+        'children', c.children
+      )
+    ) AS children
+  FROM country_nodes c
+  GROUP BY continent, region
+),
+
+-- Continent level (final root)
+continent_nodes AS (
+  SELECT 
+    jsonb_build_object(
+      'name', continent,
+      'value', SUM(r.value),
+      'children', jsonb_agg(r_child ORDER BY r_child->>'name')
+    ) AS node
+  FROM (
+    SELECT 
+      continent,
+      region,
+      value,
+      jsonb_build_object(
+        'name', region,
+        'value', value,
+        'children', children
+      ) AS r_child
+    FROM region_nodes
+  ) r
+  GROUP BY continent
+)
+
+-- Final output
+SELECT jsonb_pretty(jsonb_agg(node ORDER BY node->>'name')) AS tree
+FROM continent_nodes;
+
 """
