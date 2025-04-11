@@ -25,7 +25,7 @@ const SunburstChart = (props: { data: any, width:number, height:number , show_la
   
         // Compute the layout.
         const hierarchy = d3.hierarchy(data)
-            .sum(d => d.value)
+            .sum(d => d.children ? 0 : d.value)
             .sort((a: any, b: any) => { // eslint-disable-line
                 if(b && a){
                     return b - a;

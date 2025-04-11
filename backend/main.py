@@ -586,6 +586,8 @@ def get_last_x_years_aggregate(
     for rec in db_records:
         data = json.loads(rec[0])
     res["children"] = data
+    with open('data_x.json', 'w+') as f:
+        json.dump(data, f, indent=4)
     return res
     # else:
     #     raise HTTPException(status_code=403, detail="Unauthorized access")
