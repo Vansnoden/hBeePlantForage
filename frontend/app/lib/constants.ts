@@ -1,7 +1,7 @@
-export const BASE_API_URL = "https://beehealth.icipe.org/api"
+export const BASE_API_URL = "https://212.56.40.148:8000/api"
 export const AUTH_URL = BASE_API_URL + "/token"
 export const USERINFO_URL = BASE_API_URL + "/users/details/me"
-export const GEOSERVER_BASE_URL = "https://beehealth.icipe.org/geoserver"
+export const GEOSERVER_BASE_URL = "https://212.56.40.148:3002/geoserver"
 export const DASHBOARD_DATA_URL = BASE_API_URL + "/data/dashboard"
 export const PLANT_DATA_URL = BASE_API_URL + "/data/get"
 export const FAMILY_DATA_URL = BASE_API_URL + "/data/family?fname="
@@ -13,4 +13,6 @@ export const YEAR_DISTRO_URL = BASE_API_URL + "/data/yearly/distro"
 export const YEAR_AGG_URL = BASE_API_URL + "/data/yearly/aggregate"
 export const PLANT_TOP_URL = BASE_API_URL + "/data/plants/top"
 export const POIN_DATA_URL = BASE_API_URL + "/map/obs"
+
+
 
