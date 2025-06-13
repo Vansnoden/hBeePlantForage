@@ -97,7 +97,7 @@ export default function StatsComponent(){
             const familyData = await getFamilyData(familyName).then((geojsonD) => { // eslint-disable-line
                 setGeojsonData(geojsonD);
             });
-            const top20 = await getPlantTopX(familyName, currentFocusZone, 20);
+            const top20 = await getPlantTopX(familyName, currentFocusZone, 10);
             const max = await getFamilyDataMax(familyName);
             setPlantTop(top20);
             setFamilyMax(max);
@@ -120,7 +120,7 @@ export default function StatsComponent(){
                 // setRegionObsDistroGlobal(await getRegionObsDistro(focusZoneSelect.current?.value || '', searchInput.current?.value, startYear, endYear));
                 setYearDistro(await getYearlyObsDistro(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
                 setYearAgg(await getYearAggregate(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
-                setPlantTop(await getPlantTopX(searchInput.current?.value, focusZoneSelect.current?.value, 20));
+                setPlantTop(await getPlantTopX(searchInput.current?.value, focusZoneSelect.current?.value, 10));
             }
         }
         refreshData()
@@ -139,7 +139,7 @@ export default function StatsComponent(){
                 setYearDistro(await getYearlyObsDistro(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
                 setYearAgg(await getYearAggregate(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
-            setPlantTop(await getPlantTopX(currentFamilyName, currentFocusZone, 20));
+            setPlantTop(await getPlantTopX(currentFamilyName, currentFocusZone, 10));
             setGeojsonData(await getFamilyData(currentFamilyName));
         }
         refreshData().then(()=>{
