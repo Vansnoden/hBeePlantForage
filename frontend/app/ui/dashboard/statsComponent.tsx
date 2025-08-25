@@ -23,7 +23,7 @@ export default function StatsComponent(){
     const [yearDistro, setYearDistro] = useState<CustomChartData>();
     const [yearDistroGlobal, setYearDistroGlobal] = useState<CustomChartData>(); // eslint-disable-line
     const [regionObsDistroGlobal, setRegionObsDistroGlobal] = useState<CustomChartData>(); // eslint-disable-line
-    const startYear = 2015;
+    const startYear = 2005;
     const endYear = 2025;
     const [geojsonData, setGeojsonData] = useState({});
     const [familyMax, setFamilyMax] = useState(0);
