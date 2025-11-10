@@ -219,13 +219,13 @@ export default function StatsComponent(){
                     <div className={`${lusitana.className} ml-2 relative border-left`}>
                         <span>Start year</span><br/>
                         <input type="number" placeholder="Start year" 
-                                onChange={onStartYearChange} defaultValue={startYear} ref={startYearInput}
+                                onBlur={onStartYearChange} defaultValue={startYear} ref={startYearInput}
                                 className="p-1 rounded text-sm"/>
                     </div>
                     <div className={`${lusitana.className} ml-2 relative border-left`}>
                         <span>End year</span><br/>
                         <input type="number" placeholder="End year" 
-                                onChange={onEndYearChange} defaultValue={endYear} ref={endYearInput}
+                                onBlur={onEndYearChange} defaultValue={endYear} ref={endYearInput}
                                 className="p-1 rounded text-sm"/>
                     </div>
                 </div>
