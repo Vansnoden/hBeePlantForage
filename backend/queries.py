@@ -311,7 +311,7 @@ group by country, family_name order by count desc limit 1;
 
 QUERY_FAMILIES = """
 select distinct family_name as name from bee_plant_data 
-where family_name ilike '%{search}%' limit 20;
+where family_name ilike '%{search}%' limit 10;
 """
 
 

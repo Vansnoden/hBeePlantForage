@@ -18,13 +18,15 @@ export default function StatsComponent(){
     const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
     const [mapVisibility, toggleMapVisibility] = useState(false); // eslint-disable-line
     const searchInput = useRef<HTMLInputElement>(null);
+    const startYearInput = useRef<HTMLInputElement>(null);
+    const endYearInput = useRef<HTMLInputElement>(null);
     const focusZoneSelect = useRef<HTMLSelectElement>(null);
     const [plantTop, setPlantTop] = useState<CustomChartData>();
     const [yearDistro, setYearDistro] = useState<CustomChartData>();
     const [yearDistroGlobal, setYearDistroGlobal] = useState<CustomChartData>(); // eslint-disable-line
     const [regionObsDistroGlobal, setRegionObsDistroGlobal] = useState<CustomChartData>(); // eslint-disable-line
-    const startYear = 2015;
-    const endYear = 2025;
+    const [startYear, setStartYear] = useState(2005);
+    const [endYear, setEndYear] = useState(2025);
     const [geojsonData, setGeojsonData] = useState({});
     const [familyMax, setFamilyMax] = useState(0);
     const [isLoading, setLoading] = useState(false); // eslint-disable-line
@@ -105,6 +107,14 @@ export default function StatsComponent(){
         getData().catch(console.error);
     }
 
+    const onStartYearChange = (evt: any) => {// eslint-disable-line
+        setStartYear(evt.target.value);
+    }
+
+    const onEndYearChange = (evt: any) => {// eslint-disable-line
+        setEndYear(evt.target.value);
+    }
+
     const searchFamilyData = (evt: any) => { // eslint-disable-line
         searchFamilyNames(evt.target.value).then((families) => {
             setFamilyNames(families);
@@ -146,7 +156,7 @@ export default function StatsComponent(){
             setLoading(false);
         })
         .catch(console.error)
-    }, [currentFamilyName])
+    }, [currentFamilyName, startYear, endYear])
 
 
     // if (isLoading) return <p>Loading data...</p>
@@ -156,7 +166,7 @@ export default function StatsComponent(){
             <div className="">
                 <div className="card mb-2 bg-yellow-600 rounded flex gap-2 p-2">
                     <div className={`${lusitana.className} relative`}>
-                        <span>Country distribution of plant specie family</span><br/>
+                        <span>Country distribution of plant species family</span><br/>
                         <div className="flex flex-row justify-between align-middle">
                             <input type="text" placeholder="Start typing family name here" 
                                 onKeyUp={searchFamilyData} defaultValue={currentFamilyName} ref={searchInput}
@@ -176,8 +186,8 @@ export default function StatsComponent(){
                             )}
                         </ul>
                     </div>
-                    <div className={`${lusitana.className} ml-2 relative`}>
-                        <span>Select Zone of interest</span>
+                    <div className={`${lusitana.className} ml-2 relative border-left`}>
+                        <span>Select Zone of interest</span><br/>
                         <select
                             id="zone"
                             name="zone_id"
@@ -205,6 +215,18 @@ export default function StatsComponent(){
                                 Oceania    
                             </option>
                         </select>
+                    </div>
+                    <div className={`${lusitana.className} ml-2 relative border-left`}>
+                        <span>Start year</span><br/>
+                        <input type="number" placeholder="Start year" 
+                                onChange={onStartYearChange} defaultValue={startYear} ref={startYearInput}
+                                className="p-1 rounded text-sm"/>
+                    </div>
+                    <div className={`${lusitana.className} ml-2 relative border-left`}>
+                        <span>End year</span><br/>
+                        <input type="number" placeholder="End year" 
+                                onChange={onEndYearChange} defaultValue={endYear} ref={endYearInput}
+                                className="p-1 rounded text-sm"/>
                     </div>
                 </div>
                 <div>
