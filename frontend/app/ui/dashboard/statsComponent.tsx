@@ -166,7 +166,7 @@ export default function StatsComponent(){
             <div className="">
                 <div className="card mb-2 bg-yellow-600 rounded flex gap-2 p-2">
                     <div className={`${lusitana.className} relative`}>
-                        <span>Country distribution of plant specie family</span><br/>
+                        <span>Country distribution of plant species family</span><br/>
                         <div className="flex flex-row justify-between align-middle">
                             <input type="text" placeholder="Start typing family name here" 
                                 onKeyUp={searchFamilyData} defaultValue={currentFamilyName} ref={searchInput}

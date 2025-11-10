@@ -19,13 +19,13 @@ const MapComponent = () => {
     const [showDetails, setShowDetails] = useState(false);
     const [pointDetails, setPointDetails] = useState([] as Array<ObservationRow>);
     const [dropdowVisibility, toggleDropdowVisibility] = useState(false);
-    const [startYear, setStartYear] = useState(2000); // eslint-disable-line
-    const [endYear, setEndYear] = useState(new Date().getFullYear()); // eslint-disable-line
-    const [currentStartYear, setCurrentStartYear] = useState(2010);
-    const [currentEndYear, setCurrentEndYear] = useState(2025);
+    const [startYear, setStartYear] = useState(2015);
+    const [endYear, setEndYear] = useState(2025);
     const [currentFamilyName, setCurrentFamilyName] = useState("");
     const [familyNames, setFamilyNames] = useState<Array<string>>([]);
     const searchInput = useRef<HTMLInputElement>(null);
+    const startYearInput = useRef<HTMLInputElement>(null);
+    const endYearInput = useRef<HTMLInputElement>(null);
 
     const max = 3000;
     function normalize(value:any) { // eslint-disable-line
@@ -92,7 +92,7 @@ const MapComponent = () => {
         })
 
         const params = pointLayer?.getSource()?.getParams();
-        params.CQL_FILTER = `year > ${startYear} and year < ${currentEndYear} and continent ilike '%africa%'`;
+        params.CQL_FILTER = `year > ${startYear} and year < ${endYear} and continent ilike '%africa%'`;
         // console.log(params)
 
         if(searchInput.current){
@@ -145,18 +145,18 @@ const MapComponent = () => {
             setShowDetails(true);
         });
       return () => map.setTarget()
-    }, [currentEndYear, currentFamilyName]);
+    }, [currentFamilyName, startYear, endYear]);
 
     const toggleDetails = () => {
         setShowDetails((showDetails) => !showDetails);
     };
 
-    const handleStartYearChange = (evt: any) => { // eslint-disable-line
-        setCurrentStartYear(evt.target.value)
+    const onStartYearChange = (evt: any) => {// eslint-disable-line
+        setStartYear(evt.target.value);
     }
 
-    const handleEndYearChange = (evt: any) => { // eslint-disable-line
-        setCurrentEndYear(evt.target.value)
+    const onEndYearChange = (evt: any) => {// eslint-disable-line
+        setEndYear(evt.target.value);
     }
 
     // const createMarkup = (code: string) => {
@@ -167,6 +167,7 @@ const MapComponent = () => {
         <div className={`${lusitana.className}`}>
             <div className="card mb-2 bg-yellow-600 rounded flex md:flex-row sm:flex-col gap-2 p-2 align-middle justify-start" >
                 <div className="relative">
+                    <span>Select Countries</span><br/>
                     <select
                         id="country"
                         name="country_id"
@@ -179,8 +180,9 @@ const MapComponent = () => {
                         {/* other options */}
                     </select>
                 </div>
-                <div className={`${lusitana.className} relative`}>
-                    <div className="flex flex-row justify-between align-middle">
+                <div className={`${lusitana.className} relative  border-left`}>
+                    <div className="">
+                        <span>Select plant species family</span><br/>
                         <input type="text" placeholder="Provide family name ..." 
                             onKeyUp={searchFamilyData} defaultValue={currentFamilyName} ref={searchInput}
                             className="p-1 py-2 rounded text-sm"/>
@@ -199,21 +201,17 @@ const MapComponent = () => {
                         )}
                     </ul>
                 </div>
-                <div>
-                    <span className='ml-2 mr-2'>Start year: {currentStartYear}</span> <br/>
-                    <div className="flex flex-row align-middle justify-between">
-                        <span className='mr-2 inline-block text-center bg-green p-2'>{startYear}</span>
-                        <input type="range" min={startYear} max={endYear} defaultValue={currentStartYear} onChange={handleStartYearChange} className="slider" id="start year"/>
-                        <span className='ml-2 inline-block text-center bg-green p-2'>{endYear}</span>
-                    </div>
+                <div className={`${lusitana.className} ml-2 relative border-left`}>
+                    <span>Start year</span><br/>
+                    <input type="number" placeholder="Start year" 
+                            onChange={onStartYearChange} defaultValue={startYear} ref={startYearInput}
+                            className="p-1 rounded text-sm"/>
                 </div>
-                <div>
-                    <span className='ml-2 mr-2'>End year: {currentEndYear}</span> <br/>
-                    <div className="flex flex-row align-middle justify-between">
-                        <span className='mr-2 inline-block text-center bg-red p-2'>{currentStartYear}</span>
-                        <input type="range" min={currentStartYear} max={endYear} defaultValue={currentEndYear} onChange={handleEndYearChange} className="slider" id="end year"/>
-                        <span className='ml-2 inline-block text-center bg-green p-2'>{endYear}</span>
-                    </div>
+                <div className={`${lusitana.className} ml-2 relative border-left`}>
+                    <span>End year</span><br/>
+                    <input type="number" placeholder="End year" 
+                            onChange={onEndYearChange} defaultValue={endYear} ref={endYearInput}
+                            className="p-1 rounded text-sm"/>
                 </div>
             </div>
             <div className='content grid gap-0 sm:grid-cols-1 md:grid-cols-12'>
