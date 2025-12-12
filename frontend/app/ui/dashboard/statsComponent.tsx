@@ -7,7 +7,7 @@ import MiniMapComponent from "../../ui/dashboard/mini_map";
 import { lusitana } from "../../ui/fonts";
 import { useState, useEffect, useRef } from 'react';
 import clsx from "clsx";
-import SunburstChart from "./charts/sunburst";
+// import SunburstChart from "./charts/sunburst";
 
 
 export default function StatsComponent(){
@@ -86,7 +86,7 @@ export default function StatsComponent(){
             }
         ]
     }
-    const [yearAgg, setYearAgg] = useState(testData);
+    const [yearAgg, setYearAgg] = useState(testData); // eslint-disable-line
 
     const updateSearch = (evt: any) => { // eslint-disable-line
         const familyName = evt.target.getAttribute("value");
