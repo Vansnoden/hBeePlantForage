@@ -1,6 +1,6 @@
 "use client"
 
-import { searchFamilyNames, getPlantTopX, getYearlyObsDistro, getFamilyData, getFamilyDataMax, getYearAggregate } from "@/app/lib/client_actions";
+import { searchFamilyNames, getPlantTopX, getYearlyObsDistro, getFamilyData, getFamilyDataMax } from "@/app/lib/client_actions";
 import { CustomChartData } from "../../lib/definitions";
 import BarChart from "../../ui/dashboard/charts/barchart";
 import MiniMapComponent from "../../ui/dashboard/mini_map";
@@ -8,6 +8,7 @@ import { lusitana } from "../../ui/fonts";
 import { useState, useEffect, useRef } from 'react';
 import clsx from "clsx";
 // import SunburstChart from "./charts/sunburst";
+// getYearAggregate
 
 
 export default function StatsComponent(){
