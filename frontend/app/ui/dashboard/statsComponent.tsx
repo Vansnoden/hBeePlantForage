@@ -129,7 +129,7 @@ export default function StatsComponent(){
                 setcurrentFocusZone(focusZoneSelect.current?.value);
                 // setRegionObsDistroGlobal(await getRegionObsDistro(focusZoneSelect.current?.value || '', searchInput.current?.value, startYear, endYear));
                 setYearDistro(await getYearlyObsDistro(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
-                setYearAgg(await getYearAggregate(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
+                // setYearAgg(await getYearAggregate(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
                 setPlantTop(await getPlantTopX(searchInput.current?.value, focusZoneSelect.current?.value, 20));
             }
         }
@@ -147,7 +147,7 @@ export default function StatsComponent(){
             if(focusZoneSelect.current && searchInput.current){
                 // setRegionObsDistroGlobal(await getRegionObsDistro(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear));
                 setYearDistro(await getYearlyObsDistro(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
-                setYearAgg(await getYearAggregate(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
+                // setYearAgg(await getYearAggregate(focusZoneSelect.current?.value, searchInput.current?.value, startYear, endYear))
             }
             setPlantTop(await getPlantTopX(currentFamilyName, currentFocusZone, 20));
             setGeojsonData(await getFamilyData(currentFamilyName));
@@ -240,7 +240,7 @@ export default function StatsComponent(){
                 {/* <BarChart data={yearDistroGlobal} show_labels={true}/> */}
                 {/* <PieChart data={regionObsDistroGlobal} width={700} show_labels={true}/> */}
                 { !plantTop && <p>Loading regional distribution of reported plants ...</p> }
-                { plantTop &&  <SunburstChart data={yearAgg} width={700} height={700} show_labels={true}/>}
+                {/* { plantTop &&  <SunburstChart data={yearAgg} width={700} height={700} show_labels={true}/>} */}
             </div>
         </div>
     )
