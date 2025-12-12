@@ -45,6 +45,7 @@ services:
       - postgres_db
       - geoserver
     container_name: backend
+    restart: always
     volumes:
       - ./backend:/code
       # - ./backend/database/utilities/ai_model:/code/database/utilities/ai_model
@@ -75,6 +76,7 @@ services:
     depends_on:
       - backend
     container_name: frontend
+    restart: always
     ports:
       - 3000:3000
     deploy:

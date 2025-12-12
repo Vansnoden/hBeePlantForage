@@ -29,6 +29,7 @@ from queries import *
 import numpy as np
 from numpy.linalg import norm
 import ast
+from fastapi.responses import StreamingResponse
 
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
@@ -562,36 +563,45 @@ def get_last_x_years_distro(
 
 @app.get("/data/yearly/aggregate")
 def get_last_x_years_aggregate(
-    # user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db),
     cname: str = "", 
     fname: str = "",
     year_start: int = 2015,
-    year_end: int = 2025):
-    res = {
-        "name": "data",
-        "children":[]
-    }
-    assert year_end > year_start, "Start Year should be inferiour to end year"
-    # if user:
-    if cname and not fname:
-        query = text(QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT.format(continent=cname, year_start=year_start, year_end=year_end))
-    elif fname:
-        query = text(QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT_FAMILY.format(continent=cname, family_name=fname, year_start=year_start, year_end=year_end))
-    else:
-        query = text(QUERY_AGGREGATE_SUMMARY_DATA.format(year_start=year_start, year_end=year_end))
-    db_recs = db.execute(query)
-    db_records = db_recs.fetchall()
-    data = None
-    for rec in db_records:
-        data = json.loads(rec[0])
-    res["children"] = data
-    # with open('data_x.json', 'w+') as f:
-    #     json.dump(data, f, indent=4)
-    return res
-    # else:
-    #     raise HTTPException(status_code=403, detail="Unauthorized access")
+    year_end: int = 2025
+):
+    assert year_end > year_start, "start year should be inferior to end year"
 
+    def stream_json():
+        if cname and not fname:
+            query = text(QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT.format(
+                continent=cname, year_start=year_start, year_end=year_end
+            ))
+        elif fname:
+            query = text(QUERY_AGGREGATE_SUMMARY_DATA_CONTINENT_FAMILY.format(
+                continent=cname, family_name=fname, year_start=year_start, year_end=year_end
+            ))
+        else:
+            query = text(QUERY_AGGREGATE_SUMMARY_DATA.format(
+                year_start=year_start, year_end=year_end
+            ))
+
+        # Use server-side cursor to stream results
+        with db.connection() as conn:
+            cursor = conn.execution_options(stream_results=True).execute(query)
+            # Start of JSON
+            yield '{"root":['
+            first = True
+            for row in cursor:
+                if not first:
+                    yield ','
+                else:
+                    first = False
+                yield json.dumps(row[0])  # assuming row[0] contains JSON chunk
+            # End of JSON
+            yield ']}'
+    return StreamingResponse(stream_json(), media_type="application/json")
+
+   
 
 
 
