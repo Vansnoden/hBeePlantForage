@@ -1,5 +1,6 @@
 **/__pycache__
 backend/venv/
+backend/.env
 **/venv/
 venv/
 geo_settings/
