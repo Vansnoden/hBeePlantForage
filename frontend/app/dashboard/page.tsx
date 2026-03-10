@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-
+import { useState, useEffect, use } from 'react';
 import BarChart from "../ui/dashboard/charts/barchart";
 import CardWrapper from "../ui/dashboard/card";
 import { lusitana } from "../ui/fonts";
@@ -9,23 +9,52 @@ import DataTable from "../ui/dashboard/table";
 import Search from "../ui/dashboard/search";
 import PieChart from "../ui/dashboard/charts/piechart";
 
+// Note: 'dynamic' is a server-side config. 
+// In a pure client component, we handle "dynamic" behavior via standard React state.
 
-
-export default async function Dashboard(props: {
+export default function Dashboard(props: {
     searchParams?: Promise<{
       query?: string;
       page?: string;
     }>;
-  }){  
-
-    const dashData = await getDashboardData("");
-    const plantTop = await getPlantTopX('', '', 10);
-    const regionObsDistro = await getRegionObsDistro('', '', 2005, 2025); // global
-    const searchParams = await props.searchParams;
+}) {  
+    // Unwrap the searchParams promise using 'use' hook (React 19/Next 15)
+    const searchParams = use(props.searchParams!);
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;
 
-    return(
+    // State for your data
+    const [dashData, setDashData] = useState<any>(null);
+    const [plantTop, setPlantTop] = useState<any>([]);
+    const [regionObsDistro, setRegionObsDistro] = useState<any>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadData() {
+            try {
+                setLoading(true);
+                // Fetching in parallel for speed
+                const [data, top, distro] = await Promise.all([
+                    getDashboardData(""),
+                    getPlantTopX('', '', 10),
+                    getRegionObsDistro('', '', 2005, 2025)
+                ]);
+                
+                setDashData(data);
+                setPlantTop(top);
+                setRegionObsDistro(distro);
+            } catch (error) {
+                console.error("Failed to fetch dashboard data:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        loadData();
+    }, []); // Runs once on mount
+
+    if (loading) return <div>Loading Dashboard...</div>;
+
+    return (
         <div>
             <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
                 Dashboard
@@ -51,5 +80,5 @@ export default async function Dashboard(props: {
                 </div>
             </div> 
         </div>
-    )
+    );
 }

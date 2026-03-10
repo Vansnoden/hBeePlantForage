@@ -1,84 +1,75 @@
-'use client'
+'use client';
 
+import { useState, useEffect } from 'react';
 import { getPlantData } from '@/app/lib/client_actions';
 import { PlantData } from '@/app/lib/definitions';
 import Pagination from './pagination';
 import { lusitana } from '../fonts';
 
-
-// DataTable.use(DT);
-
-export default async function DataTable({
+export default function DataTable({
   query,
   currentPage,
 }: {
   query: string;
   currentPage: number;
 }) {
-  const plant_data_rows: PlantData = await getPlantData(query, currentPage);
-  const totalPages = plant_data_rows.total_pages;
+  // 1. Initialize state with a structure matching your PlantData definition
+  const [plantDataRows, setPlantDataRows] = useState<PlantData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // 2. Fetch data whenever query or currentPage changes
+  useEffect(() => {
+    async function loadTableData() {
+      setLoading(true);
+      try {
+        const data = await getPlantData(query, currentPage);
+        setPlantDataRows(data);
+      } catch (error) {
+        console.error("Error fetching plant data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadTableData();
+  }, [query, currentPage]); // Dependency array: re-run when these change
+
+  // 3. Handle loading state
+  if (loading && !plantDataRows) {
+    return <div className="mt-6 text-center">Loading table data...</div>;
+  }
+
+  const totalPages = plantDataRows?.total_pages || 0;
 
   return (
     <div className={`${lusitana.className} mt-6 flow-root`}>  
       <div className="inline-block min-w-full align-middle">
-        <div className="rounded-lg bg-gray-50 p-2 md:pt-0 table-container">
+        <div className={`rounded-lg bg-gray-50 p-2 md:pt-0 table-container ${loading ? 'opacity-50' : ''}`}>
           <table className="hidden min-w-full text-gray-900 md:table table-auto">
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
-                <th scope="col" className="px-4 py-5 font-medium sm:pl-6 ">
-                  Country
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Site Name
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Plant Name
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Family
-                </th>
-                {/* <th scope="col" className="px-3 py-5 font-medium">
-                  Scientific Name
-                </th> */}
-                {/* <th scope="col" className="px-3 py-5 font-medium">
-                  Taxon
-                </th> */}
-                {/* <th scope="col" className="px-3 py-5 font-medium">
-                  Kingdom
-                </th> */}
+                <th scope="col" className="px-4 py-5 font-medium sm:pl-6 ">Country</th>
+                <th scope="col" className="px-3 py-5 font-medium">Site Name</th>
+                <th scope="col" className="px-3 py-5 font-medium">Plant Name</th>
+                <th scope="col" className="px-3 py-5 font-medium">Family</th>
               </tr>
             </thead>
             <tbody className="bg-white">
-              {plant_data_rows.data?.map((plant_data) => (
+              {plantDataRows?.data?.map((plant_data) => (
                 <tr
                   key={plant_data.id}
-                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
+                  className="w-full border-b py-3 text-sm last-of-type:border-none"
                 >
-                    <td className="px-3 py-3 break-all">
-                        {plant_data.country}
-                    </td>
-                    <td className="px-3 py-3 break-all">
-                        {plant_data.site_name}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-3 break-all">
-                        {plant_data.plant_name}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-3 break-all">
-                        {plant_data.family}
-                    </td>
-                    {/* <td className="px-3 py-3 break-all">
-                        {plant_data.scientific_name}
-                    </td> */}
-                    {/* <td className=" px-3 py-3 break-all">
-                        {plant_data.taxon}
-                    </td> */}
-                    {/* <td className="whitespace-nowrap px-3 py-3 break-all">
-                        {plant_data.kingdom}
-                    </td> */}
+                    <td className="px-3 py-3 break-all">{plant_data.country}</td>
+                    <td className="px-3 py-3 break-all">{plant_data.site_name}</td>
+                    <td className="whitespace-nowrap px-3 py-3 break-all">{plant_data.plant_name}</td>
+                    <td className="whitespace-nowrap px-3 py-3 break-all">{plant_data.family}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+          {plantDataRows?.data?.length === 0 && !loading && (
+            <p className="text-center py-4">No results found.</p>
+          )}
         </div>
         <div className="mt-5 flex w-full justify-center">
           <Pagination totalPages={totalPages} />
