@@ -1,5 +1,6 @@
+'use client'
 
-import { getPlantData } from '@/app/lib/actions';
+import { getPlantData } from '@/app/lib/client_actions';
 import { PlantData } from '@/app/lib/definitions';
 import Pagination from './pagination';
 import { lusitana } from '../fonts';
