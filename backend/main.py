@@ -58,9 +58,9 @@ origins = [
     "http://localhost",
     "http://localhost:3000",
     "http://localhost:8000",
-    "http://9.141.176.168",
-    "http://9.141.176.168:3000",
-    "http://9.141.176.168:8000",
+    "http://185.250.36.234",
+    "http://185.250.36.234:3000",
+    "http://185.250.36.234:8000/api",
     "https://beehealth.icipe.org",
     "https://beehealth.icipe.org/api",
 ]
