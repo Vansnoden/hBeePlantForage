@@ -55,28 +55,6 @@ export async function getDashboardData(fname: string){
 }
 
 
-export async function getPlantTopX(fname: string, limit:number){
-  // const token = await getToken() as string
-  const dashData = await fetch(PLANT_TOP_URL +"?fname="+fname+"&top="+limit, {
-      method: 'GET',
-      // headers: {
-      //   "Authorization": token
-      // }
-  }).then((res) => res.json())
-  return dashData?.data as CustomChartData;
-}
-
-export async function getRegionObsDistro(cname: string){
-  // const token = await getToken() as string
-  const dashData = await fetch(REGION_DISTRO_URL +"?cname="+cname, {
-      method: 'GET',
-      // headers: {
-      //   "Authorization": token
-      // }
-  }).then((res) => res.json())
-  return dashData?.data as CustomChartData;
-}
-
 
 export async function getPlantData(query: string, currentPage: number){
   // const token = await getToken() as string

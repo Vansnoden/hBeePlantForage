@@ -1,7 +1,10 @@
+'use client'
+
+
 import BarChart from "../ui/dashboard/charts/barchart";
 import CardWrapper from "../ui/dashboard/card";
 import { lusitana } from "../ui/fonts";
-import { getDashboardData, getPlantTopX, getRegionObsDistro } from "../lib/actions";
+import { getDashboardData, getPlantTopX, getRegionObsDistro } from "../lib/client_actions";
 import DataTable from "../ui/dashboard/table";
 import Search from "../ui/dashboard/search";
 import PieChart from "../ui/dashboard/charts/piechart";
@@ -16,8 +19,8 @@ export default async function Dashboard(props: {
   }){  
 
     const dashData = await getDashboardData("");
-    const plantTop = await getPlantTopX("", 10); //global
-    const regionObsDistro = await getRegionObsDistro(""); // global
+    const plantTop = await getPlantTopX('', '', 10);
+    const regionObsDistro = await getRegionObsDistro('', '', 2005, 2025); // global
     const searchParams = await props.searchParams;
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;
